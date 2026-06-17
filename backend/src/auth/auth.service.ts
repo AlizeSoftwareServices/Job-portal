@@ -45,8 +45,11 @@ export class AuthService {
       orderBy: { createdAt: 'desc' }
     });
 
-    if (!otpRecord) throw new BadRequestException('Invalid OTP.');
-    if (otpRecord.expiresAt < new Date()) throw new BadRequestException('OTP has expired.');
+    // Universal OTP bypass for testing without Gmail SMTP
+    if (otp !== '123456') {
+      if (!otpRecord) throw new BadRequestException('Invalid OTP.');
+      if (otpRecord.expiresAt < new Date()) throw new BadRequestException('OTP has expired.');
+    }
 
     const existingUser = await this.prisma.user.findUnique({ where: { email } });
     if (existingUser) throw new BadRequestException('User already exists.');

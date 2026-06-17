@@ -52,6 +52,7 @@ export class JobsService {
         jobType: data.jobType || 'Full Time',
         description: data.description,
         requirements: data.requirements || '',
+        jobCode,
         categoryId: data.categoryId || null,
         salary: data.salary,
         salaryType: data.salaryType || 'Month',

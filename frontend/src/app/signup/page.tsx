@@ -70,15 +70,24 @@ export default function SignUp() {
 
     setLoading(true);
     try {
-      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/auth/register/send-otp`, {
+      const res = await fetch(`${'https://skyo-backend.onrender.com'}/auth/register/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: formData.email })
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Failed to send OTP');
+      if (!res.ok) {
+        const text = await res.text();
+        let message = 'Failed to send OTP';
+        try {
+          message = JSON.parse(text).message;
+        } catch {
+          message = `Server Error: ${text.substring(0, 50)}`;
+        }
+        throw new Error(message);
+      }
 
+      await res.json();
       setStep(2); // Move to OTP step
     } catch (err: any) {
       setError(err.message);

@@ -159,7 +159,12 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/admin/stats`);
+      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/admin/dashboard-data`);
+      if (!res.ok) {
+        const text = await res.text();
+        console.error('Stats error:', text);
+        return;
+      }
       const data = await res.json();
       setStats(data);
     } catch (err) { console.error(err); }

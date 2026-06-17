@@ -27,16 +27,22 @@ export default function Login() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
-
-      const data = await res.json();
-      
       if (!res.ok) {
-        if (res.status === 404 || data.message?.includes('not found')) {
-          setShowSignUpPrompt(true);
+        let text = await res.text();
+        let message = 'Login failed';
+        try { 
+          const errData = JSON.parse(text);
+          message = errData.message || message;
+          if (res.status === 404 || message.toLowerCase().includes('not found')) {
+            setShowSignUpPrompt(true);
+          }
+        } catch { 
+          message = text.substring(0, 50); 
         }
-        throw new Error(data.message || 'Login failed');
+        throw new Error(message);
       }
-
+      
+      const data = await res.json();
       localStorage.setItem('skyo_token', data.token);
       router.push('/');
     } catch (err: any) {

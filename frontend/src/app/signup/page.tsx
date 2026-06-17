@@ -102,7 +102,7 @@ export default function SignUp() {
     setLoading(true);
 
     try {
-      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/auth/register/verify`, {
+      const res = await fetch(`${'https://skyo-backend.onrender.com'}/auth/register/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -116,8 +116,14 @@ export default function SignUp() {
         })
       });
 
+      if (!res.ok) {
+        const text = await res.text();
+        let message = 'Verification failed';
+        try { message = JSON.parse(text).message; } catch { message = text.substring(0, 50); }
+        throw new Error(message);
+      }
+      
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Verification failed');
 
       // Save token and redirect
       localStorage.setItem('skyo_token', data.token);

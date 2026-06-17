@@ -1,9 +1,12 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 import JobsClient from './JobsClient';
 import AuthButtons from '../../components/AuthButtons';
 import ProfileLink from '../../components/ProfileLink';
 import Footer from '../../components/Footer';
 import Navbar from '../../components/Navbar';
+
+export const dynamic = 'force-dynamic';
 
 async function getJobs() {
   try {
@@ -37,7 +40,9 @@ export default async function JobsListing({ searchParams }: { searchParams: { q?
       {/* Navigation */}
       <Navbar />
 
-      <JobsClient initialJobs={jobs} initialCategories={categories} initialQuery={q} initialLoc={loc} initialCategory={category} />
+      <Suspense fallback={<div className="p-10 text-center animate-pulse">Loading jobs...</div>}>
+        <JobsClient initialJobs={jobs} initialCategories={categories} initialQuery={q} initialLoc={loc} initialCategory={category} />
+      </Suspense>
       <div className="mt-auto">
         <Footer />
       </div>

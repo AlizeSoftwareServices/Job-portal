@@ -1,10 +1,13 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { Search, MapPin, Briefcase, ChevronRight, Building, Clock, Building2 } from 'lucide-react';
 import JobCard from '../components/JobCard';
 import ShareButton from '../components/ShareButton';
 import GlobalSearchBar from '../components/GlobalSearchBar';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+
+export const dynamic = 'force-dynamic';
 
 async function getFeaturedJobs() {
   try {
@@ -57,7 +60,9 @@ export default async function Home() {
 
           {/* Search Bar */}
           <div className="max-w-4xl mx-auto">
-            <GlobalSearchBar />
+            <Suspense fallback={<div className="h-16 w-full bg-white/20 rounded-2xl animate-pulse"></div>}>
+              <GlobalSearchBar />
+            </Suspense>
           </div>
         </div>
       </section>

@@ -44,10 +44,10 @@ function ProfileContent() {
     }
 
     Promise.all([
-      fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/users/profile`, {
+      fetch(`\${'https://skyo-backend.onrender.com'}/users/profile`, {
         headers: { 'Authorization': `Bearer ${token}` }
       }).then(res => res.json()),
-      fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/applications`).then(res => res.json())
+      fetch(`\${'https://skyo-backend.onrender.com'}/applications`).then(res => res.json())
     ])
     .then(([profileData, appsData]) => {
       setProfile(profileData);

@@ -32,7 +32,7 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/auth/forgot-password/send-otp`, {
+      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/auth/forgot-password/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: formData.email })
@@ -63,7 +63,7 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/auth/forgot-password/reset`, {
+      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/auth/forgot-password/reset`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

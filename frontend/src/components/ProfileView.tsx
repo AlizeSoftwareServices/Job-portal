@@ -68,7 +68,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
     data.append('file', file);
     const token = localStorage.getItem('skyo_token');
     try {
-      const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/users/profile/avatar`, {
+      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/users/profile/avatar`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
         body: data,
@@ -110,7 +110,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
         })),
       };
 
-      const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/users/profile`, {
+      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/users/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -211,7 +211,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
           <div className="relative group mb-4">
             <div className="w-32 h-32 rounded-full border-4 border-white shadow-md overflow-hidden bg-white flex items-center justify-center">
               {form.avatarUrl ? (
-                <img src={form.avatarUrl.startsWith('http') || form.avatarUrl.startsWith('/presets') || form.avatarUrl.startsWith('/avatars') ? form.avatarUrl : `\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}${form.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
+                <img src={form.avatarUrl.startsWith('http') || form.avatarUrl.startsWith('/presets') || form.avatarUrl.startsWith('/avatars') ? form.avatarUrl : `\${'https://skyo-backend.onrender.com'}${form.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
                 <User className="w-12 h-12 text-zinc-300" />
               )}

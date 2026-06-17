@@ -32,7 +32,7 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
   const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   useEffect(() => {
-    fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/jobs/${jobId}`)
+    fetch(`\${'https://skyo-backend.onrender.com'}/jobs/${jobId}`)
       .then((res) => res.json())
       .then((data) => {
         setJob(data);
@@ -78,7 +78,7 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
         data.append('recaptchaToken', recaptchaToken);
       }
 
-      const response = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/applications`, {
+      const response = await fetch(`\${'https://skyo-backend.onrender.com'}/applications`, {
         method: 'POST',
         body: data,
       });

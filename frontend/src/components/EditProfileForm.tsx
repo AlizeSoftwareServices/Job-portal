@@ -66,7 +66,7 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
 
     try {
       const token = localStorage.getItem('skyo_token');
-      const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/users/profile/resume`, {
+      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/users/profile/resume`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
         body: formData
@@ -110,7 +110,7 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
     data.append('file', file);
     const token = localStorage.getItem('skyo_token');
     try {
-      const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/users/profile/avatar`, {
+      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/users/profile/avatar`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
         body: data,
@@ -178,7 +178,7 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
     };
 
     try {
-      const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/users/profile`, {
+      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/users/profile`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',
@@ -222,7 +222,7 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
             <h3 className="text-sm font-bold text-zinc-900 mb-4 uppercase tracking-wider">Profile Picture</h3>
             <div className="w-32 h-32 rounded-full border-4 border-white shadow-lg overflow-hidden bg-zinc-100 flex items-center justify-center relative group">
               {form.avatarUrl ? (
-                <img src={form.avatarUrl.startsWith('http') ? form.avatarUrl : `\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}${form.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
+                <img src={form.avatarUrl.startsWith('http') ? form.avatarUrl : `\${'https://skyo-backend.onrender.com'}${form.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
                 <User className="h-12 w-12 text-zinc-400" />
               )}
@@ -323,7 +323,7 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
             <div className="w-full md:w-1/3 bg-blue-50 border border-blue-100 rounded-2xl p-6 text-center flex flex-col items-center justify-center">
               <FileText className="h-10 w-10 text-blue-800 mb-3" />
               <h4 className="font-bold text-blue-900 mb-2">Resume Uploaded</h4>
-              <a href={`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}${form.resumeUrl}`} target="_blank" rel="noreferrer" className="text-sm text-blue-800 hover:underline font-medium">View Current Resume</a>
+              <a href={`\${'https://skyo-backend.onrender.com'}${form.resumeUrl}`} target="_blank" rel="noreferrer" className="text-sm text-blue-800 hover:underline font-medium">View Current Resume</a>
             </div>
           )}
         </div>

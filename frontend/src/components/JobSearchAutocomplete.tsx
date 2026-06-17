@@ -17,7 +17,7 @@ export default function JobSearchAutocomplete() {
     // Fetch all jobs to get their titles for autocomplete
     const fetchJobs = async () => {
       try {
-        const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/jobs`);
+        const res = await fetch(`\${'https://skyo-backend.onrender.com'}/jobs`);
         if (res.ok) {
           const jobs = await res.json();
           // Extract unique titles

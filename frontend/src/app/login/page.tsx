@@ -22,7 +22,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/auth/login`, {
+      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })

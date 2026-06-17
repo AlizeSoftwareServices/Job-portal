@@ -23,7 +23,7 @@ function TrackContent() {
     setError('');
     setApplication(null);
     try {
-      const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/applications/track/${ref}`);
+      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/applications/track/${ref}`);
       if (!res.ok) {
         throw new Error('Application not found. Please check your reference number.');
       }

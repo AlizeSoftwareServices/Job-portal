@@ -35,7 +35,7 @@ export default function GlobalSearchBar({
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/jobs`);
+        const res = await fetch(`\${'https://skyo-backend.onrender.com'}/jobs`);
         if (res.ok) {
           const jobs = await res.json();
           const titles = Array.from(new Set(jobs.map((j: any) => j.title))) as string[];

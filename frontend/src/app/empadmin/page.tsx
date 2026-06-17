@@ -502,6 +502,12 @@ export default function AdminDashboard() {
         <main className="flex-1 overflow-y-auto p-4 md:p-8">
           
           {/* DASHBOARD TAB */}
+          {activeTab === 'dashboard' && (!stats || stats.statusCode || !stats.categoryBreakdown) && !loading && (
+            <div className="flex flex-col items-center justify-center h-96 text-slate-500">
+              <p className="text-xl font-semibold mb-2">Could not connect to the Backend Database.</p>
+              <p>Please make sure you have added <b>NEXT_PUBLIC_API_URL</b> in Vercel Environment Variables and redeployed!</p>
+            </div>
+          )}
           {activeTab === 'dashboard' && stats && !stats.statusCode && stats.categoryBreakdown && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex justify-between items-end mb-8">

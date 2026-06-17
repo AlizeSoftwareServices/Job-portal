@@ -181,6 +181,15 @@ export default function AdminDashboard() {
 
   const handleSaveJob = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!newJob.title?.trim()) return alert('Please scroll up and enter a Job Title');
+    if (!newJob.categoryId) return alert('Please scroll up and select a Category');
+    if (newJob.categoryId === 'NEW' && !newJob.newCategoryName?.trim()) return alert('Please scroll up and enter the New Category Name');
+    if (!newJob.locationCity?.trim()) return alert('Please scroll up and enter Location City');
+    if (!newJob.locationState?.trim()) return alert('Please scroll up and enter Location State');
+    if (!newJob.salary?.trim()) return alert('Please enter Salary Amount');
+    if (!newJob.description?.trim()) return alert('Please enter a Description');
+    if (!newJob.requirements?.trim()) return alert('Please enter Requirements');
+
     try {
       let finalCategoryId = newJob.categoryId;
       // If user provided a new category name, create it first
@@ -823,7 +832,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="flex justify-end gap-3 mt-6">
                       <button type="button" onClick={() => { setEditingJobId(null); setNewJob(defaultJobState); setIsCreatingJob(false); }} className="px-6 py-2 rounded font-bold text-slate-600 hover:bg-slate-100">Cancel</button>
-                      <button type="submit" className="bg-blue-800 text-white font-bold py-2 px-6 rounded hover:bg-blue-700">{editingJobId ? 'Update Job' : 'Publish Job'}</button>
+                      <button type="submit" formNoValidate className="bg-blue-800 text-white font-bold py-2 px-6 rounded hover:bg-blue-700">{editingJobId ? 'Update Job' : 'Publish Job'}</button>
                     </div>
                   </form>
                   </div>

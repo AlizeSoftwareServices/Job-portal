@@ -59,7 +59,7 @@ export default function RegisterCVPage() {
         data.append('recaptchaToken', recaptchaToken);
       }
 
-      const response = await fetch('http://localhost:3000/applications', {
+      const response = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/applications`, {
         method: 'POST',
         body: data,
       });

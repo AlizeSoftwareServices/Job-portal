@@ -135,7 +135,7 @@ export default function AdminDashboard() {
 
   const fetchJobs = async () => {
     try {
-      const res = await fetch('http://localhost:3000/jobs');
+      const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/jobs`);
       const data = await res.json();
       setJobs(data);
     } catch (err) { console.error(err); }
@@ -143,7 +143,7 @@ export default function AdminDashboard() {
 
   const fetchApplications = async () => {
     try {
-      const res = await fetch('http://localhost:3000/applications');
+      const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/applications`);
       const data = await res.json();
       setApplications(data);
     } catch (err) { console.error(err); }
@@ -151,7 +151,7 @@ export default function AdminDashboard() {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch('http://localhost:3000/categories');
+      const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/categories`);
       const data = await res.json();
       setCategories(data);
     } catch (err) { console.error(err); }
@@ -159,7 +159,7 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch('http://localhost:3000/admin/stats');
+      const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/admin/stats`);
       const data = await res.json();
       setStats(data);
     } catch (err) { console.error(err); }
@@ -179,7 +179,7 @@ export default function AdminDashboard() {
       let finalCategoryId = newJob.categoryId;
       // If user provided a new category name, create it first
       if (newJob.newCategoryName.trim() !== '') {
-        const catRes = await fetch('http://localhost:3000/categories', {
+        const catRes = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/categories`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name: newJob.newCategoryName.trim() })
@@ -190,8 +190,8 @@ export default function AdminDashboard() {
 
       const method = editingJobId ? 'PUT' : 'POST';
       const url = editingJobId 
-        ? `http://localhost:3000/jobs/${editingJobId}`
-        : 'http://localhost:3000/jobs';
+        ? `\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/jobs/${editingJobId}`
+        : `\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/jobs`;
 
       const res = await fetch(url, {
         method,
@@ -264,7 +264,7 @@ export default function AdminDashboard() {
   const handleCreateCategory = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:3000/categories', {
+      const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/categories`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newCategory)
@@ -280,7 +280,7 @@ export default function AdminDashboard() {
   const handleUpdateCategory = async (id: string) => {
     if (!editingCategoryName.trim()) return;
     try {
-      const res = await fetch(`http://localhost:3000/categories/${id}`, {
+      const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/categories/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: editingCategoryName })
@@ -297,7 +297,7 @@ export default function AdminDashboard() {
   const handleDeleteCategory = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this category? All jobs within this category will ALSO be deleted permanently!")) return;
     try {
-      const res = await fetch(`http://localhost:3000/categories/${id}`, {
+      const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/categories/${id}`, {
         method: 'DELETE'
       });
       if (res.ok) {
@@ -310,7 +310,7 @@ export default function AdminDashboard() {
 
   const updateAppStatus = async (appId: string, status: string) => {
     try {
-      const res = await fetch(`http://localhost:3000/applications/${appId}/status`, {
+      const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/applications/${appId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
@@ -350,18 +350,18 @@ export default function AdminDashboard() {
       await updateAppStatus(appId, 'UNDER_REVIEW');
     }
     try {
-      await fetch(`http://localhost:3000/applications/${appId}/review`, { method: 'PATCH' });
+      await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/applications/${appId}/review`, { method: 'PATCH' });
     } catch (err) {
       console.error('Failed to mark as reviewed', err);
     }
-    window.open(`http://localhost:3000${resumeUrl}`, '_blank');
+    window.open(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}${resumeUrl}`, '_blank');
   };
 
   const sendCustomEmail = async (appId: string) => {
     if (!emailMessage.trim()) return alert('Please write a message first.');
     setSendingEmail(true);
     try {
-      const res = await fetch(`http://localhost:3000/applications/${appId}/send-email`, {
+      const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/applications/${appId}/send-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ subject: emailSubject, message: emailMessage })

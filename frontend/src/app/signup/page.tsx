@@ -70,7 +70,7 @@ export default function SignUp() {
 
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:3000/auth/register/send-otp', {
+      const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/auth/register/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: formData.email })
@@ -93,7 +93,7 @@ export default function SignUp() {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:3000/auth/register/verify', {
+      const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/auth/register/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

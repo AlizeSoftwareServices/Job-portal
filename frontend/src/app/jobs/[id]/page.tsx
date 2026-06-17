@@ -21,7 +21,7 @@ export default function JobDetails({ params }: { params: Promise<{ id: string }>
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/jobs/${jobId}`)
+    fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/jobs/${jobId}`)
       .then(res => res.json())
       .then(data => {
         setJob(data);
@@ -34,7 +34,7 @@ export default function JobDetails({ params }: { params: Promise<{ id: string }>
 
     const token = localStorage.getItem('skyo_token');
     if (token) {
-      fetch('http://localhost:3000/users/profile', {
+      fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/users/profile`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       .then(res => res.json())

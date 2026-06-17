@@ -8,7 +8,7 @@ import Footer from '../components/Footer';
 
 async function getFeaturedJobs() {
   try {
-    const res = await fetch('http://localhost:3000/jobs', { cache: 'no-store' });
+    const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/jobs`, { cache: 'no-store' });
     if (!res.ok) return [];
     const jobs = await res.json();
     return jobs.filter((j: any) => j.status === 'ACTIVE' || !j.status).slice(0, 6); // Just show top 6 active
@@ -20,7 +20,7 @@ async function getFeaturedJobs() {
 
 async function getCategories() {
   try {
-    const res = await fetch('http://localhost:3000/categories', { cache: 'no-store' });
+    const res = await fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/categories`, { cache: 'no-store' });
     if (!res.ok) return [];
     return await res.json();
   } catch (err) {

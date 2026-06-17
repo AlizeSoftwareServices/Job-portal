@@ -44,10 +44,10 @@ function ProfileContent() {
     }
 
     Promise.all([
-      fetch('http://localhost:3000/users/profile', {
+      fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/users/profile`, {
         headers: { 'Authorization': `Bearer ${token}` }
       }).then(res => res.json()),
-      fetch('http://localhost:3000/applications').then(res => res.json())
+      fetch(`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/applications`).then(res => res.json())
     ])
     .then(([profileData, appsData]) => {
       setProfile(profileData);

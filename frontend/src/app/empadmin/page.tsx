@@ -278,8 +278,9 @@ export default function AdminDashboard() {
 
   const handleCreateCategory = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!newCategory.name.trim()) return alert('Please enter a category name');
     try {
-      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/categories`, {
+      const res = await fetch(`${'https://skyo-backend.onrender.com'}/categories`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newCategory)
@@ -288,14 +289,20 @@ export default function AdminDashboard() {
         alert('Category Created successfully!');
         setNewCategory({ name: '', imageUrl: '' });
         fetchCategories();
+      } else {
+        const text = await res.text();
+        alert(`Failed to create category! Error: ${text}`);
       }
-    } catch (err) { console.error(err); }
+    } catch (err) { 
+      console.error(err); 
+      alert('Failed to connect to backend.');
+    }
   };
 
   const handleUpdateCategory = async (id: string) => {
     if (!editingCategoryName.trim()) return;
     try {
-      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/categories/${id}`, {
+      const res = await fetch(`${'https://skyo-backend.onrender.com'}/categories/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: editingCategoryName })
@@ -305,22 +312,34 @@ export default function AdminDashboard() {
         setEditingCategoryId(null);
         fetchCategories();
         fetchJobs(); // Update names in jobs instantly
+      } else {
+        const text = await res.text();
+        alert(`Failed to update category! Error: ${text}`);
       }
-    } catch (err) { console.error(err); }
+    } catch (err) { 
+      console.error(err); 
+      alert('Failed to connect to backend.');
+    }
   };
 
   const handleDeleteCategory = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this category? All jobs within this category will ALSO be deleted permanently!")) return;
     try {
-      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/categories/${id}`, {
+      const res = await fetch(`${'https://skyo-backend.onrender.com'}/categories/${id}`, {
         method: 'DELETE'
       });
       if (res.ok) {
         alert('Category and associated jobs deleted successfully!');
         fetchCategories();
         fetchJobs(); // Refetch jobs since some are deleted
+      } else {
+        const text = await res.text();
+        alert(`Failed to delete category! Error: ${text}`);
       }
-    } catch (err) { console.error(err); }
+    } catch (err) { 
+      console.error(err); 
+      alert('Failed to connect to backend.');
+    }
   };
 
   const updateAppStatus = async (appId: string, status: string) => {

@@ -30,8 +30,8 @@ export class AuthService {
       data: { email, code, type: 'REGISTER', expiresAt }
     });
 
-    // Send email
-    await this.mailService.sendRegistrationOtpEmail(email, code);
+    // Send email asynchronously so the UI doesn't hang waiting for Gmail SMTP
+    this.mailService.sendRegistrationOtpEmail(email, code).catch(e => console.error('Email error:', e));
 
     return { message: 'OTP sent to your email.' };
   }
@@ -108,7 +108,8 @@ export class AuthService {
       data: { email, code, type: 'FORGOT_PASSWORD', expiresAt }
     });
 
-    await this.mailService.sendForgotPasswordOtpEmail(email, code);
+    // Send email asynchronously
+    this.mailService.sendForgotPasswordOtpEmail(email, code).catch(e => console.error('Email error:', e));
 
     return { message: 'OTP sent to your email.' };
   }

@@ -3,14 +3,19 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, Loader2, Building2, User } from 'lucide-react';
 import CountrySelect from '../../components/CountrySelect';
 
 export default function SignUp() {
   const router = useRouter();
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0); // 0 = role, 1 = details, 2 = otp
+  const [role, setRole] = useState<'CANDIDATE' | 'EMPLOYER'>('CANDIDATE');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://skyo-backend.onrender.com';
+     
+    
   
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -23,7 +28,9 @@ export default function SignUp() {
     phone: '',
     password: '',
     confirmPassword: '',
-    otp: ''
+    otp: '',
+    companyName: '',
+    secondaryContactNumber: '',
   });
 
   const validateEmail = (email: string) => {
@@ -67,10 +74,13 @@ export default function SignUp() {
     if (formData.password !== formData.confirmPassword) {
       return setError('Passwords do not match.');
     }
+    if (role === 'EMPLOYER' && formData.phone === formData.secondaryContactNumber && formData.phone.trim() !== '') {
+      return setError('Primary Contact Number and Secondary Contact Number must be different.');
+    }
 
     setLoading(true);
     try {
-      const res = await fetch(`${'https://skyo-backend.onrender.com'}/auth/register/send-otp`, {
+      const res = await fetch(`${API_URL}/auth/register/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: formData.email })
@@ -102,7 +112,7 @@ export default function SignUp() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${'https://skyo-backend.onrender.com'}/auth/register/verify`, {
+      const res = await fetch(`${API_URL}/auth/register/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -112,7 +122,12 @@ export default function SignUp() {
           countryCode: formData.countryCode,
           phone: formData.phone,
           password: formData.password,
-          otp: formData.otp
+          otp: formData.otp,
+          role: role,
+          ...(role === 'EMPLOYER' && {
+            companyName: formData.companyName,
+            secondaryContactNumber: formData.secondaryContactNumber
+          })
         })
       });
 
@@ -137,10 +152,16 @@ export default function SignUp() {
 
   return (
     <div className="min-h-screen bg-zinc-50 font-sans flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
-      <div className="absolute top-6 left-6 md:top-10 md:left-10">
-        <Link href="/" className="flex items-center text-sm font-medium text-zinc-600 hover:text-blue-800 transition-colors bg-white px-4 py-2 rounded-full border border-zinc-200 shadow-sm">
-          <ArrowLeft className="h-4 w-4 mr-2" /> Back to Home
-        </Link>
+      <div className="absolute top-6 left-6 md:top-10 md:left-10 z-10">
+        {step > 0 ? (
+          <button onClick={() => setStep(step - 1)} className="flex items-center text-sm font-medium text-zinc-600 hover:text-blue-800 transition-colors bg-white px-4 py-2 rounded-full border border-zinc-200 shadow-sm cursor-pointer">
+            <ArrowLeft className="h-4 w-4 mr-2" /> Back
+          </button>
+        ) : (
+          <Link href="/" className="flex items-center text-sm font-medium text-zinc-600 hover:text-blue-800 transition-colors bg-white px-4 py-2 rounded-full border border-zinc-200 shadow-sm">
+            <ArrowLeft className="h-4 w-4 mr-2" /> Back to Home
+          </Link>
+        )}
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center mb-8 mt-10 md:mt-0">
@@ -150,7 +171,7 @@ export default function SignUp() {
           </div>
         </Link>
         <h2 className="mt-6 text-center text-2xl font-bold tracking-tight text-zinc-900">
-          Create your account
+          {step === 0 ? 'Create your account' : `Create ${role === 'EMPLOYER' ? 'Employer' : 'Candidate'} account`}
         </h2>
       </div>
 
@@ -163,45 +184,107 @@ export default function SignUp() {
             </div>
           )}
 
-          {step === 1 ? (
+          {step === 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+              <button 
+                onClick={() => { setRole('EMPLOYER'); setStep(1); }}
+                className="p-6 border border-zinc-200 rounded-xl hover:border-blue-500 hover:shadow-md transition-all flex flex-col items-center justify-center gap-3 bg-white"
+              >
+                <div className="bg-blue-50 p-4 rounded-full">
+                  <Building2 className="h-8 w-8 text-blue-600" />
+                </div>
+                <h3 className="font-bold text-lg text-zinc-800">Employer</h3>
+                <p className="text-sm text-zinc-500 text-center">I want to hire talent</p>
+              </button>
+
+              <button 
+                onClick={() => { setRole('CANDIDATE'); setStep(1); }}
+                className="p-6 border border-zinc-200 rounded-xl hover:border-amber-500 hover:shadow-md transition-all flex flex-col items-center justify-center gap-3 bg-white"
+              >
+                <div className="bg-amber-50 p-4 rounded-full">
+                  <User className="h-8 w-8 text-amber-600" />
+                </div>
+                <h3 className="font-bold text-lg text-zinc-800">Candidate</h3>
+                <p className="text-sm text-zinc-500 text-center">I want to find a job</p>
+              </button>
+            </div>
+          ) : step === 1 ? (
             <form onSubmit={handleSendOtp} className="space-y-5">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-zinc-700 mb-1">First name</label>
-                  <input required type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none" />
+              {role === 'EMPLOYER' ? (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-700 mb-1">Full Name</label>
+                    <input required type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-700 mb-1">Company Name</label>
+                    <input required type="text" value={formData.companyName} onChange={e => setFormData({...formData, companyName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none" />
+                  </div>
+                </>
+              ) : (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-700 mb-1">First name</label>
+                    <input required type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-700 mb-1">Last name</label>
+                    <input required type="text" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none" />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-zinc-700 mb-1">Last name</label>
-                  <input required type="text" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none" />
-                </div>
-              </div>
+              )}
 
               <div>
-                <label className="block text-sm font-medium text-zinc-700 mb-1">Email address</label>
+                <label className="block text-sm font-medium text-zinc-700 mb-1">E-mail id</label>
                 <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none" />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-700 mb-1">Mobile Number</label>
+                <label className="block text-sm font-medium text-zinc-700 mb-1">{role === 'EMPLOYER' ? 'Primary Contact Number' : 'Mobile Number'}</label>
                 <div className="flex gap-2">
-                  <CountrySelect 
-                    value={formData.countryCode} 
-                    onChange={(val: string) => setFormData({...formData, countryCode: val})} 
-                  />
+                  <div className="w-32 shrink-0">
+                    <CountrySelect 
+                      value={formData.countryCode} 
+                      onChange={(val: string) => setFormData({...formData, countryCode: val})} 
+                    />
+                  </div>
                   <input 
                     required 
                     type="tel" 
                     maxLength={getPhoneMaxLength(formData.countryCode)}
                     value={formData.phone} 
                     onChange={e => setFormData({...formData, phone: e.target.value.replace(/[^0-9]/g, '')})} 
-                    className="w-2/3 border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none" 
+                    className="flex-1 border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none min-w-0" 
                     placeholder="Phone Number" 
                   />
                 </div>
               </div>
 
+              {role === 'EMPLOYER' && (
+                <div>
+                  <label className="block text-sm font-medium text-zinc-700 mb-1">Secondary Contact Number</label>
+                  <div className="flex gap-2">
+                    <div className="w-32 shrink-0">
+                      <CountrySelect 
+                        value={formData.countryCode} 
+                        onChange={(val: string) => setFormData({...formData, countryCode: val})} 
+                      />
+                    </div>
+                    <input 
+                      required
+                      type="tel" 
+                      maxLength={getPhoneMaxLength(formData.countryCode)}
+                      value={formData.secondaryContactNumber} 
+                      onChange={e => setFormData({...formData, secondaryContactNumber: e.target.value.replace(/[^0-9]/g, '')})} 
+                      className="flex-1 border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none min-w-0" 
+                      placeholder="Phone Number" 
+                    />
+                  </div>
+                </div>
+              )}
+
               <div>
-                <label className="block text-sm font-medium text-zinc-700 mb-1">Password</label>
+                <label className="block text-sm font-medium text-zinc-700 mb-1">Create Password</label>
                 <div className="relative">
                   <input required type={showPassword ? 'text' : 'password'} value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 pr-10 focus:ring-2 focus:ring-blue-500 outline-none" />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-400">
@@ -247,13 +330,21 @@ export default function SignUp() {
             </form>
           )}
 
-          {step === 1 && (
+          {step === 0 && (
             <p className="mt-6 text-center text-sm text-zinc-600">
               Already have an account?{' '}
               <Link href="/login" className="font-medium text-blue-800 hover:text-amber-500">
                 Sign in
               </Link>
             </p>
+          )}
+
+          {step === 1 && (
+            <div className="text-center mt-6">
+              <button type="button" onClick={() => setStep(0)} className="text-sm text-zinc-500 hover:text-zinc-800">
+                &larr; Change Role
+              </button>
+            </div>
           )}
         </div>
       </div>

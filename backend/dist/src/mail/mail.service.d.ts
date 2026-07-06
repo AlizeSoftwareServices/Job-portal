@@ -7,4 +7,6 @@ export declare class MailService {
     sendForgotPasswordOtpEmail(email: string, code: string): Promise<void>;
     sendStatusUpdateEmail(email: string, firstName: string, jobTitle: string, status: string, referenceNumber: string): Promise<void>;
     sendAdminNewApplicationEmail(adminEmail: string, candidateDetails: any, jobTitle: string, referenceNumber: string): Promise<void>;
+    sendAdminNewEmployerEmail(adminEmail: string, companyName: string, hrName: string, email: string): Promise<void>;
+    sendAdminNewJobRequestEmail(adminEmail: string, jobTitle: string, companyName: string): Promise<void>;
 }

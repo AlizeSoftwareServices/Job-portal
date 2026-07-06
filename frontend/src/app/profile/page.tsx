@@ -11,6 +11,9 @@ import JobCard from '../../components/JobCard';
 import Navbar from '../../components/Navbar';
 
 function ProfileContent() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://skyo-backend.onrender.com';
+     
+    
   const router = useRouter();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get('tab') as 'profile' | 'applied' | 'saved' | 'track' | null;
@@ -44,10 +47,10 @@ function ProfileContent() {
     }
 
     Promise.all([
-      fetch(`\${'https://skyo-backend.onrender.com'}/users/profile`, {
+      fetch(`${API_URL}/users/profile`, {
         headers: { 'Authorization': `Bearer ${token}` }
       }).then(res => res.json()),
-      fetch(`\${'https://skyo-backend.onrender.com'}/applications`).then(res => res.json())
+      fetch(`${API_URL}/applications`).then(res => res.json())
     ])
     .then(([profileData, appsData]) => {
       setProfile(profileData);
@@ -62,10 +65,9 @@ function ProfileContent() {
   }, [router]);
 
   const handleLogout = () => {
-    if (window.confirm("Are you sure you want to log out?")) {
-      localStorage.removeItem('skyo_token');
-      router.push('/login');
-    }
+    if (!window.confirm('Are you sure you want to log out?')) return;
+    localStorage.removeItem('skyo_token');
+    router.push('/login');
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-xl text-blue-800 animate-pulse">Loading Profile...</div>;
@@ -74,34 +76,48 @@ function ProfileContent() {
     <div className="min-h-screen bg-zinc-50 font-sans text-zinc-900 pb-20">
       <Navbar />
 
-      <div className="max-w-6xl mx-auto px-6 py-10">
+      {/* Premium Hero Banner */}
+      <div className="w-full bg-gradient-to-r from-[#002b52] via-[#003c71] to-[#0055a4] pt-16 pb-32 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
+        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+        <div className="absolute -top-24 -left-24 w-72 h-72 bg-indigo-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
         
-        {/* Horizontal Navigation */}
-        <div className="bg-white rounded-2xl border border-zinc-200 p-2 shadow-sm mb-8">
-          <div className="grid grid-cols-2 md:flex gap-2">
+        <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center justify-between">
+          <div className="text-white text-center md:text-left mb-6 md:mb-0">
+            <h1 className="text-4xl md:text-5xl font-black mb-2 tracking-tight">Your Dashboard</h1>
+            <p className="text-blue-100 font-medium text-lg">Manage your profile, track applications, and find your dream job.</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-6 -mt-20 relative z-20">
+        
+        {/* Modern Navigation Tabs (Glassmorphic) */}
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/50 p-2 shadow-[0_8px_30px_rgb(0,0,0,0.08)] mb-8 flex overflow-x-auto no-scrollbar">
+          <div className="flex gap-2 min-w-max w-full">
             <button 
               onClick={() => setActiveTab('profile')}
-              className={`flex items-center justify-center md:justify-start gap-1.5 px-2 sm:px-5 py-2.5 rounded-xl font-bold transition-colors text-xs sm:text-sm ${activeTab === 'profile' ? 'bg-blue-800 text-white shadow-md' : 'text-zinc-600 hover:bg-zinc-50'}`}
+              className={`flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold transition-all text-sm ${activeTab === 'profile' ? 'bg-[#003c71] text-white shadow-md transform scale-[1.02]' : 'text-zinc-600 hover:bg-white/60 hover:text-blue-800'}`}
             >
-              <User className="h-4 w-4 shrink-0" /> <span className="truncate">My Profile</span>
+              <User className="h-4 w-4 shrink-0" /> My Profile
             </button>
             <button 
               onClick={() => setActiveTab('applied')}
-              className={`flex items-center justify-center md:justify-start gap-1.5 px-2 sm:px-5 py-2.5 rounded-xl font-bold transition-colors text-xs sm:text-sm ${activeTab === 'applied' ? 'bg-blue-800 text-white shadow-md' : 'text-zinc-600 hover:bg-zinc-50'}`}
+              className={`flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold transition-all text-sm ${activeTab === 'applied' ? 'bg-[#003c71] text-white shadow-md transform scale-[1.02]' : 'text-zinc-600 hover:bg-white/60 hover:text-blue-800'}`}
             >
-              <Briefcase className="h-4 w-4 shrink-0" /> <span className="truncate">Applied Jobs</span>
+              <Briefcase className="h-4 w-4 shrink-0" /> Applied Jobs
             </button>
             <button 
               onClick={() => setActiveTab('saved')}
-              className={`flex items-center justify-center md:justify-start gap-1.5 px-2 sm:px-5 py-2.5 rounded-xl font-bold transition-colors text-xs sm:text-sm ${activeTab === 'saved' ? 'bg-blue-800 text-white shadow-md' : 'text-zinc-600 hover:bg-zinc-50'}`}
+              className={`flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold transition-all text-sm ${activeTab === 'saved' ? 'bg-[#003c71] text-white shadow-md transform scale-[1.02]' : 'text-zinc-600 hover:bg-white/60 hover:text-blue-800'}`}
             >
-              <Bookmark className="h-4 w-4 shrink-0" /> <span className="truncate">Saved Jobs</span>
+              <Bookmark className="h-4 w-4 shrink-0" /> Saved Jobs
             </button>
             <button 
               onClick={() => setActiveTab('track')}
-              className={`flex items-center justify-center md:justify-start gap-1.5 px-2 sm:px-5 py-2.5 rounded-xl font-bold transition-colors text-xs sm:text-sm ${activeTab === 'track' ? 'bg-blue-800 text-white shadow-md' : 'text-zinc-600 hover:bg-zinc-50'}`}
+              className={`flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold transition-all text-sm ${activeTab === 'track' ? 'bg-[#003c71] text-white shadow-md transform scale-[1.02]' : 'text-zinc-600 hover:bg-white/60 hover:text-blue-800'}`}
             >
-              <Search className="h-4 w-4 shrink-0" /> <span className="truncate">Track</span>
+              <Search className="h-4 w-4 shrink-0" /> Track
             </button>
           </div>
         </div>

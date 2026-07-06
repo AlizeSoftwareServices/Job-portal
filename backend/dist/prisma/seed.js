@@ -37,48 +37,57 @@ const client_1 = require("@prisma/client");
 const bcrypt = __importStar(require("bcrypt"));
 const prisma = new client_1.PrismaClient();
 async function main() {
-    const email = 'dummy@example.com';
-    const passwordHash = await bcrypt.hash('password123', 10);
-    const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (!existingUser) {
-        const user = await prisma.user.create({
-            data: {
-                email,
-                passwordHash,
-                role: 'CANDIDATE',
-                firstName: 'Dummy',
-                lastName: 'User',
-                phone: '1234567890',
-                isVerified: true,
-                candidateProfile: {
-                    create: {
-                        fullName: 'Dummy User',
-                        phone: '1234567890',
-                        address: '123 Dummy St, Chennai, Tamil Nadu',
-                        summary: 'Experienced developer looking for new opportunities.',
-                        expectedSalary: '10 LPA',
-                        preferredLocation: 'Chennai',
-                        preferredJobType: 'Full Time'
-                    }
+    const passwordHash = await bcrypt.hash('Demo@123', 10);
+    const candidate = await prisma.user.upsert({
+        where: { email: 'candidate@demo.com' },
+        update: {},
+        create: {
+            email: 'candidate@demo.com',
+            passwordHash,
+            role: 'CANDIDATE',
+            firstName: 'Demo',
+            lastName: 'Candidate',
+            phone: '1234567890',
+            isVerified: true,
+            candidateProfile: {
+                create: {
+                    fullName: 'Demo Candidate',
+                    phone: '1234567890'
                 }
             }
-        });
-        console.log('Dummy user created successfully!');
-        console.log(`Email: ${user.email}`);
-        console.log('Password: password123');
-    }
-    else {
-        console.log('Dummy user already exists!');
-        console.log(`Email: ${existingUser.email}`);
-        console.log('Password: password123');
-    }
+        }
+    });
+    const employer = await prisma.user.upsert({
+        where: { email: 'employer@demo.com' },
+        update: {},
+        create: {
+            email: 'employer@demo.com',
+            passwordHash,
+            role: 'EMPLOYER',
+            firstName: 'Demo',
+            lastName: 'Employer',
+            phone: '9876543210',
+            isVerified: true,
+            employerProfile: {
+                create: {
+                    companyName: 'Demo Corp',
+                    companyWebsite: 'https://demo.com',
+                    hrName: 'Demo Employer',
+                    industry: 'IT'
+                }
+            }
+        }
+    });
+    console.log('Seed successful! Credentials:');
+    console.log('Candidate: candidate@demo.com / Demo@123');
+    console.log('Employer: employer@demo.com / Demo@123');
 }
 main()
-    .catch(e => {
+    .catch((e) => {
     console.error(e);
     process.exit(1);
 })
     .finally(async () => {
     await prisma.$disconnect();
 });
-//# sourceMappingURL=create-dummy.js.map
+//# sourceMappingURL=seed.js.map

@@ -9,9 +9,11 @@ import Footer from '../components/Footer';
 
 export const dynamic = 'force-dynamic';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://skyo-backend.onrender.com';
+
 async function getFeaturedJobs() {
   try {
-    const res = await fetch(`\${'https://skyo-backend.onrender.com'}/jobs`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/jobs`, { cache: 'no-store' });
     if (!res.ok) return [];
     const jobs = await res.json();
     return jobs.filter((j: any) => j.status === 'ACTIVE' || !j.status).slice(0, 6); // Just show top 6 active
@@ -23,7 +25,7 @@ async function getFeaturedJobs() {
 
 async function getCategories() {
   try {
-    const res = await fetch(`\${'https://skyo-backend.onrender.com'}/categories`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/categories`, { cache: 'no-store' });
     if (!res.ok) return [];
     return await res.json();
   } catch (err) {
@@ -51,7 +53,7 @@ export default async function Home() {
 
         <div className="max-w-6xl mx-auto text-center relative z-10">
           
-          <h1 className="text-5xl md:text-7xl font-black text-white tracking-tight mb-6 leading-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-7xl font-black text-white tracking-tight mb-4 md:mb-6 leading-tight">
             Find Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Next Great</span> Opportunity.
           </h1>
           <p className="text-xl md:text-2xl text-blue-50 mb-12 max-w-3xl mx-auto font-light">
@@ -76,7 +78,7 @@ export default async function Home() {
           </div>
         
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-6">
-          {categories.slice(0, 8).map((category: any, index: number) => (
+          {categories.filter((category: any) => category.jobCount > 0).slice(0, 8).map((category: any, index: number) => (
             <Link href={`/jobs?category=${encodeURIComponent(category.name)}`} key={category.id || index} className="bg-white border border-zinc-200 rounded-xl hover:shadow-lg hover:border-blue-300 transition-all group overflow-hidden flex flex-col h-32 md:h-48 relative">
               {category.imageUrl ? (
                 <div className="absolute inset-0 w-full h-full">
@@ -102,6 +104,13 @@ export default async function Home() {
             </Link>
           ))}
         </div>
+        
+        <div className="text-center mt-12">
+          <Link href="/jobs" className="inline-flex items-center bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-8 py-3 rounded-full transition-all border border-blue-200 hover:shadow-sm">
+            Explore All Categories <ChevronRight className="h-4 w-4 ml-2" />
+          </Link>
+        </div>
+
         </div>
       </section>
 
@@ -140,11 +149,11 @@ export default async function Home() {
                 <div className="w-12 h-0.5 bg-blue-700"></div>
                 <span className="text-amber-500 font-bold tracking-wide text-lg">Join Our Network</span>
               </div>
-              <h2 className="text-5xl md:text-6xl font-black mb-6 leading-[1.1] text-zinc-900 font-serif">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 md:mb-6 leading-[1.1] text-zinc-900 font-serif">
                 Upload Your Resume <br/>
                 <span className="text-amber-500 font-sans tracking-tight">Find Your Job</span>
               </h2>
-              <p className="text-zinc-600 mb-10 leading-relaxed text-lg max-w-md">
+              <p className="text-zinc-600 mb-8 md:mb-10 leading-relaxed text-base md:text-lg max-w-md">
                 Do you want to get started, but have not found the ideal job vacancy yet? Register with us and let the perfect opportunity find you.
               </p>
               <div>
@@ -155,7 +164,7 @@ export default async function Home() {
             </div>
 
             {/* Right Images Composition */}
-            <div className="md:w-1/2 relative mt-20 md:mt-0 flex justify-center items-center z-10">
+            <div className="w-full md:w-1/2 relative mt-16 md:mt-0 flex justify-center items-center z-10 scale-75 md:scale-100 origin-center md:origin-right">
               
               {/* Decorative Shapes */}
               <div className="absolute top-[10%] left-[10%] w-48 h-48 bg-[#FCD34D] rounded-full mix-blend-multiply opacity-90 z-0"></div>

@@ -4,13 +4,26 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum Role {
   ADMIN
   CANDIDATE
+  EMPLOYER
+}
+
+enum JobRouteType {
+  DIRECT
+  SKYO
+}
+
+enum ApprovalStatus {
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
 }
 
 enum JobStatus {
@@ -50,8 +63,11 @@ model User {
   updatedAt      DateTime          @updatedAt
 
   candidateProfile CandidateProfile?
+  employerProfile  EmployerProfile?
   applications   Application[]
   jobsCreated    Job[]             @relation("JobsCreatedByAdmin")
+  jobsRequested  Job[]             @relation("JobsRequestedByEmployer")
+  assignedApplications Application[] @relation("ApplicationsAssignedToEmployer")
 }
 
 model CandidateProfile {
@@ -67,12 +83,43 @@ model CandidateProfile {
   expectedSalary   String?
   preferredLocation String?
   preferredJobType String?
+  
+  gender                 String?
+  dateOfBirth            DateTime?
+  maritalStatus          String?
+  secondaryContactNumber String?
+  educationQualification String?
+  totalWorkExperienceYears String?
+  currentWorkingDetails  String?
+  fatherName             String?
+  fatherOccupation       String?
+  motherName             String?
+  motherOccupation       String?
+  currentSalary          String?
+  currentStay            String?
+  nativePlace            String?
+  interestFieldToWork    String[]
 
   experiences      Experience[]
   educations       Education[]
   skills           Skill[]
   certifications   Certification[]
   projects         Project[]
+}
+
+model EmployerProfile {
+  id               String            @id @default(uuid())
+  userId           String            @unique
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyName      String
+  companyWebsite   String?
+  industry         String?
+  companyLogoUrl   String?
+  companyLocation  String?
+  hrName           String?
+  hrContactNumber  String?
+  officialMailId   String?
+  secondaryContactNumber String?
 }
 
 model Experience {
@@ -126,6 +173,7 @@ model Job {
   id               String            @id @default(uuid())
   jobCode          String            @unique
   title            String
+  recruitmentPosition String?
   department       String?
   categoryId       String?
   category         Category?         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
@@ -137,25 +185,34 @@ model Job {
   experienceLevel  String            // e.g., "Fresher", "1-3 Years"
   workMode         String            // e.g., "Remote", "Onsite"
   jobType          String            // e.g., "Full Time", "Contract"
+  shiftTimings     String?
   description      String
   requirements     String
   benefits         String?
+  generalComments  String?
   skills           String[]          // Array of skills required
   educationReq     String?
   vacancyCount     Int               @default(1)
   status           JobStatus         @default(ACTIVE)
+  approvalStatus   ApprovalStatus    @default(APPROVED)
   expiryDate       DateTime?
   visibilityStatus Boolean           @default(true)
+  closureRequested Boolean           @default(false)
+  fieldVisibility  Json?
   salary           String?
   salaryType       String?           @default("Month")
   salaryVisible    Boolean           @default(true)
+  routeType        JobRouteType      @default(SKYO)
   
   facebookLink     String?
   instagramLink    String?
   linkedinLink     String?
 
-  createdByAdminId String
-  createdByAdmin   User              @relation("JobsCreatedByAdmin", fields: [createdByAdminId], references: [id])
+  createdByAdminId String?
+  createdByAdmin   User?             @relation("JobsCreatedByAdmin", fields: [createdByAdminId], references: [id])
+  
+  employerId       String?
+  employer         User?             @relation("JobsRequestedByEmployer", fields: [employerId], references: [id])
   
   applications     Application[]
   
@@ -189,6 +246,14 @@ model Application {
   adminRating      Int?              // 1 to 5 stars
   adminNotes       String?
   isReviewed       Boolean           @default(false)
+  isPassedToEmployer Boolean         @default(false)
+
+  qualification    String?
+  experience       String?
+  skills           String?
+  
+  assignedEmployerId String?
+  assignedEmployer   User?             @relation("ApplicationsAssignedToEmployer", fields: [assignedEmployerId], references: [id])
   
   interview        Interview?
   

@@ -70,11 +70,11 @@ let AuthService = class AuthService {
         await this.prisma.otpCode.create({
             data: { email, code, type: 'REGISTER', expiresAt }
         });
-        await this.mailService.sendRegistrationOtpEmail(email, code);
+        this.mailService.sendRegistrationOtpEmail(email, code).catch(e => console.error('Email error:', e));
         return { message: 'OTP sent to your email.' };
     }
     async verifyAndRegister(data) {
-        const { firstName, lastName, countryCode, phone, email, password, otp } = data;
+        const { firstName, lastName, countryCode, phone, email, password, otp, role, companyName, secondaryContactNumber } = data;
         const otpRecord = await this.prisma.otpCode.findFirst({
             where: { email, code: otp, type: 'REGISTER' },
             orderBy: { createdAt: 'desc' }
@@ -86,6 +86,7 @@ let AuthService = class AuthService {
         const existingUser = await this.prisma.user.findUnique({ where: { email } });
         if (existingUser)
             throw new common_1.BadRequestException('User already exists.');
+        const userRole = role === 'EMPLOYER' ? 'EMPLOYER' : 'CANDIDATE';
         const passwordHash = await bcrypt.hash(password, 10);
         const user = await this.prisma.user.create({
             data: {
@@ -96,15 +97,37 @@ let AuthService = class AuthService {
                 countryCode,
                 phone,
                 isVerified: true,
-                candidateProfile: {
-                    create: {
-                        fullName: `${firstName} ${lastName}`,
-                        phone: `${countryCode} ${phone}`,
+                role: userRole,
+                ...(userRole === 'CANDIDATE' ? {
+                    candidateProfile: {
+                        create: {
+                            fullName: `${firstName} ${lastName || ''}`.trim(),
+                            phone: `${countryCode} ${phone}`,
+                        }
                     }
-                }
+                } : {
+                    employerProfile: {
+                        create: {
+                            companyName: companyName || `${firstName} Company`,
+                            contactPerson: `${firstName} ${lastName || ''}`.trim(),
+                            secondaryContactNumber: secondaryContactNumber || null,
+                        }
+                    }
+                })
             }
         });
         await this.prisma.otpCode.deleteMany({ where: { email, type: 'REGISTER' } });
+        if (userRole === 'EMPLOYER') {
+            try {
+                const admin = await this.prisma.user.findFirst({ where: { role: 'ADMIN' } });
+                if (admin) {
+                    await this.mailService.sendAdminNewEmployerEmail(admin.email, companyName || `${firstName} Company`, `${firstName} ${lastName || ''}`.trim(), email);
+                }
+            }
+            catch (e) {
+                console.error('Failed to send admin notification for new employer', e);
+            }
+        }
         const token = this.jwtService.sign({ sub: user.id, email: user.email, role: user.role });
         return { message: 'Registration successful', token, user: { id: user.id, email: user.email, firstName: user.firstName, role: user.role } };
     }
@@ -130,7 +153,7 @@ let AuthService = class AuthService {
         await this.prisma.otpCode.create({
             data: { email, code, type: 'FORGOT_PASSWORD', expiresAt }
         });
-        await this.mailService.sendForgotPasswordOtpEmail(email, code);
+        this.mailService.sendForgotPasswordOtpEmail(email, code).catch(e => console.error('Email error:', e));
         return { message: 'OTP sent to your email.' };
     }
     async resetPassword(data) {

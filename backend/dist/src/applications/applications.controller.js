@@ -16,15 +16,14 @@ exports.ApplicationsController = void 0;
 const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
 const applications_service_1 = require("./applications.service");
-const multer_1 = require("multer");
-const path_1 = require("path");
+const cloudinary_config_1 = require("../cloudinary.config");
 let ApplicationsController = class ApplicationsController {
     applicationsService;
     constructor(applicationsService) {
         this.applicationsService = applicationsService;
     }
     async applyForJob(file, body) {
-        const resumeUrl = file ? `/uploads/resumes/${file.filename}` : undefined;
+        const resumeUrl = file ? file.path : undefined;
         return this.applicationsService.createApplication({
             ...body,
             resumeUrl,
@@ -48,19 +47,37 @@ let ApplicationsController = class ApplicationsController {
     trackApplication(ref) {
         return this.applicationsService.getTrackApplication(ref);
     }
+    getEmployerDirectApplications(employerId) {
+        return this.applicationsService.getEmployerDirectApplications(employerId);
+    }
+    getEmployerSkyoApplications(employerId) {
+        return this.applicationsService.getEmployerSkyoApplications(employerId);
+    }
+    passApplicationToEmployer(id) {
+        return this.applicationsService.passApplicationToEmployer(id);
+    }
 };
 exports.ApplicationsController = ApplicationsController;
 __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('resume', {
-        storage: (0, multer_1.diskStorage)({
-            destination: './uploads/resumes',
-            filename: (req, file, cb) => {
-                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-                const ext = (0, path_1.extname)(file.originalname);
-                cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
-            },
-        }),
+        storage: cloudinary_config_1.cloudinaryResumeStorage,
+        limits: {
+            fileSize: 100 * 1024,
+        },
+        fileFilter: (req, file, cb) => {
+            const allowedMimeTypes = [
+                'application/pdf',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/msword'
+            ];
+            if (allowedMimeTypes.includes(file.mimetype)) {
+                cb(null, true);
+            }
+            else {
+                cb(new common_1.BadRequestException('Only PDF and DOCX files are allowed'), false);
+            }
+        }
     })),
     __param(0, (0, common_1.UploadedFile)()),
     __param(1, (0, common_1.Body)()),
@@ -112,6 +129,27 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], ApplicationsController.prototype, "trackApplication", null);
+__decorate([
+    (0, common_1.Get)('employer/:employerId/direct'),
+    __param(0, (0, common_1.Param)('employerId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ApplicationsController.prototype, "getEmployerDirectApplications", null);
+__decorate([
+    (0, common_1.Get)('employer/:employerId/skyo'),
+    __param(0, (0, common_1.Param)('employerId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ApplicationsController.prototype, "getEmployerSkyoApplications", null);
+__decorate([
+    (0, common_1.Patch)(':id/pass-to-employer'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ApplicationsController.prototype, "passApplicationToEmployer", null);
 exports.ApplicationsController = ApplicationsController = __decorate([
     (0, common_1.Controller)('applications'),
     __metadata("design:paramtypes", [applications_service_1.ApplicationsService])

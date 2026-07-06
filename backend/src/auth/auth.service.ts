@@ -37,7 +37,7 @@ export class AuthService {
   }
 
   async verifyAndRegister(data: any) {
-    const { firstName, lastName, countryCode, phone, email, password, otp } = data;
+    const { firstName, lastName, countryCode, phone, email, password, otp, role, companyName, secondaryContactNumber } = data;
 
     // Verify OTP
     const otpRecord = await this.prisma.otpCode.findFirst({
@@ -51,6 +51,8 @@ export class AuthService {
     const existingUser = await this.prisma.user.findUnique({ where: { email } });
     if (existingUser) throw new BadRequestException('User already exists.');
 
+    const userRole = role === 'EMPLOYER' ? 'EMPLOYER' : 'CANDIDATE';
+
     // Create user
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await this.prisma.user.create({
@@ -62,17 +64,45 @@ export class AuthService {
         countryCode,
         phone,
         isVerified: true,
-        candidateProfile: {
-          create: {
-            fullName: `${firstName} ${lastName}`,
-            phone: `${countryCode} ${phone}`,
+        role: userRole,
+        ...(userRole === 'CANDIDATE' ? {
+          candidateProfile: {
+            create: {
+              fullName: `${firstName} ${lastName || ''}`.trim(),
+              phone: `${countryCode} ${phone}`,
+            }
           }
-        }
+        } : {
+          employerProfile: {
+            create: {
+              companyName: companyName || `${firstName} Company`,
+              contactPerson: `${firstName} ${lastName || ''}`.trim(),
+              secondaryContactNumber: secondaryContactNumber || null,
+            }
+          }
+        })
       }
     });
 
     // Clean up OTPs
     await this.prisma.otpCode.deleteMany({ where: { email, type: 'REGISTER' } });
+
+    // Send Admin Notification for Employer Registration
+    if (userRole === 'EMPLOYER') {
+      try {
+        const admin = await this.prisma.user.findFirst({ where: { role: 'ADMIN' } });
+        if (admin) {
+          await this.mailService.sendAdminNewEmployerEmail(
+            admin.email, 
+            companyName || `${firstName} Company`, 
+            `${firstName} ${lastName || ''}`.trim(), 
+            email
+          );
+        }
+      } catch (e) {
+        console.error('Failed to send admin notification for new employer', e);
+      }
+    }
 
     // Generate token
     const token = this.jwtService.sign({ sub: user.id, email: user.email, role: user.role });

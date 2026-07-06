@@ -11,6 +11,7 @@ import ProfileLink from '../../../components/ProfileLink';
 import Navbar from '../../../components/Navbar';
 
 export default function JobDetails({ params }: { params: Promise<{ id: string }> }) {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://skyo-backend.onrender.com';
   const router = useRouter();
   const unwrappedParams = use(params);
   const jobId = unwrappedParams.id;
@@ -18,10 +19,11 @@ export default function JobDetails({ params }: { params: Promise<{ id: string }>
   const [isApplying, setIsApplying] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
   const [job, setJob] = useState<any>(null);
+  const [candidateProfile, setCandidateProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`\${'https://skyo-backend.onrender.com'}/jobs/${jobId}`)
+    fetch(`${API_URL}/jobs/${jobId}`)
       .then(res => res.json())
       .then(data => {
         setJob(data);
@@ -34,11 +36,12 @@ export default function JobDetails({ params }: { params: Promise<{ id: string }>
 
     const token = localStorage.getItem('skyo_token');
     if (token) {
-      fetch(`\${'https://skyo-backend.onrender.com'}/users/profile`, {
+      fetch(`${API_URL}/users/profile`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       .then(res => res.json())
       .then(profile => {
+        setCandidateProfile(profile);
         if (profile.applications) {
           const applied = profile.applications.some((app: any) => app.jobId === jobId);
           setHasApplied(applied);
@@ -54,6 +57,17 @@ export default function JobDetails({ params }: { params: Promise<{ id: string }>
     if (!token) {
       router.push('/login');
     } else {
+      if (candidateProfile) {
+        // Check if profile is complete
+        const profile = candidateProfile.candidateProfile;
+        const isComplete = profile?.fullName && profile?.phone && profile?.preferredLocation && profile?.educationQualification && profile?.totalWorkExperienceYears;
+        
+        if (!isComplete) {
+          alert('Please complete your candidate profile before applying for jobs.');
+          router.push('/profile');
+          return;
+        }
+      }
       router.push(`/jobs/${job.id}/apply`);
     }
   };
@@ -109,9 +123,22 @@ export default function JobDetails({ params }: { params: Promise<{ id: string }>
               
               <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 sm:gap-4 text-zinc-600 mb-6 text-sm sm:text-base mt-4">
                 <span className="flex items-center gap-1.5"><Building className="h-5 w-5" /> SkyoConsultancy Platform</span>
-                <span className="flex items-center gap-1.5"><MapPin className="h-5 w-5" /> {job.locationCity}, {job.locationState}</span>
-                <span className="flex items-center gap-1.5"><Briefcase className="h-5 w-5" /> {job.jobType}</span>
-                {job.salaryVisible !== false && job.salary && (
+                {(job.fieldVisibility?.locationCity !== false && job.fieldVisibility?.locationState !== false) && (
+                  <span className="flex items-center gap-1.5"><MapPin className="h-5 w-5" /> {job.locationCity}, {job.locationState}</span>
+                )}
+                {job.fieldVisibility?.jobType !== false && (
+                  <span className="flex items-center gap-1.5"><Briefcase className="h-5 w-5" /> {job.jobType}</span>
+                )}
+                {job.fieldVisibility?.experienceLevel !== false && job.experienceLevel && (
+                  <span className="flex items-center gap-1.5"><svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg> {job.experienceLevel}</span>
+                )}
+                {job.fieldVisibility?.workMode !== false && job.workMode && (
+                  <span className="flex items-center gap-1.5"><svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> {job.workMode}</span>
+                )}
+                {job.fieldVisibility?.shiftTimings !== false && job.shiftTimings && (
+                  <span className="flex items-center gap-1.5"><Clock className="h-5 w-5" /> {job.shiftTimings}</span>
+                )}
+                {(job.fieldVisibility?.salary !== false && job.salaryVisible !== false) && job.salary && (
                   <span className="flex items-center gap-1.5 font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-100">
                     ₹ {job.salary} / {job.salaryType}
                   </span>
@@ -141,6 +168,28 @@ export default function JobDetails({ params }: { params: Promise<{ id: string }>
                 </button>
               </div>
 
+              {job.routeType === 'DIRECT' && job.employer?.employerProfile && (
+                <div className="mb-6 p-6 bg-blue-50 border border-blue-100 rounded-xl">
+                  <h3 className="font-bold text-blue-900 mb-4 flex items-center gap-2">
+                    <Building className="w-5 h-5" /> Employer Contact Details
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-blue-800">
+                    {job.employer.employerProfile.companyName && (
+                      <p><span className="font-semibold text-blue-900/60 uppercase text-[10px] tracking-wider block">Company Name</span> {job.employer.employerProfile.companyName}</p>
+                    )}
+                    {job.employer.employerProfile.contactPerson && (
+                      <p><span className="font-semibold text-blue-900/60 uppercase text-[10px] tracking-wider block">Contact Person</span> {job.employer.employerProfile.contactPerson}</p>
+                    )}
+                    {job.employer.employerProfile.companyWebsite && (
+                      <p><span className="font-semibold text-blue-900/60 uppercase text-[10px] tracking-wider block">Website</span> <a href={job.employer.employerProfile.companyWebsite} target="_blank" className="underline">{job.employer.employerProfile.companyWebsite}</a></p>
+                    )}
+                    {job.employer.employerProfile.address && (
+                      <p className="sm:col-span-2"><span className="font-semibold text-blue-900/60 uppercase text-[10px] tracking-wider block">Address</span> {job.employer.employerProfile.address}</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Company Social Links */}
               <div className="flex items-center gap-4 pt-4 border-t border-zinc-100">
                 {job.linkedinLink?.length > 0 && (
@@ -166,19 +215,41 @@ export default function JobDetails({ params }: { params: Promise<{ id: string }>
 
             {/* Description */}
             <div className="p-8 space-y-8">
-              <section>
-                <h2 className="text-xl font-bold text-zinc-900 mb-4">Job Description</h2>
-                <div className="text-zinc-700 leading-relaxed whitespace-pre-wrap">
-                  {job.description}
-                </div>
-              </section>
+              {job.fieldVisibility?.description !== false && (
+                <section>
+                  <h2 className="text-xl font-bold text-zinc-900 mb-4">Job Description</h2>
+                  <div className="text-zinc-700 leading-relaxed whitespace-pre-wrap">
+                    {job.description}
+                  </div>
+                </section>
+              )}
 
-              <section>
-                <h2 className="text-xl font-bold text-zinc-900 mb-4">Requirements & Skills</h2>
-                <div className="text-zinc-700 leading-relaxed whitespace-pre-wrap">
-                  {job.requirements}
-                </div>
-              </section>
+              {job.fieldVisibility?.requirements !== false && (
+                <section>
+                  <h2 className="text-xl font-bold text-zinc-900 mb-4">Requirements & Skills</h2>
+                  <div className="text-zinc-700 leading-relaxed whitespace-pre-wrap">
+                    {job.requirements}
+                  </div>
+                </section>
+              )}
+
+              {job.fieldVisibility?.benefits !== false && job.benefits && (
+                <section>
+                  <h2 className="text-xl font-bold text-zinc-900 mb-4">Other Benefits</h2>
+                  <div className="text-zinc-700 leading-relaxed whitespace-pre-wrap">
+                    {job.benefits}
+                  </div>
+                </section>
+              )}
+
+              {job.fieldVisibility?.generalComments !== false && job.generalComments && (
+                <section>
+                  <h2 className="text-xl font-bold text-zinc-900 mb-4">General Comments</h2>
+                  <div className="text-zinc-700 leading-relaxed whitespace-pre-wrap">
+                    {job.generalComments}
+                  </div>
+                </section>
+              )}
 
               {job.skills && job.skills.length > 0 && (
                 <section>

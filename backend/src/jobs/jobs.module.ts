@@ -2,7 +2,10 @@ import { Module } from '@nestjs/common';
 import { JobsController } from './jobs.controller';
 import { JobsService } from './jobs.service';
 
+import { MailModule } from '../mail/mail.module';
+
 @Module({
+  imports: [MailModule],
   controllers: [JobsController],
   providers: [JobsService]
 })

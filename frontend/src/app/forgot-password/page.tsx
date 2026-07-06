@@ -6,6 +6,9 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, Eye, EyeOff, Loader2 } from 'lucide-react';
 
 export default function ForgotPassword() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://skyo-backend.onrender.com';
+     
+    
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -32,7 +35,7 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/auth/forgot-password/send-otp`, {
+      const res = await fetch(`${API_URL}/auth/forgot-password/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: formData.email })
@@ -63,7 +66,7 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/auth/forgot-password/reset`, {
+      const res = await fetch(`${API_URL}/auth/forgot-password/reset`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

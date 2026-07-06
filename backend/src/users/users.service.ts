@@ -17,7 +17,8 @@ export class UsersService {
             projects: true,
             certifications: true
           }
-        }
+        },
+        employerProfile: true
       }
     });
 
@@ -56,8 +57,39 @@ export class UsersService {
     });
 
     // Profile-level fields
-    const updatedProfile = await this.prisma.candidateProfile.update({
-      where: { userId },
+    let updatedProfile: any = null;
+    const existingUser = await this.prisma.user.findUnique({ where: { id: userId } });
+
+    if (existingUser && existingUser.role === 'EMPLOYER') {
+      updatedProfile = await this.prisma.employerProfile.upsert({
+        where: { userId },
+        create: {
+          userId,
+          companyName: data.companyName || 'New Company',
+          companyWebsite: data.companyWebsite,
+          hrName: data.hrName,
+          industry: data.industry,
+          companyLogoUrl: data.companyLogoUrl,
+          companyLocation: data.companyLocation,
+          secondaryContactNumber: data.secondaryContactNumber,
+          hrContactNumber: data.hrContactNumber,
+          officialMailId: data.officialMailId,
+        },
+        update: {
+          ...(data.companyName && { companyName: data.companyName }),
+          ...(data.companyWebsite !== undefined && { companyWebsite: data.companyWebsite }),
+          ...(data.hrName !== undefined && { hrName: data.hrName }),
+          ...(data.industry !== undefined && { industry: data.industry }),
+          ...(data.companyLogoUrl !== undefined && { companyLogoUrl: data.companyLogoUrl }),
+          ...(data.companyLocation !== undefined && { companyLocation: data.companyLocation }),
+          ...(data.secondaryContactNumber !== undefined && { secondaryContactNumber: data.secondaryContactNumber }),
+          ...(data.hrContactNumber !== undefined && { hrContactNumber: data.hrContactNumber }),
+          ...(data.officialMailId !== undefined && { officialMailId: data.officialMailId }),
+        }
+      });
+    } else {
+      updatedProfile = await this.prisma.candidateProfile.update({
+        where: { userId },
       data: {
         ...(data.firstName && data.lastName && { fullName: `${data.firstName} ${data.lastName}` }),
         ...((data.phone || data.countryCode) && { phone: `${data.countryCode || ''} ${data.phone || ''}`.trim() }),
@@ -68,6 +100,22 @@ export class UsersService {
         ...(data.expectedSalary !== undefined && { expectedSalary: data.expectedSalary }),
         ...(data.preferredLocation !== undefined && { preferredLocation: data.preferredLocation }),
         ...(data.preferredJobType !== undefined && { preferredJobType: data.preferredJobType }),
+        
+        ...(data.gender !== undefined && { gender: data.gender }),
+        ...(data.dateOfBirth !== undefined && { dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null }),
+        ...(data.maritalStatus !== undefined && { maritalStatus: data.maritalStatus }),
+        ...(data.secondaryContactNumber !== undefined && { secondaryContactNumber: data.secondaryContactNumber }),
+        ...(data.educationQualification !== undefined && { educationQualification: data.educationQualification }),
+        ...(data.totalWorkExperienceYears !== undefined && { totalWorkExperienceYears: data.totalWorkExperienceYears }),
+        ...(data.currentWorkingDetails !== undefined && { currentWorkingDetails: data.currentWorkingDetails }),
+        ...(data.fatherName !== undefined && { fatherName: data.fatherName }),
+        ...(data.fatherOccupation !== undefined && { fatherOccupation: data.fatherOccupation }),
+        ...(data.motherName !== undefined && { motherName: data.motherName }),
+        ...(data.motherOccupation !== undefined && { motherOccupation: data.motherOccupation }),
+        ...(data.currentSalary !== undefined && { currentSalary: data.currentSalary }),
+        ...(data.currentStay !== undefined && { currentStay: data.currentStay }),
+        ...(data.nativePlace !== undefined && { nativePlace: data.nativePlace }),
+        ...(data.interestFieldToWork !== undefined && { interestFieldToWork: data.interestFieldToWork }),
       }
     });
 
@@ -115,6 +163,7 @@ export class UsersService {
         });
       }
     }
+    } // End of candidate specific updates
 
     return { message: 'Profile updated successfully', emailChanged, profile: updatedProfile };
   }

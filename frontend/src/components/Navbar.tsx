@@ -2,12 +2,14 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import AuthButtons from './AuthButtons';
 import ProfileLink from './ProfileLink';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <>
@@ -16,8 +18,11 @@ export default function Navbar() {
           <button className="md:hidden p-2 -ml-2 text-zinc-600" onClick={() => setIsOpen(true)}>
             <Menu className="w-6 h-6" />
           </button>
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex flex-col items-center">
             <img src="/logo.png" alt="Skyo Consultancy Logo" className="h-12 md:h-16 w-auto object-contain mix-blend-multiply" />
+            {pathname === '/profile' && (
+              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-1 text-center">Candidate Portal</span>
+            )}
           </Link>
         </div>
 
@@ -26,7 +31,7 @@ export default function Navbar() {
           <Link href="/" className="hover:text-blue-800 transition-colors">Home</Link>
           <Link href="/jobs" className="hover:text-blue-800 transition-colors">Find Jobs</Link>
           <Link href="/about" className="hover:text-blue-800 transition-colors">About Us</Link>
-          <Link href="#footer" className="hover:text-blue-800 transition-colors">Contact</Link>
+          <Link href="/#footer" className="hover:text-blue-800 transition-colors">Contact</Link>
           <ProfileLink />
         </div>
 
@@ -42,8 +47,13 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       <div className={`fixed top-0 left-0 h-full w-64 bg-white shadow-2xl z-[70] transform transition-transform duration-300 ease-in-out md:hidden flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="p-4 border-b border-zinc-100 flex justify-between items-center h-[81px] shrink-0">
-          <img src="/logo.png" alt="Skyo Consultancy Logo" className="h-10 w-auto object-contain mix-blend-multiply" />
+        <div className="p-4 border-b border-zinc-100 flex justify-between items-start h-[100px] shrink-0">
+          <div className="flex flex-col items-center">
+            <img src="/logo.png" alt="Skyo Consultancy Logo" className="h-10 w-auto object-contain mix-blend-multiply" />
+            {pathname === '/profile' && (
+              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-1 text-center">Candidate Portal</span>
+            )}
+          </div>
           <button className="p-2 text-zinc-600 bg-zinc-100 rounded-full" onClick={() => setIsOpen(false)}>
             <X className="w-5 h-5" />
           </button>
@@ -52,7 +62,7 @@ export default function Navbar() {
           <Link href="/" onClick={() => setIsOpen(false)} className="hover:text-blue-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">Home</Link>
           <Link href="/jobs" onClick={() => setIsOpen(false)} className="hover:text-blue-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">Find Jobs</Link>
           <Link href="/about" onClick={() => setIsOpen(false)} className="hover:text-blue-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">About Us</Link>
-          <Link href="#footer" onClick={() => setIsOpen(false)} className="hover:text-blue-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">Contact</Link>
+          <Link href="/#footer" onClick={() => setIsOpen(false)} className="hover:text-blue-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">Contact</Link>
           <div className="p-2" onClick={() => setIsOpen(false)}>
             <ProfileLink />
           </div>

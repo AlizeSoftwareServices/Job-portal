@@ -7,4 +7,7 @@ export declare class CategoriesController {
     findOne(id: string): Promise<any>;
     update(id: string, updateCategoryDto: any): Promise<any>;
     remove(id: string): Promise<any>;
+    uploadImage(file: any): {
+        imageUrl: any;
+    };
 }

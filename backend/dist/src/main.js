@@ -4,8 +4,9 @@ require("dotenv/config");
 const core_1 = require("@nestjs/core");
 const path_1 = require("path");
 const app_module_1 = require("./app.module");
-process.env.DATABASE_URL = "postgresql://admin:adminpassword@localhost:5432/job_portal?schema=public";
+const cloudinary_config_1 = require("./cloudinary.config");
 async function bootstrap() {
+    (0, cloudinary_config_1.configureCloudinary)();
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors();
     app.useStaticAssets((0, path_1.join)(__dirname, '..', 'uploads'), {

@@ -14,6 +14,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoriesController = void 0;
 const common_1 = require("@nestjs/common");
+const platform_express_1 = require("@nestjs/platform-express");
+const cloudinary_config_1 = require("../cloudinary.config");
 const categories_service_1 = require("./categories.service");
 let CategoriesController = class CategoriesController {
     categoriesService;
@@ -34,6 +36,12 @@ let CategoriesController = class CategoriesController {
     }
     remove(id) {
         return this.categoriesService.remove(id);
+    }
+    uploadImage(file) {
+        if (!file)
+            throw new common_1.BadRequestException('File is required (Max 50KB, JPEG/PNG only)');
+        const imageUrl = file.path;
+        return { imageUrl };
     }
 };
 exports.CategoriesController = CategoriesController;
@@ -72,6 +80,28 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], CategoriesController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Post)('upload-image'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
+        storage: cloudinary_config_1.cloudinaryAvatarStorage,
+        limits: {
+            fileSize: 50 * 1024,
+        },
+        fileFilter: (req, file, cb) => {
+            const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            if (allowedMimeTypes.includes(file.mimetype)) {
+                cb(null, true);
+            }
+            else {
+                cb(new common_1.BadRequestException('Only JPEG, JPG, and PNG files are allowed'), false);
+            }
+        }
+    })),
+    __param(0, (0, common_1.UploadedFile)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], CategoriesController.prototype, "uploadImage", null);
 exports.CategoriesController = CategoriesController = __decorate([
     (0, common_1.Controller)('categories'),
     __metadata("design:paramtypes", [categories_service_1.CategoriesService])

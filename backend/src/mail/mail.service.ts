@@ -244,4 +244,80 @@ export class MailService {
       console.error(`Failed to send admin notification email:`, error);
     }
   }
+  async sendAdminNewEmployerEmail(adminEmail: string, companyName: string, hrName: string, email: string) {
+    if (!process.env.GMAIL_USER || process.env.GMAIL_USER === 'your-email@gmail.com') return;
+
+    try {
+      await this.transporter.sendMail({
+        from: `"Skyo System" <${process.env.GMAIL_USER}>`,
+        to: adminEmail,
+        subject: `New Employer Account Created: ${companyName}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 8px; max-width: 600px; margin: auto;">
+            <div style="background-color: #1e3a8a; padding: 15px; border-radius: 8px 8px 0 0; text-align: center;">
+              <h2 style="color: white; margin: 0;">New Employer Registration</h2>
+            </div>
+            <div style="padding: 20px;">
+              <p>A new employer account has been created on the platform.</p>
+              
+              <div style="background-color: #f8fafc; padding: 15px; border-radius: 6px; margin: 20px 0; border: 1px solid #e2e8f0;">
+                <h3 style="margin-top: 0; color: #1e293b; border-bottom: 1px solid #cbd5e1; padding-bottom: 8px;">Employer Details</h3>
+                <p style="margin: 8px 0;"><strong>Company Name:</strong> ${companyName}</p>
+                <p style="margin: 8px 0;"><strong>HR Name:</strong> ${hrName}</p>
+                <p style="margin: 8px 0;"><strong>Email:</strong> <a href="mailto:${email}" style="color: #0284c7;">${email}</a></p>
+              </div>
+
+              <div style="text-align: center; margin-top: 30px;">
+                <a href="http://localhost:3001/admin" style="background-color: #1e3a8a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">View in Dashboard</a>
+              </div>
+            </div>
+            <div style="text-align: center; font-size: 12px; color: #64748b; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+              <p>This is an automated notification from the SkyoConsultancy Platform.</p>
+            </div>
+          </div>
+        `
+      });
+      console.log(`Admin notification email sent for new employer ${companyName}`);
+    } catch (error) {
+      console.error(`Failed to send admin notification email:`, error);
+    }
+  }
+
+  async sendAdminNewJobRequestEmail(adminEmail: string, jobTitle: string, companyName: string) {
+    if (!process.env.GMAIL_USER || process.env.GMAIL_USER === 'your-email@gmail.com') return;
+
+    try {
+      await this.transporter.sendMail({
+        from: `"Skyo System" <${process.env.GMAIL_USER}>`,
+        to: adminEmail,
+        subject: `New Job Post Request: ${jobTitle}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 8px; max-width: 600px; margin: auto;">
+            <div style="background-color: #f59e0b; padding: 15px; border-radius: 8px 8px 0 0; text-align: center;">
+              <h2 style="color: white; margin: 0;">New Job Post Request</h2>
+            </div>
+            <div style="padding: 20px;">
+              <p>An employer has requested to post a new job. It is currently pending approval.</p>
+              
+              <div style="background-color: #fffbeb; padding: 15px; border-radius: 6px; margin: 20px 0; border: 1px solid #fde68a;">
+                <h3 style="margin-top: 0; color: #92400e; border-bottom: 1px solid #fcd34d; padding-bottom: 8px;">Job Request Details</h3>
+                <p style="margin: 8px 0; color: #92400e;"><strong>Job Title:</strong> ${jobTitle}</p>
+                <p style="margin: 8px 0; color: #92400e;"><strong>Company Name:</strong> ${companyName || 'Not specified'}</p>
+              </div>
+
+              <div style="text-align: center; margin-top: 30px;">
+                <a href="http://localhost:3001/admin" style="background-color: #f59e0b; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Review in Dashboard</a>
+              </div>
+            </div>
+            <div style="text-align: center; font-size: 12px; color: #64748b; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+              <p>This is an automated notification from the SkyoConsultancy Platform.</p>
+            </div>
+          </div>
+        `
+      });
+      console.log(`Admin notification email sent for new job request ${jobTitle}`);
+    } catch (error) {
+      console.error(`Failed to send admin notification email:`, error);
+    }
+  }
 }

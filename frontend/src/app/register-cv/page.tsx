@@ -3,9 +3,11 @@
 import { useState, useRef } from 'react';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import ReCAPTCHA from 'react-google-recaptcha';
 
 export default function RegisterCVPage() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://skyo-backend.onrender.com';
+     
+    
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -22,8 +24,6 @@ export default function RegisterCVPage() {
     zipCode: '',
   });
   const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
-  const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -32,8 +32,8 @@ export default function RegisterCVPage() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      if (file.size > 500 * 1024) {
-        alert('File size exceeds the 500KB limit. Please upload a smaller file.');
+      if (file.size > 100 * 1024) {
+        alert('File size exceeds the 100KB limit. Please upload a smaller file.');
         e.target.value = '';
         setResumeFile(null);
         return;
@@ -44,6 +44,10 @@ export default function RegisterCVPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!resumeFile) {
+      alert('Please upload your CV/Resume to continue.');
+      return;
+    }
     setSubmitting(true);
 
     try {
@@ -55,11 +59,8 @@ export default function RegisterCVPage() {
       if (resumeFile) {
         data.append('resume', resumeFile);
       }
-      if (recaptchaToken) {
-        data.append('recaptchaToken', recaptchaToken);
-      }
 
-      const response = await fetch(`\${'https://skyo-backend.onrender.com'}/applications`, {
+      const response = await fetch(`${API_URL}/applications`, {
         method: 'POST',
         body: data,
       });
@@ -74,10 +75,6 @@ export default function RegisterCVPage() {
       alert('An error occurred.');
     } finally {
       setSubmitting(false);
-      if (recaptchaRef.current) {
-        recaptchaRef.current.reset();
-        setRecaptchaToken(null);
-      }
     }
   };
 
@@ -110,9 +107,13 @@ export default function RegisterCVPage() {
           </Link>
         </div>
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h1 className="text-3xl font-black mb-2 tracking-tight">Register / Drop CV</h1>
-          <p className="text-xl opacity-90">Find a great job anywhere in the world.</p>
+        <div className="max-w-4xl mx-auto text-center relative z-10 flex flex-col items-center">
+          <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight pt-6">
+            Register & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">Drop CV</span>
+          </h1>
+          <p className="text-lg md:text-xl text-zinc-300 max-w-2xl mx-auto leading-relaxed">
+            Take the first step towards your dream career. Register with us and let the best opportunities find you anywhere in the world.
+          </p>
         </div>
       </div>
 
@@ -196,7 +197,7 @@ export default function RegisterCVPage() {
               </div>
 
               <div className="pt-4">
-                <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4 border-b pb-2">Upload CV / Resume</h3>
+                <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4 border-b pb-2">Upload CV / Resume *</h3>
                 <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md bg-gray-50 hover:bg-gray-100 transition">
                   <div className="space-y-1 text-center">
                     <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
@@ -208,7 +209,7 @@ export default function RegisterCVPage() {
                         <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept=".pdf,.doc,.docx" required />
                       </label>
                     </div>
-                    <p className="text-xs text-gray-500">PDF, DOC, DOCX up to 500KB</p>
+                    <p className="text-xs text-gray-500">PDF, DOC, DOCX up to 100KB</p>
                     {resumeFile && <p className="text-sm font-medium text-green-600 mt-2">Selected: {resumeFile.name}</p>}
                   </div>
                 </div>
@@ -227,16 +228,9 @@ export default function RegisterCVPage() {
               </div>
 
               <div className="pt-6 border-t">
-                <div className="mb-6 flex justify-center">
-                  <ReCAPTCHA
-                    ref={recaptchaRef}
-                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
-                    onChange={(token) => setRecaptchaToken(token)}
-                  />
-                </div>
                 <button
                   type="submit"
-                  disabled={submitting || !recaptchaToken}
+                  disabled={submitting}
                   className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#008c44] hover:bg-[#006e35] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 transition"
                 >
                   {submitting ? 'Submitting...' : 'Register Profile'}

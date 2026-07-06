@@ -1,24 +1,27 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { LogOut } from 'lucide-react';
 
 export default function AuthButtons() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     setIsLoggedIn(!!localStorage.getItem('skyo_token'));
   }, []);
 
   const handleLogout = () => {
+    if (!window.confirm('Are you sure you want to log out?')) return;
     localStorage.removeItem('skyo_token');
     setIsLoggedIn(false);
     router.push('/');
   };
 
   if (isLoggedIn) {
+    if (pathname !== '/profile') return null;
     return (
       <div className="flex items-center gap-3 md:gap-4 order-2 md:order-3 w-full md:w-auto">
         <button 

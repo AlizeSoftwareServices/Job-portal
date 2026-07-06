@@ -15,8 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
-const multer_1 = require("multer");
-const path_1 = require("path");
+const cloudinary_config_1 = require("../cloudinary.config");
 const users_service_1 = require("./users.service");
 const passport_1 = require("@nestjs/passport");
 let UsersController = class UsersController {
@@ -35,14 +34,14 @@ let UsersController = class UsersController {
     }
     uploadResume(req, file) {
         if (!file)
-            throw new common_1.BadRequestException('File is required (Max 500KB, PDF/DOCX only)');
-        const resumeUrl = `/uploads/resumes/${file.filename}`;
+            throw new common_1.BadRequestException('File is required (Max 100KB, PDF/DOCX only)');
+        const resumeUrl = file.path;
         return { resumeUrl };
     }
     uploadAvatar(req, file) {
         if (!file)
-            throw new common_1.BadRequestException('File is required (Max 100KB, JPEG/PNG only)');
-        const avatarUrl = `/uploads/avatars/${file.filename}`;
+            throw new common_1.BadRequestException('File is required (Max 50KB, JPEG/PNG only)');
+        const avatarUrl = file.path;
         return { avatarUrl };
     }
 };
@@ -72,15 +71,9 @@ __decorate([
 __decorate([
     (0, common_1.Post)('profile/resume'),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
-        storage: (0, multer_1.diskStorage)({
-            destination: './uploads/resumes',
-            filename: (req, file, cb) => {
-                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-                cb(null, `${req.user.id}-${uniqueSuffix}${(0, path_1.extname)(file.originalname)}`);
-            }
-        }),
+        storage: cloudinary_config_1.cloudinaryResumeStorage,
         limits: {
-            fileSize: 500 * 1024,
+            fileSize: 100 * 1024,
         },
         fileFilter: (req, file, cb) => {
             const allowedMimeTypes = [
@@ -105,15 +98,9 @@ __decorate([
 __decorate([
     (0, common_1.Post)('profile/avatar'),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
-        storage: (0, multer_1.diskStorage)({
-            destination: './uploads/avatars',
-            filename: (req, file, cb) => {
-                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-                cb(null, `${req.user.id}-avatar-${uniqueSuffix}${(0, path_1.extname)(file.originalname)}`);
-            }
-        }),
+        storage: cloudinary_config_1.cloudinaryAvatarStorage,
         limits: {
-            fileSize: 100 * 1024,
+            fileSize: 50 * 1024,
         },
         fileFilter: (req, file, cb) => {
             const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png'];

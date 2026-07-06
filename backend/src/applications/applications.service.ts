@@ -53,6 +53,9 @@ export class ApplicationsService {
         state: data.state,
         country: data.country,
         zipCode: data.zipCode,
+        qualification: data.qualification,
+        experience: data.experience,
+        skills: data.skills,
         resumeUrl: data.resumeUrl,
         referenceNumber: this.generateReferenceNumber(),
       },
@@ -180,5 +183,49 @@ export class ApplicationsService {
     }
 
     return application;
+  }
+
+  async getEmployerDirectApplications(employerId: string) {
+    return this.prisma.application.findMany({
+      where: {
+        job: {
+          employerId: employerId,
+          routeType: 'DIRECT'
+        }
+      },
+      include: {
+        job: true,
+        candidate: {
+          select: { id: true, email: true, candidateProfile: true }
+        }
+      },
+      orderBy: { appliedAt: 'desc' }
+    });
+  }
+
+  async getEmployerSkyoApplications(employerId: string) {
+    return this.prisma.application.findMany({
+      where: {
+        isPassedToEmployer: true,
+        OR: [
+          { assignedEmployerId: employerId },
+          { job: { employerId: employerId, routeType: 'SKYO' } }
+        ]
+      },
+      include: {
+        job: true,
+        candidate: {
+          select: { id: true, email: true, candidateProfile: true }
+        }
+      },
+      orderBy: { appliedAt: 'desc' }
+    });
+  }
+
+  async passApplicationToEmployer(id: string) {
+    return this.prisma.application.update({
+      where: { id },
+      data: { isPassedToEmployer: true }
+    });
   }
 }

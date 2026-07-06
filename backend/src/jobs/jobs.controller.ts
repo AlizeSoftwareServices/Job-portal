@@ -21,6 +21,16 @@ export class JobsController {
     return this.jobsService.findAllJobs();
   }
 
+  @Get('admin-all')
+  async findAllAdminJobs() {
+    return this.jobsService.findAllAdminJobs();
+  }
+
+  @Get('employer/:employerId')
+  async findJobsByEmployer(@Param('employerId') employerId: string) {
+    return this.jobsService.findJobsByEmployer(employerId);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.jobsService.findJobById(id);
@@ -34,5 +44,20 @@ export class JobsController {
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return this.jobsService.deleteJob(id);
+  }
+
+  @Put(':id/request-closure')
+  async requestClosure(@Param('id') id: string) {
+    return this.jobsService.requestClosure(id);
+  }
+
+  @Put(':id/approve-closure')
+  async approveClosure(@Param('id') id: string) {
+    return this.jobsService.approveClosure(id);
+  }
+
+  @Put(':id/repost')
+  async repostJob(@Param('id') id: string) {
+    return this.jobsService.repostJob(id);
   }
 }

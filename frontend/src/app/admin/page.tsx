@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Briefcase, Users, Layers, TrendingUp, Settings, LogOut, Search, Bell, Menu, MapPin, Clock, ChevronRight, Eye, EyeOff, Trash2, Edit, Save, X } from 'lucide-react';
+import { Briefcase, Users, Layers, TrendingUp, Settings, LogOut, Search, Bell, Menu, MapPin, Clock, ChevronRight, Eye, EyeOff, Trash2, Edit, Save, X, Upload, Download, Building2, PieChart as PieChartIcon } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 export default function AdminDashboard() {
@@ -23,19 +23,20 @@ export default function AdminDashboard() {
   };
 
   const handleAdminLogout = () => {
-    if (window.confirm("Are you sure you want to log out from admin panel?")) {
-      localStorage.removeItem('skyo_admin_auth');
-      setIsAdminAuthenticated(false);
-    }
+    if (!window.confirm('Are you sure you want to log out?')) return;
+    localStorage.removeItem('skyo_admin_auth');
+    setIsAdminAuthenticated(false);
   };
 
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'jobs' | 'categories' | 'applications'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'jobs' | 'categories' | 'applications' | 'employers'>('dashboard');
   const [jobs, setJobs] = useState<any[]>([]);
   const [applications, setApplications] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
+  const [employersList, setEmployersList] = useState<any[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [jobRouteTypes, setJobRouteTypes] = useState<Record<string, string>>({});
 
   // Application Details Modal State
   const [selectedApp, setSelectedApp] = useState<any>(null);
@@ -46,6 +47,7 @@ export default function AdminDashboard() {
   const [isReInvite, setIsReInvite] = useState(false);
   const [reInviteJobId, setReInviteJobId] = useState('');
   const [sendingEmail, setSendingEmail] = useState(false);
+  const [appEmployerSelections, setAppEmployerSelections] = useState<Record<string, string>>({});
 
   // New Job Form State
   const [isCreatingJob, setIsCreatingJob] = useState(false);
@@ -58,16 +60,22 @@ export default function AdminDashboard() {
     locationState: '',
     experienceLevel: 'Entry Level',
     workMode: 'Remote',
-    jobType: 'Full Time',
+    jobType: 'Permanent',
     description: '',
     requirements: '',
     salary: '',
     salaryType: 'Month',
     salaryVisible: true,
+    recruitmentPosition: '',
+    vacancyCount: 1,
+    shiftTimings: '',
+    benefits: '',
+    generalComments: '',
     facebookLink: '',
     instagramLink: '',
     linkedinLink: '',
-    status: 'ACTIVE'
+    status: 'ACTIVE',
+    fieldVisibility: {} as Record<string, boolean>
   };
   const [newJob, setNewJob] = useState(defaultJobState);
 
@@ -75,6 +83,7 @@ export default function AdminDashboard() {
   const [showCategoryForm, setShowCategoryForm] = useState(false);
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
   const [editingCategoryName, setEditingCategoryName] = useState('');
+  const [editingCategoryImage, setEditingCategoryImage] = useState('');
 
   const [jobCategoryFilter, setJobCategoryFilter] = useState('All');
   const [jobLocationFilter, setJobLocationFilter] = useState('All');
@@ -85,6 +94,9 @@ export default function AdminDashboard() {
   const [appJobFilter, setAppJobFilter] = useState('All');
   const [appLocationFilter, setAppLocationFilter] = useState('All');
   const [appStatusFilter, setAppStatusFilter] = useState('All');
+  
+  // State for Employers UI
+  const [expandedEmployerId, setExpandedEmployerId] = useState<string | null>(null);
   
   // Pagination for Applications
   const [appCurrentPage, setAppCurrentPage] = useState(1);
@@ -98,10 +110,33 @@ export default function AdminDashboard() {
   const appUniqueCategories = ['All', ...Array.from(new Set(applications.map((a: any) => a.job?.category?.name || 'General')))] as string[];
   const appUniqueJobs = ['All', ...Array.from(new Set(applications.map((a: any) => a.job?.title).filter(Boolean)))] as string[];
   const appUniqueLocations = ['All', ...Array.from(new Set(applications.map((a: any) => {
-    if (!a.job) return null;
-    return `${a.job.locationCity || ''}, ${a.job.locationState || ''}`;
-  }).filter(l => l && l !== ', ')))] as string[];
+    return a.job ? `${a.job.locationCity}, ${a.job.locationState}` : null;
+  }).filter(Boolean)))] as string[];
   const appUniqueStatuses = ['All', ...Array.from(new Set(applications.map((a: any) => a.status || 'APPLIED')))] as string[];
+
+  const toggleVisibility = (field: string) => {
+    setNewJob(prev => ({
+      ...prev,
+      fieldVisibility: {
+        ...prev.fieldVisibility,
+        [field]: prev.fieldVisibility[field] === false ? true : false
+      }
+    }));
+  };
+
+  const FieldToggle = ({ field }: { field: string }) => {
+    const isVisible = newJob.fieldVisibility[field] !== false;
+    return (
+      <button 
+        type="button" 
+        onClick={() => toggleVisibility(field)} 
+        className={`p-1.5 rounded-md transition-colors ${isVisible ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100' : 'text-slate-400 bg-slate-100 hover:bg-slate-200'}`}
+        title={isVisible ? 'Field is Visible' : 'Field is Hidden'}
+      >
+        {isVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+      </button>
+    );
+  };
 
   // Filter and paginate Applications
   const filteredApplications = applications.filter((app: any) => {
@@ -133,9 +168,13 @@ export default function AdminDashboard() {
     setJobCurrentPage(1);
   }, [jobCategoryFilter, jobLocationFilter, jobStatusFilter]);
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://skyo-backend.onrender.com';
+     
+    
+
   const fetchJobs = async () => {
     try {
-      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/jobs`);
+      const res = await fetch(`${API_URL}/jobs/admin-all`);
       const data = await res.json();
       setJobs(data);
     } catch (err) { console.error(err); }
@@ -143,7 +182,7 @@ export default function AdminDashboard() {
 
   const fetchApplications = async () => {
     try {
-      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/applications`);
+      const res = await fetch(`${API_URL}/applications`);
       const data = await res.json();
       setApplications(data);
     } catch (err) { console.error(err); }
@@ -151,15 +190,23 @@ export default function AdminDashboard() {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/categories`);
+      const res = await fetch(`${API_URL}/categories`);
       const data = await res.json();
       setCategories(data);
     } catch (err) { console.error(err); }
   };
 
+  const fetchEmployersList = async () => {
+    try {
+      const res = await fetch(`${API_URL}/admin/employers`);
+      const data = await res.json();
+      setEmployersList(data);
+    } catch (err) { console.error(err); }
+  };
+
   const fetchStats = async () => {
     try {
-      const res = await fetch(`${'https://skyo-backend.onrender.com'}/admin/dashboard-data`);
+      const res = await fetch(`${API_URL}/admin/dashboard-data`);
       if (!res.ok) {
         throw new Error('Stats fetch failed');
       }
@@ -176,7 +223,7 @@ export default function AdminDashboard() {
       setIsAdminAuthenticated(true);
     }
     setAdminAuthChecked(true);
-    Promise.all([fetchJobs(), fetchApplications(), fetchCategories(), fetchStats()]).then(() => setLoading(false));
+    Promise.all([fetchJobs(), fetchApplications(), fetchCategories(), fetchEmployersList(), fetchStats()]).then(() => setLoading(false));
   }, []);
 
   const handleSaveJob = async (e: React.FormEvent) => {
@@ -194,7 +241,7 @@ export default function AdminDashboard() {
       let finalCategoryId = newJob.categoryId;
       // If user provided a new category name, create it first
       if (newJob.newCategoryName.trim() !== '') {
-        const catRes = await fetch(`\${'https://skyo-backend.onrender.com'}/categories`, {
+        const catRes = await fetch(`${API_URL}/categories`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name: newJob.newCategoryName.trim() })
@@ -205,13 +252,13 @@ export default function AdminDashboard() {
 
       const method = editingJobId ? 'PUT' : 'POST';
       const url = editingJobId 
-        ? `\${'https://skyo-backend.onrender.com'}/jobs/${editingJobId}`
-        : `\${'https://skyo-backend.onrender.com'}/jobs`;
+        ? `${API_URL}/jobs/${editingJobId}`
+        : `${API_URL}/jobs`;
 
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...newJob, categoryId: finalCategoryId }) 
+        body: JSON.stringify({ ...newJob, categoryId: finalCategoryId, vacancyCount: Number(newJob.vacancyCount) || 1 }) 
       });
       if (res.ok) {
         alert(editingJobId ? 'Job Updated successfully!' : 'Job Created successfully!');
@@ -232,28 +279,34 @@ export default function AdminDashboard() {
   const handleEditClick = (job: any) => {
     setEditingJobId(job.id);
     setNewJob({
-      title: job.title,
+      title: job.title || '',
       categoryId: job.categoryId || '',
       newCategoryName: '',
-      locationCity: job.locationCity,
-      locationState: job.locationState,
-      experienceLevel: job.experienceLevel,
-      workMode: job.workMode,
-      jobType: job.jobType,
-      description: job.description,
-      requirements: job.requirements,
+      locationCity: job.locationCity || '',
+      locationState: job.locationState || '',
+      experienceLevel: job.experienceLevel || 'Entry Level',
+      workMode: job.workMode || 'Remote',
+      jobType: job.jobType || 'Permanent',
+      description: job.description || '',
+      requirements: job.requirements || '',
       salary: job.salary || '',
       salaryType: job.salaryType || 'Month',
       salaryVisible: job.salaryVisible !== false,
+      recruitmentPosition: job.recruitmentPosition || '',
+      vacancyCount: job.vacancyCount || 1,
+      shiftTimings: job.shiftTimings || '',
+      benefits: job.benefits || '',
+      generalComments: job.generalComments || '',
       facebookLink: job.facebookLink || '',
       instagramLink: job.instagramLink || '',
       linkedinLink: job.linkedinLink || '',
-      status: job.status || 'ACTIVE'
+      status: job.status || 'ACTIVE',
+      fieldVisibility: job.fieldVisibility || {}
     });
     setIsCreatingJob(true);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -263,24 +316,91 @@ export default function AdminDashboard() {
       return;
     }
 
-    if (file.size > 100 * 1024) {
-      alert('File size must be less than 100KB.');
+    if (file.size > 10 * 1024 * 1024) {
+      alert('File size too large before compression.');
       e.target.value = '';
       return;
     }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setNewCategory({...newCategory, imageUrl: reader.result as string});
-    };
-    reader.readAsDataURL(file);
+    try {
+      const options = {
+        maxSizeMB: 0.05,
+        maxWidthOrHeight: 800,
+        useWebWorker: true
+      };
+      // @ts-ignore
+      const compressedFile = await imageCompression(file, options);
+      
+      const formData = new FormData();
+      formData.append('file', compressedFile);
+      
+      const res = await fetch(`${API_URL}/categories/upload-image`, {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        setNewCategory({...newCategory, imageUrl: data.imageUrl});
+      } else {
+        alert('Failed to upload image.');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Error compressing or uploading image.');
+    }
+  };
+
+  const handleEditImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+      alert('Only JPEG, JPG, and PNG formats are accepted.');
+      e.target.value = '';
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert('File size too large before compression.');
+      e.target.value = '';
+      return;
+    }
+
+    try {
+      const options = {
+        maxSizeMB: 0.05,
+        maxWidthOrHeight: 800,
+        useWebWorker: true
+      };
+      // @ts-ignore
+      const compressedFile = await imageCompression(file, options);
+      
+      const formData = new FormData();
+      formData.append('file', compressedFile);
+      
+      const res = await fetch(`${API_URL}/categories/upload-image`, {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        setEditingCategoryImage(data.imageUrl);
+      } else {
+        alert('Failed to upload image.');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Error compressing or uploading image.');
+    }
   };
 
   const handleCreateCategory = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCategory.name.trim()) return alert('Please enter a category name');
     try {
-      const res = await fetch(`${'https://skyo-backend.onrender.com'}/categories`, {
+      const res = await fetch(`${API_URL}/categories`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newCategory)
@@ -302,10 +422,10 @@ export default function AdminDashboard() {
   const handleUpdateCategory = async (id: string) => {
     if (!editingCategoryName.trim()) return;
     try {
-      const res = await fetch(`${'https://skyo-backend.onrender.com'}/categories/${id}`, {
+      const res = await fetch(`${API_URL}/categories/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: editingCategoryName })
+        body: JSON.stringify({ name: editingCategoryName, imageUrl: editingCategoryImage })
       });
       if (res.ok) {
         alert('Category Updated successfully!');
@@ -322,10 +442,43 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleUpdateJobApproval = async (id: string, status: string, routeType: string = 'SKYO') => {
+    try {
+      const res = await fetch(`${API_URL}/jobs/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ approvalStatus: status, routeType })
+      });
+      if (res.ok) {
+        alert(`Job ${status.toLowerCase()} successfully!`);
+        fetchJobs();
+      } else {
+        alert('Failed to update approval status.');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleApproveClosure = async (id: string) => {
+    try {
+      const res = await fetch(`${API_URL}/jobs/${id}/approve-closure`, { method: 'PUT' });
+      if (res.ok) {
+        alert('Job closure approved and marked as COMPLETED.');
+        fetchJobs();
+        fetchStats();
+      } else {
+        alert('Failed to approve job closure.');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const handleDeleteCategory = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this category? All jobs within this category will ALSO be deleted permanently!")) return;
     try {
-      const res = await fetch(`${'https://skyo-backend.onrender.com'}/categories/${id}`, {
+      const res = await fetch(`${API_URL}/categories/${id}`, {
         method: 'DELETE'
       });
       if (res.ok) {
@@ -344,12 +497,25 @@ export default function AdminDashboard() {
 
   const updateAppStatus = async (appId: string, status: string) => {
     try {
-      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/applications/${appId}/status`, {
+      const res = await fetch(`${API_URL}/applications/${appId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
       });
       if (res.ok) {
+        fetchApplications();
+      }
+    } catch (err) { console.error(err); }
+  };
+
+  const handlePassToEmployer = async (appId: string, employerId: string) => {
+    if(!window.confirm('Are you sure you want to pass this applicant to the selected employer?')) return;
+    try {
+      const res = await fetch(`${API_URL}/admin/applications/${appId}/assign-employer/${employerId}`, {
+        method: 'GET'
+      });
+      if (res.ok) {
+        alert('Applicant passed to employer successfully!');
         fetchApplications();
       }
     } catch (err) { console.error(err); }
@@ -384,18 +550,18 @@ export default function AdminDashboard() {
       await updateAppStatus(appId, 'UNDER_REVIEW');
     }
     try {
-      await fetch(`\${'https://skyo-backend.onrender.com'}/applications/${appId}/review`, { method: 'PATCH' });
+      await fetch(`${API_URL}/applications/${appId}/review`, { method: 'PATCH' });
     } catch (err) {
       console.error('Failed to mark as reviewed', err);
     }
-    window.open(`\${'https://skyo-backend.onrender.com'}${resumeUrl}`, '_blank');
+    window.open(resumeUrl.startsWith('http') ? resumeUrl : `${API_URL}${resumeUrl.replace('./uploads', '/uploads')}`, '_blank');
   };
 
   const sendCustomEmail = async (appId: string) => {
     if (!emailMessage.trim()) return alert('Please write a message first.');
     setSendingEmail(true);
     try {
-      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/applications/${appId}/send-email`, {
+      const res = await fetch(`${API_URL}/applications/${appId}/send-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ subject: emailSubject, message: emailMessage })
@@ -461,6 +627,72 @@ export default function AdminDashboard() {
 
   const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#6366f1'];
 
+  // Compute hierarchical data for Categories -> Jobs breakdown
+  const categoryDetailedList: { name: string; totalApps: number; jobs: { id: string; title: string; appsCount: number; status: string }[] }[] = [];
+  
+  if (stats) {
+    const catMap: Record<string, { totalApps: number, jobs: any[] }> = {};
+    
+    // Initialize all categories
+    if (categories && categories.length > 0) {
+      categories.forEach(cat => {
+        catMap[cat.name] = { totalApps: 0, jobs: [] };
+      });
+    } else if (stats.categoryBreakdown) {
+      stats.categoryBreakdown.forEach((cat: any) => {
+        catMap[cat.name] = { totalApps: 0, jobs: [] };
+      });
+    }
+
+    if (jobs && jobs.length > 0) {
+      jobs.forEach(job => {
+        const catName = job.category?.name || 'Uncategorized';
+        const appsForJob = applications.filter(app => app.job?.id === job.id).length;
+        
+        if (!catMap[catName]) catMap[catName] = { totalApps: 0, jobs: [] };
+        
+        catMap[catName].totalApps += appsForJob;
+        catMap[catName].jobs.push({
+          id: job.id,
+          title: job.title,
+          appsCount: appsForJob,
+          status: job.status
+        });
+      });
+    }
+
+    Object.keys(catMap).forEach(cat => {
+      categoryDetailedList.push({
+        name: cat,
+        totalApps: catMap[cat].totalApps,
+        jobs: catMap[cat].jobs
+      });
+    });
+    
+    // Sort categories by number of jobs (descending)
+    categoryDetailedList.sort((a, b) => b.jobs.length - a.jobs.length);
+  }
+
+  const categoryInnerData: any[] = [];
+  const jobsOuterData: any[] = [];
+  
+  categoryDetailedList.forEach(cat => {
+    categoryInnerData.push({
+      name: cat.name,
+      value: Math.max(cat.totalApps, 1),
+      appsCount: cat.totalApps,
+      jobsCount: cat.jobs.length
+    });
+    
+    cat.jobs.forEach(job => {
+      jobsOuterData.push({
+        name: job.title,
+        value: Math.max(job.appsCount, 1),
+        appsCount: job.appsCount
+      });
+    });
+  });
+
   return (
     <div className="flex h-screen bg-slate-50 font-sans text-slate-900 overflow-hidden relative">
       
@@ -472,11 +704,10 @@ export default function AdminDashboard() {
       {/* Sidebar */}
       <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#0B132B] text-slate-300 flex flex-col transform transition-transform duration-300 md:relative md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-6 pt-8 pb-6 flex items-center justify-center relative">
-          <Link href="/" className="block">
-            <div className="bg-white px-4 py-3 rounded-2xl flex items-center justify-center shadow-md">
-              <img src="/logo.png" alt="Skyo Consultancy Logo" className="h-16 w-auto object-contain" />
-            </div>
-          </Link>
+          <a href="/" className="cursor-pointer hover:scale-105 transition-transform flex flex-col items-center">
+            <img src="/logo.png" alt="Skyo Consultancy Logo" className="h-16 w-auto object-contain mb-2" />
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest text-center">Skyo Admin</span>
+          </a>
           <button className="md:hidden text-white absolute right-6 top-8" onClick={() => setIsMobileMenuOpen(false)}>
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
           </button>
@@ -501,6 +732,12 @@ export default function AdminDashboard() {
           >
             <Users className="h-5 w-5" /> Applications
           </button>
+          <button 
+            onClick={() => { setActiveTab('employers'); setIsMobileMenuOpen(false); }}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${activeTab === 'employers' ? 'bg-blue-800 text-white shadow-lg shadow-blue-900/20' : 'hover:bg-white/10 hover:text-white'}`}
+          >
+            <Briefcase className="h-5 w-5" /> Employers
+          </button>
         </nav>
 
         <div className="p-4 border-t border-slate-800">
@@ -524,11 +761,6 @@ export default function AdminDashboard() {
             </Link>
           </div>
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3 pl-6">
-              <div className="text-right block">
-                <p className="text-sm font-bold text-slate-800">Skyo Admin</p>
-              </div>
-            </div>
           </div>
         </header>
 
@@ -587,23 +819,65 @@ export default function AdminDashboard() {
                     All Active
                   </div>
                 </div>
+
+                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-full mix-blend-multiply opacity-50 -mr-8 -mt-8 group-hover:scale-150 transition-transform duration-700"></div>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="text-sm font-bold text-slate-500 mb-1">Total Employers</p>
+                      <p className="text-3xl font-black text-slate-800">{employersList?.length || 0}</p>
+                    </div>
+                    <div className="p-3 bg-blue-100 text-blue-700 rounded-xl"><Building2 className="h-5 w-5" /></div>
+                  </div>
+                  <div className="mt-4 flex items-center text-sm font-medium text-emerald-600 bg-emerald-50 w-fit px-2 py-1 rounded-md">
+                    <TrendingUp className="h-3 w-3 mr-1" /> Registered
+                  </div>
+                </div>
               </div>
 
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 w-full mb-8">
-                <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2"><TrendingUp className="h-5 w-5 text-amber-500" /> Jobs Distribution</h3>
-                <div className="h-80 w-full outline-none focus:outline-none">
+                <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2"><PieChartIcon className="h-5 w-5 text-amber-500" /> Platform Advanced Distribution (Categories &rarr; Jobs)</h3>
+                <div className="h-[600px] w-full outline-none focus:outline-none flex justify-center items-center">
                   <ResponsiveContainer width="100%" height="100%" className="outline-none focus:outline-none">
-                    <BarChart data={stats.categoryBreakdown} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                      <XAxis dataKey="name" tick={{fill: '#64748b', fontSize: 12}} axisLine={false} tickLine={false} />
-                      <YAxis tick={{fill: '#64748b', fontSize: 12}} axisLine={false} tickLine={false} />
-                      <Tooltip cursor={{fill: '#f1f5f9'}} contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
-                      <Bar dataKey="count" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={40}>
-                        {stats.categoryBreakdown.map((entry: any, index: number) => (
+                    <PieChart>
+                      <Pie
+                        data={categoryInnerData}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={160}
+                        fill="#8884d8"
+                      >
+                        {categoryInnerData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
-                      </Bar>
-                    </BarChart>
+                      </Pie>
+                      <Pie
+                        data={jobsOuterData}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={180}
+                        outerRadius={240}
+                        fill="#82ca9d"
+                        label={({ name }) => (name || '').length > 15 ? (name || '').substring(0,15)+'...' : (name || '')}
+                      >
+                        {jobsOuterData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[(index + 2) % COLORS.length]} opacity={0.8} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
+                        formatter={(value: any, name: any, props: any) => [
+                          props.payload?.jobsCount !== undefined 
+                            ? `${props.payload?.jobsCount} Active Jobs, ${props.payload?.appsCount ?? 0} Applications`
+                            : `${props.payload?.appsCount ?? 0} Applications`, 
+                          String(name)
+                        ]}
+                      />
+                    </PieChart>
                   </ResponsiveContainer>
                 </div>
               </div>
@@ -625,6 +899,13 @@ export default function AdminDashboard() {
                   >
                     <Layers className="w-4 h-4" /> {showCategoryForm ? 'Close Category' : 'Manage Categories'}
                   </button>
+                  <a 
+                    href={`${API_URL}/admin/jobs/export`}
+                    target="_blank"
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" /> Export Jobs
+                  </a>
                   <button 
                     onClick={() => setIsCreatingJob(!isCreatingJob)}
                     className="bg-blue-800 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center gap-2"
@@ -693,17 +974,28 @@ export default function AdminDashboard() {
                       <div key={cat.id} className="bg-white border border-slate-200 p-4 rounded-xl flex items-center justify-between shadow-sm">
                         {editingCategoryId === cat.id ? (
                           <div className="flex flex-1 items-center gap-2">
+                            {editingCategoryImage && <img src={editingCategoryImage} alt="preview" className="w-8 h-8 rounded-lg object-cover shrink-0 border border-purple-200" />}
+                            <input 
+                              type="file"
+                              accept=".jpg,.jpeg,.png"
+                              onChange={handleEditImageUpload}
+                              className="hidden"
+                              id={`edit-cat-img-${cat.id}`}
+                            />
+                            <label htmlFor={`edit-cat-img-${cat.id}`} className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-100 text-purple-700 hover:bg-purple-200 rounded-md cursor-pointer shrink-0 font-bold text-xs" title="Change Image">
+                              <Upload className="w-3.5 h-3.5" /> Upload Image
+                            </label>
                             <input 
                               type="text" 
                               value={editingCategoryName} 
                               onChange={e => setEditingCategoryName(e.target.value)} 
-                              className="flex-1 border border-purple-300 p-1.5 rounded-md outline-none focus:border-purple-500 text-sm font-bold" 
+                              className="flex-1 w-20 border border-purple-300 p-1.5 rounded-md outline-none focus:border-purple-500 text-sm font-bold" 
                               autoFocus 
                             />
-                            <button onClick={() => handleUpdateCategory(cat.id)} className="p-1.5 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded-md">
+                            <button onClick={() => handleUpdateCategory(cat.id)} className="p-1.5 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded-md shrink-0">
                               <Save className="w-4 h-4" />
                             </button>
-                            <button onClick={() => setEditingCategoryId(null)} className="p-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-md">
+                            <button onClick={() => setEditingCategoryId(null)} className="p-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-md shrink-0">
                               <X className="w-4 h-4" />
                             </button>
                           </div>
@@ -717,7 +1009,7 @@ export default function AdminDashboard() {
                               </div>
                             </div>
                             <div className="flex items-center gap-1 shrink-0 ml-2">
-                              <button onClick={() => { setEditingCategoryId(cat.id); setEditingCategoryName(cat.name); }} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-md transition-colors" title="Edit Category">
+                              <button onClick={() => { setEditingCategoryId(cat.id); setEditingCategoryName(cat.name); setEditingCategoryImage(cat.imageUrl || ''); }} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-md transition-colors" title="Edit Category">
                                 <Edit className="w-4 h-4" />
                               </button>
                               <button onClick={() => handleDeleteCategory(cat.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-md transition-colors" title="Delete Category">
@@ -739,77 +1031,137 @@ export default function AdminDashboard() {
                       <button type="button" onClick={() => { setEditingJobId(null); setNewJob(defaultJobState); setIsCreatingJob(false); }} className="text-sm text-slate-500 hover:text-slate-800 bg-slate-100 px-3 py-1.5 rounded-lg font-bold">Close</button>
                     </div>
                     <form onSubmit={handleSaveJob} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-bold text-zinc-700 mb-1">Job Title <span className="text-red-500">*</span></label>
-                        <input type="text" required value={newJob.title} onChange={e => setNewJob({...newJob, title: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="e.g. Frontend Developer" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="flex gap-2 items-end">
+                        <div className="flex-1">
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">Job Title <span className="text-red-500">*</span></label>
+                          <input required type="text" value={newJob.title} onChange={e => setNewJob({...newJob, title: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="e.g. Frontend Developer" />
+                        </div>
+                        <FieldToggle field="title" />
                       </div>
-                      <div>
-                        <label className="block text-sm font-bold text-zinc-700 mb-1">Select Category <span className="text-red-500">*</span></label>
-                        <select 
-                          required
-                          value={newJob.categoryId} 
-                          onChange={e => setNewJob({...newJob, categoryId: e.target.value, newCategoryName: ''})} 
-                          className="w-full border p-2 rounded outline-none focus:border-amber-500"
-                        >
-                          <option value="">-- Choose Category --</option>
-                          {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                          <option value="NEW">Create New Category</option>
-                        </select>
+                      <div className="flex gap-2 items-end">
+                        <div className="flex-1">
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">Select Category <span className="text-red-500">*</span></label>
+                          <select 
+                            required
+                            value={newJob.categoryId} 
+                            onChange={e => setNewJob({...newJob, categoryId: e.target.value, newCategoryName: ''})} 
+                            className="w-full border p-2 rounded outline-none focus:border-amber-500"
+                          >
+                            <option value="" disabled>-- Choose Category --</option>
+                            {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                            <option value="NEW">Others (Type manually)</option>
+                          </select>
+                        </div>
+                        <FieldToggle field="category" />
                       </div>
-                      
+
                       {newJob.categoryId === 'NEW' && (
-                        <div className="md:col-span-2">
-                          <label className="block text-sm font-bold text-blue-700 mb-1">New Category Name <span className="text-red-500">*</span></label>
-                          <input type="text" required value={newJob.newCategoryName} onChange={e => setNewJob({...newJob, newCategoryName: e.target.value})} className="w-full border border-blue-300 p-2 rounded outline-none focus:border-amber-500 bg-blue-50" placeholder="e.g. Data Science" />
+                        <div className="md:col-span-2 flex gap-2 items-end">
+                          <div className="flex-1">
+                            <label className="block text-sm font-bold text-blue-700 mb-1">New Category Name <span className="text-red-500">*</span></label>
+                            <input type="text" required value={newJob.newCategoryName} onChange={e => setNewJob({...newJob, newCategoryName: e.target.value})} className="w-full border border-blue-300 p-2 rounded outline-none focus:border-amber-500 bg-blue-50" placeholder="e.g. Data Science" />
+                          </div>
                         </div>
                       )}
 
-                      <div>
-                        <label className="block text-sm font-bold text-zinc-700 mb-1">Location City <span className="text-red-500">*</span></label>
-                        <input type="text" required value={newJob.locationCity} onChange={e => setNewJob({...newJob, locationCity: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="e.g. Bangalore" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold text-zinc-700 mb-1">Location State <span className="text-red-500">*</span></label>
-                        <input type="text" required value={newJob.locationState} onChange={e => setNewJob({...newJob, locationState: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="e.g. Karnataka" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold text-zinc-700 mb-1">Job Type <span className="text-red-500">*</span></label>
-                        <select required value={newJob.jobType} onChange={e => setNewJob({...newJob, jobType: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500">
-                          <option>Full Time</option>
-                          <option>Part Time</option>
-                          <option>Permanent</option>
-                          <option>Contract</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold text-zinc-700 mb-1">Experience <span className="text-red-500">*</span></label>
-                        <select required value={newJob.experienceLevel} onChange={e => setNewJob({...newJob, experienceLevel: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500">
-                          <option>Fresher</option>
-                          <option>Experience</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold text-zinc-700 mb-1">Salary Amount <span className="text-red-500">*</span></label>
-                        <input type="text" required value={newJob.salary} onChange={e => setNewJob({...newJob, salary: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="e.g. 50,000 or 5 LPA" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold text-zinc-700 mb-1">Salary Period <span className="text-red-500">*</span></label>
-                        <select required value={newJob.salaryType} onChange={e => setNewJob({...newJob, salaryType: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500">
-                          <option value="Month">Per Month</option>
-                          <option value="Year">Per Year</option>
-                        </select>
-                      </div>
-                      <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-xl">
-                        <div>
-                          <label className="block text-sm font-bold text-slate-800">Visible to Users?</label>
-                          <p className="text-xs text-slate-500 mt-0.5">If toggled off, salary will be hidden from candidates.</p>
+                      <div className="flex gap-2 items-end">
+                        <div className="flex-1">
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">No. Of. Vacancies</label>
+                          <input type="text" value={newJob.vacancyCount} onChange={e => setNewJob({...newJob, vacancyCount: e.target.value as any})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="e.g. 10" />
                         </div>
-                        <button type="button" onClick={() => setNewJob({...newJob, salaryVisible: !newJob.salaryVisible})} className={`w-12 h-6 rounded-full relative transition-colors ${newJob.salaryVisible ? 'bg-blue-800' : 'bg-slate-300'}`}>
-                          <span className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full transition-all ${newJob.salaryVisible ? 'left-7' : 'left-1'}`}></span>
-                        </button>
+                        <FieldToggle field="vacancyCount" />
+                      </div>
+
+                      <div className="flex gap-2 items-end">
+                        <div className="flex-1">
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">Location City <span className="text-red-500">*</span></label>
+                          <input type="text" required value={newJob.locationCity} onChange={e => setNewJob({...newJob, locationCity: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="e.g. Bangalore" />
+                        </div>
+                        <FieldToggle field="locationCity" />
+                      </div>
+
+                      <div className="flex gap-2 items-end">
+                        <div className="flex-1">
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">Location State <span className="text-red-500">*</span></label>
+                          <input type="text" required value={newJob.locationState} onChange={e => setNewJob({...newJob, locationState: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="e.g. Karnataka" />
+                        </div>
+                        <FieldToggle field="locationState" />
+                      </div>
+
+                      <div className="flex gap-2 items-end">
+                        <div className="flex-1">
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">Job Type <span className="text-red-500">*</span></label>
+                          <select required value={newJob.jobType} onChange={e => setNewJob({...newJob, jobType: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500">
+                            <option value="Permanent">Permanent</option>
+                            <option value="Temporary">Temporary</option>
+                            <option value="Contract">Contract</option>
+                          </select>
+                        </div>
+                        <FieldToggle field="jobType" />
+                      </div>
+
+                      <div className="flex gap-2 items-end">
+                        <div className="flex-1">
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">Work Mode <span className="text-red-500">*</span></label>
+                          <select required value={newJob.workMode} onChange={e => setNewJob({...newJob, workMode: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500">
+                            <option value="Remote">Remote</option>
+                            <option value="Onsite">Onsite</option>
+                            <option value="Hybrid">Hybrid</option>
+                          </select>
+                        </div>
+                        <FieldToggle field="workMode" />
                       </div>
                       
+                      <div className="flex gap-2 items-end">
+                        <div className="flex-1">
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">Shift Timings</label>
+                          <select value={newJob.shiftTimings} onChange={e => setNewJob({...newJob, shiftTimings: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500">
+                            <option value="">Select Shift Timing</option>
+                            <option value="9:00 AM-6:00 PM (General shift)">9:00 AM-6:00 PM (General shift)</option>
+                            <option value="6:00 PM-3:00 AM IST(US shift)">6:00 PM-3:00 AM IST(US shift)</option>
+                            <option value="1:30 PM-10:30PM IST(UK shift)">1:30 PM-10:30PM IST(UK shift)</option>
+                            <option value="5:30AM-2:30 PM IST (Australia shift)">5:30AM-2:30 PM IST (Australia shift)</option>
+                            <option value="Rotational shift-Weekly changes">Rotational shift-Weekly changes</option>
+                            <option value="Flexible timings (Candidate can choose 8-Hr slot)">Flexible timings (Candidate can choose 8-Hr slot)</option>
+                            <option value="6:00AM-2:00PM (Morning shift)">6:00AM-2:00PM (Morning shift)</option>
+                            <option value="2:00PM-10:00PM (Day shift)">2:00PM-10:00PM (Day shift)</option>
+                            <option value="10:00PM-6:00 PM (Night Shift)">10:00PM-6:00 PM (Night Shift)</option>
+                          </select>
+                        </div>
+                        <FieldToggle field="shiftTimings" />
+                      </div>
+
+                      <div className="flex gap-2 items-end">
+                        <div className="flex-1">
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">Experience Level <span className="text-red-500">*</span></label>
+                          <select required value={newJob.experienceLevel} onChange={e => setNewJob({...newJob, experienceLevel: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500">
+                            <option value="Entry Level">Entry Level</option>
+                            <option value="Mid Level">Mid Level</option>
+                            <option value="Senior Level">Senior Level</option>
+                            <option value="Executive">Executive</option>
+                          </select>
+                        </div>
+                        <FieldToggle field="experienceLevel" />
+                      </div>
+
+                      <div className="flex gap-2 items-end">
+                        <div className="flex-1 flex gap-4">
+                          <div className="flex-1">
+                            <label className="block text-sm font-bold text-zinc-700 mb-1">Salary Amount <span className="text-red-500">*</span></label>
+                            <input type="text" required value={newJob.salary} onChange={e => setNewJob({...newJob, salary: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="e.g. ₹30,000" />
+                          </div>
+                          <div className="flex-1">
+                            <label className="block text-sm font-bold text-zinc-700 mb-1">Per</label>
+                            <select required value={newJob.salaryType} onChange={e => setNewJob({...newJob, salaryType: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500">
+                              <option value="Month">Month</option>
+                              <option value="Year">Year</option>
+                            </select>
+                          </div>
+                        </div>
+                        <FieldToggle field="salary" />
+                      </div>
+
                       {editingJobId && (
                         <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-xl gap-4">
                           <div className="flex-1">
@@ -825,33 +1177,68 @@ export default function AdminDashboard() {
                         </div>
                       )}
 
-                      <div className="md:col-span-2">
-                        <label className="block text-sm font-bold text-zinc-700 mb-1">Description <span className="text-red-500">*</span></label>
-                        <textarea required value={newJob.description} onChange={e => setNewJob({...newJob, description: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" rows={3}></textarea>
+                      <div className="md:col-span-2 flex gap-2 items-start">
+                        <div className="flex-1">
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">Other Benefits</label>
+                          <textarea value={newJob.benefits} onChange={e => setNewJob({...newJob, benefits: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" rows={2}></textarea>
+                        </div>
+                        <div className="mt-6"><FieldToggle field="benefits" /></div>
                       </div>
-                      <div className="md:col-span-2">
-                        <label className="block text-sm font-bold text-zinc-700 mb-1">Requirements <span className="text-red-500">*</span></label>
-                        <textarea required value={newJob.requirements} onChange={e => setNewJob({...newJob, requirements: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" rows={3}></textarea>
+
+                      <div className="md:col-span-2 flex gap-2 items-start">
+                        <div className="flex-1">
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">General Comments</label>
+                          <textarea value={newJob.generalComments} onChange={e => setNewJob({...newJob, generalComments: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" rows={2}></textarea>
+                        </div>
+                        <div className="mt-6"><FieldToggle field="generalComments" /></div>
                       </div>
+
+                      <div className="md:col-span-2 flex gap-2 items-start">
+                        <div className="flex-1">
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">Description <span className="text-red-500">*</span></label>
+                          <textarea required value={newJob.description} onChange={e => setNewJob({...newJob, description: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" rows={3}></textarea>
+                        </div>
+                        <div className="mt-6"><FieldToggle field="description" /></div>
+                      </div>
+
+                      <div className="md:col-span-2 flex gap-2 items-start">
+                        <div className="flex-1">
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">Requirements <span className="text-red-500">*</span></label>
+                          <textarea required value={newJob.requirements} onChange={e => setNewJob({...newJob, requirements: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" rows={3}></textarea>
+                        </div>
+                        <div className="mt-6"><FieldToggle field="requirements" /></div>
+                      </div>
+
                       <div className="md:col-span-2">
                         <h4 className="font-bold text-slate-800 border-b pb-2 mb-4 mt-2">Company Social Links (Optional)</h4>
                       </div>
-                      <div>
-                        <label className="block text-sm font-bold text-zinc-700 mb-1">LinkedIn Link</label>
-                        <input type="url" value={newJob.linkedinLink} onChange={e => setNewJob({...newJob, linkedinLink: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="https://linkedin.com/company/..." />
+                      
+                      <div className="flex gap-2 items-end">
+                        <div className="flex-1">
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">LinkedIn Link</label>
+                          <input type="url" value={newJob.linkedinLink} onChange={e => setNewJob({...newJob, linkedinLink: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="https://linkedin.com/company/..." />
+                        </div>
+                        <FieldToggle field="linkedinLink" />
                       </div>
-                      <div>
-                        <label className="block text-sm font-bold text-zinc-700 mb-1">Facebook Link</label>
-                        <input type="url" value={newJob.facebookLink} onChange={e => setNewJob({...newJob, facebookLink: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="https://facebook.com/..." />
+                      <div className="flex gap-2 items-end">
+                        <div className="flex-1">
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">Facebook Link</label>
+                          <input type="url" value={newJob.facebookLink} onChange={e => setNewJob({...newJob, facebookLink: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="https://facebook.com/..." />
+                        </div>
+                        <FieldToggle field="facebookLink" />
                       </div>
-                      <div>
-                        <label className="block text-sm font-bold text-zinc-700 mb-1">Instagram Link</label>
-                        <input type="url" value={newJob.instagramLink} onChange={e => setNewJob({...newJob, instagramLink: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="https://instagram.com/..." />
+                      <div className="flex gap-2 items-end">
+                        <div className="flex-1">
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">Instagram Link</label>
+                          <input type="url" value={newJob.instagramLink} onChange={e => setNewJob({...newJob, instagramLink: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="https://instagram.com/..." />
+                        </div>
+                        <FieldToggle field="instagramLink" />
                       </div>
+
                     </div>
-                    <div className="flex justify-end gap-3 mt-6">
-                      <button type="button" onClick={() => { setEditingJobId(null); setNewJob(defaultJobState); setIsCreatingJob(false); }} className="px-6 py-2 rounded font-bold text-slate-600 hover:bg-slate-100">Cancel</button>
-                      <button type="submit" formNoValidate className="bg-blue-800 text-white font-bold py-2 px-6 rounded hover:bg-blue-700">{editingJobId ? 'Update Job' : 'Publish Job'}</button>
+                    <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-slate-100">
+                      <button type="button" onClick={() => { setEditingJobId(null); setNewJob(defaultJobState); setIsCreatingJob(false); }} className="px-6 py-2.5 rounded-lg font-bold text-slate-600 hover:bg-slate-100 transition-colors">Cancel</button>
+                      <button type="submit" formNoValidate className="bg-blue-800 text-white font-bold py-2.5 px-8 rounded-lg hover:bg-blue-700 shadow-sm transition-colors">{editingJobId ? 'Update & Save Job' : 'Publish Job'}</button>
                     </div>
                   </form>
                   </div>
@@ -907,9 +1294,23 @@ export default function AdminDashboard() {
                           <MapPin className="h-3.5 w-3.5" /> {job.locationCity}, {job.locationState}
                         </p>
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-black ${job.status === 'ACTIVE' ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-slate-100 text-slate-600 border border-slate-200'}`}>
-                        {job.status}
-                      </span>
+                      <div className="flex flex-col items-end gap-1">
+                        <span className={`px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-black ${
+                          job.status === 'COMPLETED' ? 'bg-indigo-100 text-indigo-700 border border-indigo-200' : 
+                          job.status === 'ACTIVE' ? 'bg-green-100 text-green-700 border border-green-200' : 
+                          'bg-slate-100 text-slate-600 border border-slate-200'
+                        }`}>
+                          {job.status}
+                        </span>
+                        {job.closureRequested && job.status !== 'COMPLETED' && (
+                          <span className="px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-black bg-purple-100 text-purple-700 border border-purple-200">
+                            CLOSURE REQUESTED
+                          </span>
+                        )}
+                        <span className={`px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-black ${job.approvalStatus === 'APPROVED' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : job.approvalStatus === 'PENDING_APPROVAL' ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-red-100 text-red-700 border border-red-200'}`}>
+                          {job.approvalStatus ? job.approvalStatus.replace('_', ' ') : 'APPROVED'}
+                        </span>
+                      </div>
                     </div>
                     
                     <div className="flex flex-wrap gap-2 text-xs font-bold mb-4">
@@ -918,11 +1319,49 @@ export default function AdminDashboard() {
                       <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded-md border border-slate-200">{job.experienceLevel}</span>
                     </div>
 
+                    {job.approvalStatus === 'PENDING_APPROVAL' && (
+                      <div className="flex flex-col gap-2 mb-4 bg-amber-50 p-3 rounded-lg border border-amber-100">
+                        <label className="text-xs font-bold text-slate-700">Approval Route:</label>
+                        <select 
+                          className="w-full bg-white border border-amber-200 p-1.5 rounded text-xs font-bold text-slate-700 outline-none focus:border-amber-400"
+                          value={jobRouteTypes[job.id] || 'SKYO'}
+                          onChange={(e) => setJobRouteTypes({...jobRouteTypes, [job.id]: e.target.value})}
+                        >
+                          <option value="SKYO">Through Skyo (Mask Employer)</option>
+                          <option value="DIRECT">Direct (Show Employer)</option>
+                        </select>
+                        <div className="flex gap-2 mt-1">
+                          <button onClick={() => handleUpdateJobApproval(job.id, 'APPROVED', jobRouteTypes[job.id] || 'SKYO')} className="flex-1 bg-emerald-500 text-white font-bold py-1.5 rounded hover:bg-emerald-600 text-xs shadow-sm">
+                            Approve Job
+                          </button>
+                          <button onClick={() => handleUpdateJobApproval(job.id, 'REJECTED')} className="flex-1 bg-red-500 text-white font-bold py-1.5 rounded hover:bg-red-600 text-xs shadow-sm">
+                            Reject
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {job.closureRequested && job.status !== 'COMPLETED' && (
+                      <div className="flex gap-2 mb-4 bg-purple-50 p-3 rounded-lg border border-purple-100 items-center justify-between">
+                        <div className="text-xs font-bold text-purple-800">Employer marked this job as Hired.</div>
+                        <button onClick={() => handleApproveClosure(job.id)} className="bg-purple-600 text-white font-bold py-1.5 px-4 rounded hover:bg-purple-700 text-xs shadow-sm whitespace-nowrap">
+                          Approve Closure
+                        </button>
+                      </div>
+                    )}
+
                     <div className="pt-4 border-t border-slate-100 flex justify-between items-center">
-                      <span className="text-xs font-bold text-slate-400 flex items-center gap-1"><Clock className="h-3 w-3"/> {new Date(job.createdAt).toLocaleDateString()}</span>
-                      <button onClick={() => handleEditClick(job)} className="text-sm font-bold text-blue-800 hover:text-blue-800 flex items-center gap-1">
-                        Edit <ChevronRight className="h-4 w-4" />
-                      </button>
+                      <div className="flex gap-2">
+                        <button onClick={() => window.open(`${API_URL}/admin/jobs/${job.id}/export`, '_blank')} className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded hover:bg-emerald-100 flex items-center gap-1 border border-emerald-200">
+                          Export Excel
+                        </button>
+                      </div>
+                      <div className="flex gap-3">
+                        <span className="text-xs font-bold text-slate-400 flex items-center gap-1"><Clock className="h-3 w-3"/> {new Date(job.createdAt).toLocaleDateString()}</span>
+                        <button onClick={() => handleEditClick(job)} className="text-sm font-bold text-blue-800 hover:text-blue-800 flex items-center gap-1">
+                          Edit <ChevronRight className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -975,7 +1414,14 @@ export default function AdminDashboard() {
             <div>
               <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
                 <h2 className="text-xl font-bold text-zinc-800">Candidate Applications</h2>
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3">
+                  <a 
+                    href={`${API_URL}/admin/candidates/export`}
+                    target="_blank"
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" /> Export Candidates
+                  </a>
                   <div className="bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-lg text-blue-800 font-bold flex items-center gap-2 text-sm">
                     <span>New</span>
                     <span className="bg-blue-800 text-white px-2 py-0.5 rounded-md text-xs">{applications.filter((a: any) => a.status === 'APPLIED').length}</span>
@@ -1075,36 +1521,66 @@ export default function AdminDashboard() {
                             </button>
                           </td>
                           <td className="p-4 text-center">
-                            <div className="flex gap-2 justify-center">
-                              <button 
-                                onClick={() => {
-                                  if (app.status === 'SELECTED') {
-                                    alert('This applicant has already been Appointed.');
-                                    return;
-                                  }
-                                  if(window.confirm('Are you sure you want to Appoint this applicant? This will send an automated email and update the status.')) {
-                                    updateAppStatus(app.id, 'SELECTED');
-                                  }
-                                }} 
-                                className="text-xs px-4 py-1.5 bg-green-50 text-green-600 rounded-md border border-green-200 font-bold hover:bg-green-100"
-                              >
-                                Appoint
-                              </button>
-                              <button 
-                                onClick={() => {
-                                  if (app.status === 'REJECTED') {
-                                    alert('This applicant has already been Rejected.');
-                                    return;
-                                  }
-                                  if(window.confirm('Are you sure you want to Reject this applicant? This will send an automated email and update the status.')) {
-                                    updateAppStatus(app.id, 'REJECTED');
-                                  }
-                                }} 
-                                className="text-xs px-4 py-1.5 bg-red-50 text-red-600 rounded-md border border-red-200 font-bold hover:bg-red-100"
-                              >
-                                Reject
-                              </button>
-                            </div>
+                              <div className="flex gap-2 justify-center">
+                                <button 
+                                  onClick={() => {
+                                    if (app.status === 'SELECTED') {
+                                      alert('This applicant has already been Appointed.');
+                                      return;
+                                    }
+                                    if(window.confirm('Are you sure you want to Appoint this applicant? This will send an automated email and update the status.')) {
+                                      updateAppStatus(app.id, 'SELECTED');
+                                    }
+                                  }} 
+                                  className="text-xs px-4 py-1.5 bg-green-50 text-green-600 rounded-md border border-green-200 font-bold hover:bg-green-100"
+                                >
+                                  Appoint
+                                </button>
+                                <button 
+                                  onClick={() => {
+                                    if (app.status === 'REJECTED') {
+                                      alert('This applicant has already been Rejected.');
+                                      return;
+                                    }
+                                    if(window.confirm('Are you sure you want to Reject this applicant? This will send an automated email and update the status.')) {
+                                      updateAppStatus(app.id, 'REJECTED');
+                                    }
+                                  }} 
+                                  className="text-xs px-4 py-1.5 bg-red-50 text-red-600 rounded-md border border-red-200 font-bold hover:bg-red-100"
+                                >
+                                  Reject
+                                </button>
+                              </div>
+                              {app.job?.routeType === 'SKYO' && !app.isPassedToEmployer && (
+                                <div className="mt-2 flex flex-col gap-1 items-center">
+                                  <select 
+                                    className="w-full text-xs p-1 border border-blue-200 rounded text-blue-800 bg-blue-50 max-w-[150px]"
+                                    value={appEmployerSelections[app.id] || app.job?.employerId || ''}
+                                    onChange={e => setAppEmployerSelections(prev => ({ ...prev, [app.id]: e.target.value }))}
+                                  >
+                                    <option value="">Select Employer</option>
+                                    {employersList.map(emp => (
+                                      <option key={emp.id} value={emp.id}>{emp.employerProfile?.companyName || emp.email}</option>
+                                    ))}
+                                  </select>
+                                  <button 
+                                    onClick={() => {
+                                      const employerId = appEmployerSelections[app.id] || app.job?.employerId;
+                                      if (!employerId) return alert('Please select an employer first.');
+                                      handlePassToEmployer(app.id, employerId);
+                                    }} 
+                                    className="text-[10px] px-3 py-1 bg-blue-50 text-blue-600 rounded border border-blue-200 font-bold hover:bg-blue-100 uppercase tracking-wider"
+                                  >
+                                    Pass to Employer
+                                  </button>
+                                </div>
+                              )}
+                              {app.job?.routeType === 'SKYO' && app.isPassedToEmployer && (
+                                <div className="mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center flex flex-col">
+                                  <span>Passed to Employer</span>
+                                  <span className="text-[9px] truncate max-w-[150px]">{employersList.find(e => e.id === (app.assignedEmployerId || app.job?.employerId))?.employerProfile?.companyName || ''}</span>
+                                </div>
+                              )}
                           </td>
                         </tr>
                       ))}
@@ -1319,6 +1795,110 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* EMPLOYERS TAB */}
+          {activeTab === 'employers' && (
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+                <div>
+                  <h2 className="text-xl font-bold text-zinc-800">Employers Directory</h2>
+                  <p className="text-sm text-zinc-500 mt-1">Manage and view all registered employers</p>
+                </div>
+                <div className="flex gap-3">
+                  <a 
+                    href={`${API_URL}/admin/employers/export`}
+                    target="_blank"
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" /> Export Employers to Excel
+                  </a>
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden overflow-x-auto">
+                <table className="w-full text-left border-collapse min-w-[600px]">
+                  <thead className="bg-zinc-50 border-b border-zinc-200">
+                    <tr>
+                      <th className="p-4 font-bold text-sm text-zinc-600">Company Name</th>
+                      <th className="p-4 font-bold text-sm text-zinc-600">HR Contact</th>
+                      <th className="p-4 font-bold text-sm text-zinc-600">Industry</th>
+                      <th className="p-4 font-bold text-sm text-zinc-600">Location</th>
+                      <th className="p-4 font-bold text-sm text-zinc-600">Joined</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-100">
+                    {employersList.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="p-6 text-center text-zinc-500 italic">No employers found.</td>
+                      </tr>
+                    ) : (
+                      employersList.map(emp => (
+                        <React.Fragment key={emp.id}>
+                          <tr 
+                            className="hover:bg-zinc-50 cursor-pointer transition-colors"
+                            onClick={() => setExpandedEmployerId(expandedEmployerId === emp.id ? null : emp.id)}
+                          >
+                            <td className="p-4">
+                              <p className="font-bold text-sm text-zinc-900">{emp.employerProfile?.companyName || 'Not Set'}</p>
+                              <p className="text-xs text-zinc-500">{emp.email}</p>
+                              {emp.employerProfile?.companyWebsite && (
+                                <a href={emp.employerProfile.companyWebsite.startsWith('http') ? emp.employerProfile.companyWebsite : `https://${emp.employerProfile.companyWebsite}`} target="_blank" className="text-xs text-blue-600 hover:underline" onClick={e => e.stopPropagation()}>Website</a>
+                              )}
+                            </td>
+                            <td className="p-4 text-sm text-zinc-700">
+                              <p className="font-medium">{emp.employerProfile?.hrName || 'Not Set'}</p>
+                              <p className="text-xs text-zinc-500">{emp.phone || emp.employerProfile?.hrContactNumber || 'No Phone'}</p>
+                            </td>
+                            <td className="p-4 text-sm text-zinc-700">{emp.employerProfile?.industry || 'Not Set'}</td>
+                            <td className="p-4 text-sm text-zinc-700">{emp.employerProfile?.companyLocation || 'Not Set'}</td>
+                            <td className="p-4 text-sm text-zinc-700">{new Date(emp.createdAt).toLocaleDateString()}</td>
+                          </tr>
+                          {expandedEmployerId === emp.id && (
+                            <tr className="bg-blue-50/50">
+                              <td colSpan={5} className="p-0">
+                                <div className="p-6 border-t border-blue-100">
+                                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {emp.employerProfile?.companyLogoUrl && (
+                                      <div className="lg:col-span-3 mb-2">
+                                        <img src={emp.employerProfile.companyLogoUrl} alt="Logo" className="h-16 w-16 object-contain rounded-lg border border-zinc-200 bg-white" />
+                                      </div>
+                                    )}
+                                    <div>
+                                      <p className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1">Company Details</p>
+                                      <p className="text-sm text-zinc-800"><strong>Name:</strong> {emp.employerProfile?.companyName || 'N/A'}</p>
+                                      <p className="text-sm text-zinc-800"><strong>Industry:</strong> {emp.employerProfile?.industry || 'N/A'}</p>
+                                      <p className="text-sm text-zinc-800"><strong>Location:</strong> {emp.employerProfile?.companyLocation || 'N/A'}</p>
+                                      <p className="text-sm text-zinc-800">
+                                        <strong>Website:</strong> {emp.employerProfile?.companyWebsite ? (
+                                          <a href={emp.employerProfile.companyWebsite.startsWith('http') ? emp.employerProfile.companyWebsite : `https://${emp.employerProfile.companyWebsite}`} target="_blank" className="text-blue-600 hover:underline">{emp.employerProfile.companyWebsite}</a>
+                                        ) : 'N/A'}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <p className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1">Primary Contact (HR)</p>
+                                      <p className="text-sm text-zinc-800"><strong>Name:</strong> {emp.employerProfile?.hrName || 'N/A'}</p>
+                                      <p className="text-sm text-zinc-800"><strong>Number:</strong> {emp.employerProfile?.hrContactNumber || emp.phone || 'N/A'}</p>
+                                      <p className="text-sm text-zinc-800"><strong>Email:</strong> {emp.email}</p>
+                                    </div>
+                                    <div>
+                                      <p className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1">Additional Contact</p>
+                                      <p className="text-sm text-zinc-800"><strong>Official Mail ID:</strong> {emp.employerProfile?.officialMailId || 'N/A'}</p>
+                                      <p className="text-sm text-zinc-800"><strong>Secondary Number:</strong> {emp.employerProfile?.secondaryContactNumber || 'N/A'}</p>
+                                      <p className="text-sm text-zinc-800"><strong>Registered On:</strong> {new Date(emp.createdAt).toLocaleDateString()}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
 

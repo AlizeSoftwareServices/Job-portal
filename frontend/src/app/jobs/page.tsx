@@ -8,9 +8,11 @@ import Navbar from '../../components/Navbar';
 
 export const dynamic = 'force-dynamic';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://skyo-backend.onrender.com';
+
 async function getJobs() {
   try {
-    const res = await fetch(`\${'https://skyo-backend.onrender.com'}/jobs`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/jobs`, { cache: 'no-store' });
     if (!res.ok) return [];
     return res.json();
   } catch (err) {
@@ -20,7 +22,7 @@ async function getJobs() {
 
 async function getCategories() {
   try {
-    const res = await fetch(`\${'https://skyo-backend.onrender.com'}/categories`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/categories`, { cache: 'no-store' });
     if (!res.ok) return [];
     return res.json();
   } catch (err) {
@@ -28,7 +30,7 @@ async function getCategories() {
   }
 }
 
-export default async function JobsListing({ searchParams }: { searchParams: { q?: string, loc?: string, category?: string } }) {
+export default async function JobsListing({ searchParams }: { searchParams: Promise<{ q?: string, loc?: string, category?: string }> }) {
   const params = await searchParams;
   const q = params?.q || '';
   const loc = params?.loc || '';

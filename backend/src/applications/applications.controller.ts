@@ -1,8 +1,7 @@
-import { Controller, Post, UseInterceptors, UploadedFile, Body, Get, Param, Patch } from '@nestjs/common';
+import { Controller, Post, UseInterceptors, UploadedFile, Body, Get, Param, Patch, BadRequestException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApplicationsService } from './applications.service';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { cloudinaryResumeStorage } from '../cloudinary.config';
 
 @Controller('applications')
 export class ApplicationsController {
@@ -10,20 +9,28 @@ export class ApplicationsController {
 
   @Post()
   @UseInterceptors(FileInterceptor('resume', {
-    storage: diskStorage({
-      destination: './uploads/resumes',
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        const ext = extname(file.originalname);
-        cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
-      },
-    }),
+    storage: cloudinaryResumeStorage,
+    limits: {
+      fileSize: 100 * 1024, // 100 KB max
+    },
+    fileFilter: (req, file, cb) => {
+      const allowedMimeTypes = [
+        'application/pdf', 
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
+        'application/msword'
+      ];
+      if (allowedMimeTypes.includes(file.mimetype)) {
+        cb(null, true);
+      } else {
+        cb(new BadRequestException('Only PDF and DOCX files are allowed'), false);
+      }
+    }
   }))
   async applyForJob(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: any,
     @Body() body: any
   ) {
-    const resumeUrl = file ? `/uploads/resumes/${file.filename}` : undefined;
+    const resumeUrl = file ? file.path : undefined;
     return this.applicationsService.createApplication({
       ...body,
       resumeUrl,
@@ -65,5 +72,20 @@ export class ApplicationsController {
   @Get('track/:ref')
   trackApplication(@Param('ref') ref: string) {
     return this.applicationsService.getTrackApplication(ref);
+  }
+
+  @Get('employer/:employerId/direct')
+  getEmployerDirectApplications(@Param('employerId') employerId: string) {
+    return this.applicationsService.getEmployerDirectApplications(employerId);
+  }
+
+  @Get('employer/:employerId/skyo')
+  getEmployerSkyoApplications(@Param('employerId') employerId: string) {
+    return this.applicationsService.getEmployerSkyoApplications(employerId);
+  }
+
+  @Patch(':id/pass-to-employer')
+  passApplicationToEmployer(@Param('id') id: string) {
+    return this.applicationsService.passApplicationToEmployer(id);
   }
 }

@@ -15,6 +15,7 @@ let PrismaService = class PrismaService {
     job = prisma.job;
     user = prisma.user;
     candidateProfile = prisma.candidateProfile;
+    employerProfile = prisma.employerProfile;
     experience = prisma.experience;
     education = prisma.education;
     skill = prisma.skill;

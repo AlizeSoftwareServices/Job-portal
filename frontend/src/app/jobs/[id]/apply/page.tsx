@@ -3,9 +3,10 @@
 import { useState, useEffect, use, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import ReCAPTCHA from 'react-google-recaptcha';
+
 
 export default function ApplyPage({ params }: { params: Promise<{ id: string }> }) {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://skyo-backend.onrender.com';
   const unwrappedParams = use(params);
   const jobId = unwrappedParams.id;
   
@@ -26,13 +27,14 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
     state: '',
     country: '',
     zipCode: '',
+    qualification: '',
+    experience: '',
+    skills: '',
   });
   const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
-  const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   useEffect(() => {
-    fetch(`\${'https://skyo-backend.onrender.com'}/jobs/${jobId}`)
+    fetch(`${API_URL}/jobs/${jobId}`)
       .then((res) => res.json())
       .then((data) => {
         setJob(data);
@@ -51,8 +53,8 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      if (file.size > 500 * 1024) {
-        alert('File size exceeds the 500KB limit. Please upload a smaller file.');
+      if (file.size > 100 * 1024) {
+        alert('File size exceeds the 100KB limit. Please upload a smaller file.');
         e.target.value = '';
         setResumeFile(null);
         return;
@@ -74,11 +76,8 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
       if (resumeFile) {
         data.append('resume', resumeFile);
       }
-      if (recaptchaToken) {
-        data.append('recaptchaToken', recaptchaToken);
-      }
 
-      const response = await fetch(`\${'https://skyo-backend.onrender.com'}/applications`, {
+      const response = await fetch(`${API_URL}/applications`, {
         method: 'POST',
         body: data,
       });
@@ -93,10 +92,6 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
       alert('An error occurred.');
     } finally {
       setSubmitting(false);
-      if (recaptchaRef.current) {
-        recaptchaRef.current.reset();
-        setRecaptchaToken(null);
-      }
     }
   };
 
@@ -191,6 +186,24 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
               </div>
 
               <div className="pt-4">
+                <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4 border-b pb-2">Professional Details</h3>
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Highest Qualification *</label>
+                    <input type="text" name="qualification" required value={formData.qualification} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border" placeholder="e.g. B.Tech, MBA" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Total Experience (Years) *</label>
+                    <input type="text" name="experience" required value={formData.experience} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border" placeholder="e.g. 2, 5, Fresher" />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700">Skills *</label>
+                    <input type="text" name="skills" required value={formData.skills} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border" placeholder="e.g. React, Node.js, Communication" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4">
                 <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4 border-b pb-2">Address Details</h3>
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                   <div className="sm:col-span-2">
@@ -229,7 +242,7 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
                         <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept=".pdf,.doc,.docx" required />
                       </label>
                     </div>
-                    <p className="text-xs text-gray-500">PDF, DOC, DOCX up to 500KB</p>
+                    <p className="text-xs text-gray-500">PDF, DOC, DOCX up to 100KB</p>
                     {resumeFile && <p className="text-sm font-medium text-green-600 mt-2">Selected: {resumeFile.name}</p>}
                   </div>
                 </div>
@@ -248,16 +261,9 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
               </div>
 
               <div className="pt-6 border-t">
-                <div className="mb-6 flex justify-center">
-                  <ReCAPTCHA
-                    ref={recaptchaRef}
-                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
-                    onChange={(token) => setRecaptchaToken(token)}
-                  />
-                </div>
                 <button
                   type="submit"
-                  disabled={submitting || !recaptchaToken}
+                  disabled={submitting}
                   className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#008c44] hover:bg-[#006e35] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 transition"
                 >
                   {submitting ? 'Submitting...' : 'Submit Application'}

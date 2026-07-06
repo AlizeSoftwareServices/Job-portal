@@ -26,6 +26,12 @@ let JobsController = class JobsController {
     async findAll() {
         return this.jobsService.findAllJobs();
     }
+    async findAllAdminJobs() {
+        return this.jobsService.findAllAdminJobs();
+    }
+    async findJobsByEmployer(employerId) {
+        return this.jobsService.findJobsByEmployer(employerId);
+    }
     async findOne(id) {
         return this.jobsService.findJobById(id);
     }
@@ -34,6 +40,15 @@ let JobsController = class JobsController {
     }
     async remove(id) {
         return this.jobsService.deleteJob(id);
+    }
+    async requestClosure(id) {
+        return this.jobsService.requestClosure(id);
+    }
+    async approveClosure(id) {
+        return this.jobsService.approveClosure(id);
+    }
+    async repostJob(id) {
+        return this.jobsService.repostJob(id);
     }
 };
 exports.JobsController = JobsController;
@@ -50,6 +65,19 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], JobsController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('admin-all'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], JobsController.prototype, "findAllAdminJobs", null);
+__decorate([
+    (0, common_1.Get)('employer/:employerId'),
+    __param(0, (0, common_1.Param)('employerId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], JobsController.prototype, "findJobsByEmployer", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
@@ -72,6 +100,27 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], JobsController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Put)(':id/request-closure'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], JobsController.prototype, "requestClosure", null);
+__decorate([
+    (0, common_1.Put)(':id/approve-closure'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], JobsController.prototype, "approveClosure", null);
+__decorate([
+    (0, common_1.Put)(':id/repost'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], JobsController.prototype, "repostJob", null);
 exports.JobsController = JobsController = __decorate([
     (0, common_1.Controller)('jobs'),
     __metadata("design:paramtypes", [jobs_service_1.JobsService])

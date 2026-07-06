@@ -27,19 +27,19 @@ export declare class UsersController {
                 profileId: string;
                 name: string;
             }[];
-            projects: {
-                id: string;
-                profileId: string;
-                name: string;
-                description: string | null;
-                link: string | null;
-            }[];
             certifications: {
                 id: string;
                 profileId: string;
                 name: string;
                 issuer: string;
                 dateIssued: Date | null;
+            }[];
+            projects: {
+                id: string;
+                profileId: string;
+                name: string;
+                description: string | null;
+                link: string | null;
             }[];
         } & {
             id: string;
@@ -53,7 +53,35 @@ export declare class UsersController {
             expectedSalary: string | null;
             preferredLocation: string | null;
             preferredJobType: string | null;
+            gender: string | null;
+            dateOfBirth: Date | null;
+            maritalStatus: string | null;
+            secondaryContactNumber: string | null;
+            educationQualification: string | null;
+            totalWorkExperienceYears: string | null;
+            currentWorkingDetails: string | null;
+            fatherName: string | null;
+            fatherOccupation: string | null;
+            motherName: string | null;
+            motherOccupation: string | null;
+            currentSalary: string | null;
+            currentStay: string | null;
+            nativePlace: string | null;
+            interestFieldToWork: string[];
         }) | null;
+        employerProfile: {
+            id: string;
+            userId: string;
+            companyName: string;
+            companyWebsite: string | null;
+            industry: string | null;
+            companyLogoUrl: string | null;
+            companyLocation: string | null;
+            hrName: string | null;
+            hrContactNumber: string | null;
+            officialMailId: string | null;
+            secondaryContactNumber: string | null;
+        } | null;
         id: string;
         email: string;
         role: import(".prisma/client").$Enums.Role;
@@ -68,27 +96,15 @@ export declare class UsersController {
     updateProfile(req: any, body: any): Promise<{
         message: string;
         emailChanged: boolean;
-        profile: {
-            id: string;
-            userId: string;
-            fullName: string;
-            phone: string | null;
-            address: string | null;
-            summary: string | null;
-            avatarUrl: string | null;
-            resumeUrl: string | null;
-            expectedSalary: string | null;
-            preferredLocation: string | null;
-            preferredJobType: string | null;
-        };
+        profile: any;
     }>;
     deleteProfile(req: any): Promise<{
         message: string;
     }>;
     uploadResume(req: any, file: any): {
-        resumeUrl: string;
+        resumeUrl: any;
     };
     uploadAvatar(req: any, file: any): {
-        avatarUrl: string;
+        avatarUrl: any;
     };
 }

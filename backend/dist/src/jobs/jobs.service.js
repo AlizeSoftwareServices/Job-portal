@@ -12,10 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.JobsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma.service");
+const mail_service_1 = require("../mail/mail.service");
 let JobsService = class JobsService {
     prisma;
-    constructor(prisma) {
+    mailService;
+    constructor(prisma, mailService) {
         this.prisma = prisma;
+        this.mailService = mailService;
     }
     generateRoleCode(title) {
         const cleanTitle = title.replace(/[^a-zA-Z ]/g, '').toUpperCase();
@@ -52,7 +55,7 @@ let JobsService = class JobsService {
                 }
             });
         }
-        return this.prisma.job.create({
+        const job = await this.prisma.job.create({
             data: {
                 title: data.title,
                 locationCity: data.locationCity,
@@ -63,21 +66,48 @@ let JobsService = class JobsService {
                 description: data.description,
                 requirements: data.requirements || '',
                 jobCode,
-                categoryId: data.categoryId,
+                categoryId: data.categoryId || null,
                 salary: data.salary,
                 salaryType: data.salaryType || 'Month',
                 salaryVisible: data.salaryVisible !== undefined ? data.salaryVisible : true,
+                recruitmentPosition: data.recruitmentPosition,
+                vacancyCount: data.vacancyCount || 1,
+                shiftTimings: data.shiftTimings,
+                benefits: data.benefits,
+                generalComments: data.generalComments,
                 facebookLink: data.facebookLink,
                 instagramLink: data.instagramLink,
                 linkedinLink: data.linkedinLink,
-                createdByAdmin: {
+                fieldVisibility: data.fieldVisibility || {},
+                createdByAdmin: data.employerId ? undefined : {
                     connect: { id: admin.id }
-                }
+                },
+                employer: data.employerId ? {
+                    connect: { id: data.employerId }
+                } : undefined,
+                approvalStatus: data.employerId ? 'PENDING_APPROVAL' : 'APPROVED',
             },
         });
+        if (data.employerId) {
+            try {
+                const employer = await this.prisma.user.findUnique({
+                    where: { id: data.employerId },
+                    include: { employerProfile: true }
+                });
+                if (employer && admin) {
+                    const companyName = employer.employerProfile?.companyName || `${employer.firstName} Company`;
+                    await this.mailService.sendAdminNewJobRequestEmail(admin.email, data.title, companyName);
+                }
+            }
+            catch (e) {
+                console.error('Failed to send admin notification for new job request', e);
+            }
+        }
+        return job;
     }
     async findAllJobs() {
         const jobs = await this.prisma.job.findMany({
+            where: { approvalStatus: 'APPROVED' },
             orderBy: { createdAt: 'desc' },
             include: {
                 category: true,
@@ -96,6 +126,33 @@ let JobsService = class JobsService {
             reviewedApplicationsCount: job._count.applications
         }));
     }
+    async findAllAdminJobs() {
+        const jobs = await this.prisma.job.findMany({
+            orderBy: { createdAt: 'desc' },
+            include: {
+                category: true,
+                _count: {
+                    select: { applications: { where: { isReviewed: true } } }
+                }
+            }
+        });
+        return jobs.map(job => ({
+            ...job,
+            category: job.category?.name || 'Uncategorized',
+            reviewedApplicationsCount: job._count.applications
+        }));
+    }
+    async findJobsByEmployer(employerId) {
+        const jobs = await this.prisma.job.findMany({
+            where: { employerId },
+            orderBy: { createdAt: 'desc' },
+            include: { category: true }
+        });
+        return jobs.map(job => ({
+            ...job,
+            category: job.category?.name || 'Uncategorized'
+        }));
+    }
     async findJobById(id) {
         const job = await this.prisma.job.findUnique({
             where: { id },
@@ -106,6 +163,11 @@ let JobsService = class JobsService {
                         applications: {
                             where: { isReviewed: true }
                         }
+                    }
+                },
+                employer: {
+                    include: {
+                        employerProfile: true
                     }
                 }
             }
@@ -130,10 +192,36 @@ let JobsService = class JobsService {
             where: { id },
         });
     }
+    async requestClosure(id) {
+        return this.prisma.job.update({
+            where: { id },
+            data: { closureRequested: true }
+        });
+    }
+    async approveClosure(id) {
+        return this.prisma.job.update({
+            where: { id },
+            data: {
+                closureRequested: false,
+                status: 'COMPLETED'
+            }
+        });
+    }
+    async repostJob(id) {
+        return this.prisma.job.update({
+            where: { id },
+            data: {
+                status: 'ACTIVE',
+                approvalStatus: 'PENDING_APPROVAL',
+                closureRequested: false
+            }
+        });
+    }
 };
 exports.JobsService = JobsService;
 exports.JobsService = JobsService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        mail_service_1.MailService])
 ], JobsService);
 //# sourceMappingURL=jobs.service.js.map

@@ -9,6 +9,7 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   public job = prisma.job;
   public user = prisma.user;
   public candidateProfile = prisma.candidateProfile;
+  public employerProfile = prisma.employerProfile;
   public experience = prisma.experience;
   public education = prisma.education;
   public skill = prisma.skill;

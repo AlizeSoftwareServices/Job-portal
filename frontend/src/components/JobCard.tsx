@@ -32,13 +32,19 @@ export default function JobCard({ job, showAppliedBadge }: JobCardProps) {
         <h3 className="text-lg md:text-xl font-bold text-zinc-900 mb-2 line-clamp-2 leading-tight group-hover:text-blue-700 transition-colors">{job.title}</h3>
         
         <div className="flex items-center gap-2 text-zinc-600 mb-3 md:mb-4 text-xs md:text-sm font-medium">
-          <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5 md:h-4 md:w-4 text-zinc-400" /> {job.locationCity}, {job.locationState}</span>
+          {(job.fieldVisibility?.locationCity !== false && job.fieldVisibility?.locationState !== false) && (
+            <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5 md:h-4 md:w-4 text-zinc-400" /> {job.locationCity}, {job.locationState}</span>
+          )}
         </div>
         
         <div className="flex flex-wrap gap-1.5 md:gap-2 mb-3 md:mb-4">
-          <span className="px-2.5 md:px-3 py-1 bg-white border border-zinc-200 text-zinc-700 rounded-full text-[10px] md:text-xs font-bold">{job.jobType}</span>
+          {job.fieldVisibility?.jobType !== false && (
+            <span className="px-2.5 md:px-3 py-1 bg-white border border-zinc-200 text-zinc-700 rounded-full text-[10px] md:text-xs font-bold">{job.jobType}</span>
+          )}
           <span className="px-2.5 md:px-3 py-1 bg-white border border-zinc-200 text-zinc-700 rounded-full text-[10px] md:text-xs font-bold">{(typeof job.category === 'object' ? job.category?.name : job.category) || 'General'}</span>
-          <span className="px-2.5 md:px-3 py-1 bg-white border border-zinc-200 text-zinc-700 rounded-full text-[10px] md:text-xs font-bold">{job.workMode}</span>
+          {job.fieldVisibility?.workMode !== false && (
+            <span className="px-2.5 md:px-3 py-1 bg-white border border-zinc-200 text-zinc-700 rounded-full text-[10px] md:text-xs font-bold">{job.workMode}</span>
+          )}
         </div>
 
         {/* Reviewing Applications Counter */}

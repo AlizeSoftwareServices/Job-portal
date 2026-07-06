@@ -4,13 +4,18 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { jwtDecode } from 'jwt-decode';
 
 export default function Login() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://skyo-backend.onrender.com';
+     
+    
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showSignUpPrompt, setShowSignUpPrompt] = useState(false);
+  const [loginRole, setLoginRole] = useState<'CANDIDATE' | 'EMPLOYER'>('CANDIDATE');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,7 +27,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/auth/login`, {
+      const res = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -44,7 +49,13 @@ export default function Login() {
       
       const data = await res.json();
       localStorage.setItem('skyo_token', data.token);
-      router.push('/');
+      
+      const decoded: any = jwtDecode(data.token);
+      if (decoded.role === 'EMPLOYER') {
+        router.push('/employer/dashboard');
+      } else {
+        router.push('/');
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -54,7 +65,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-zinc-50 font-sans flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
-      <div className="absolute top-6 left-6 md:top-10 md:left-10">
+      <div className="absolute top-6 left-6 md:top-10 md:left-10 z-10">
         <Link href="/" className="flex items-center text-sm font-medium text-zinc-600 hover:text-blue-800 transition-colors bg-white px-4 py-2 rounded-full border border-zinc-200 shadow-sm">
           <ArrowLeft className="h-4 w-4 mr-2" /> Back to Home
         </Link>
@@ -89,6 +100,26 @@ export default function Login() {
               </Link>
             </div>
           )}
+
+          <div className="flex bg-zinc-100 p-1 rounded-xl mb-6">
+            <button
+              onClick={() => setLoginRole('CANDIDATE')}
+              className={`flex-1 py-2 text-sm font-bold rounded-lg transition-colors ${
+                loginRole === 'CANDIDATE' ? 'bg-white text-blue-800 shadow-sm' : 'text-zinc-500 hover:text-zinc-700'
+              }`}
+            >
+              Candidate
+            </button>
+            <button
+              onClick={() => setLoginRole('EMPLOYER')}
+              className={`flex-1 py-2 text-sm font-bold rounded-lg transition-colors ${
+                loginRole === 'EMPLOYER' ? 'bg-white text-blue-800 shadow-sm' : 'text-zinc-500 hover:text-zinc-700'
+              }`}
+            >
+              Employer
+            </button>
+          </div>
+
 
           <form className="space-y-6" onSubmit={handleLogin}>
             <div>

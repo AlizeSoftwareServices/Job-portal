@@ -1,15 +1,18 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { Pencil, Save, X, Upload, Trash2, MapPin, Mail, Phone, Briefcase, GraduationCap, Download, Send, Loader2, User, Plus, Calendar, Building, CheckCircle, Clock, BookOpen, Edit, Camera, LogOut, Check } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import imageCompression from 'browser-image-compression';
+import { Pencil, Save, X, Upload, Trash2, MapPin, Mail, Phone, Briefcase, GraduationCap, Download, Send, Loader2, User, Users, Plus, Calendar, Building, CheckCircle, Clock, BookOpen, Edit, Camera, LogOut, Check } from 'lucide-react';
 import CountrySelect from './CountrySelect';
 import JobCard from './JobCard';
 import Link from 'next/link';
-
+import Select from 'react-select';
+import { JOB_ROLES } from '@/constants/jobRoles';
 export default function ProfileView({ profile, onSaved }: { profile: any, onSaved: () => void }) {
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadingResume, setUploadingResume] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
   const [appliedJobs] = useState(profile?.applications || []);
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -41,9 +44,27 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
     skills: profile?.candidateProfile?.skills?.map((s: any) => s.name).join(', ') || '',
     educations: profile?.candidateProfile?.educations || [],
     experiences: profile?.candidateProfile?.experiences || [],
+    
+    gender: profile?.candidateProfile?.gender || '',
+    dateOfBirth: profile?.candidateProfile?.dateOfBirth ? new Date(profile?.candidateProfile?.dateOfBirth).toISOString().split('T')[0] : '',
+    maritalStatus: profile?.candidateProfile?.maritalStatus || '',
+    secondaryContactNumber: profile?.candidateProfile?.secondaryContactNumber || '',
+    educationQualification: profile?.candidateProfile?.educationQualification || '',
+    totalWorkExperienceYears: profile?.candidateProfile?.totalWorkExperienceYears || '',
+    currentWorkingDetails: profile?.candidateProfile?.currentWorkingDetails || '',
+    fatherName: profile?.candidateProfile?.fatherName || '',
+    fatherOccupation: profile?.candidateProfile?.fatherOccupation || '',
+    motherName: profile?.candidateProfile?.motherName || '',
+    motherOccupation: profile?.candidateProfile?.motherOccupation || '',
+    currentSalary: profile?.candidateProfile?.currentSalary || '',
+    currentStay: profile?.candidateProfile?.currentStay || '',
+    nativePlace: profile?.candidateProfile?.nativePlace || '',
+    interestFieldToWork: profile?.candidateProfile?.interestFieldToWork || [],
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -51,8 +72,8 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
     const file = e.target.files?.[0];
     if (!file) return;
     
-    if (file.size > 100 * 1024) {
-      alert('Avatar size must be less than 100KB.');
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Avatar size too large before compression.');
       e.target.value = '';
       return;
     }
@@ -64,11 +85,15 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
     }
 
     setUploadingAvatar(true);
-    const data = new FormData();
-    data.append('file', file);
-    const token = localStorage.getItem('skyo_token');
     try {
-      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/users/profile/avatar`, {
+      const options = { maxSizeMB: 0.05, maxWidthOrHeight: 800, useWebWorker: true };
+      // @ts-ignore
+      const compressedFile = await imageCompression(file, options);
+      
+      const data = new FormData();
+      data.append('file', compressedFile);
+      const token = localStorage.getItem('skyo_token');
+      const res = await fetch(`https://skyo-backend.onrender.com/users/profile/avatar`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
         body: data,
@@ -80,6 +105,48 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
       alert('Failed to upload avatar.');
     } finally {
       setUploadingAvatar(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (file.size > 100 * 1024) {
+      alert('File size must be less than 100KB.');
+      return;
+    }
+    const allowed = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword'];
+    if (!allowed.includes(file.type)) {
+      alert('Only PDF and DOCX files are allowed.');
+      return;
+    }
+
+    setUploadingResume(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const token = localStorage.getItem('skyo_token');
+      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/users/profile/resume`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setForm({ ...form, resumeUrl: data.resumeUrl });
+        alert('Resume uploaded! Save profile to keep changes.');
+      } else {
+        const err = await res.json();
+        alert(err.message || 'Upload failed');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Failed to upload resume.');
+    } finally {
+      setUploadingResume(false);
       e.target.value = '';
     }
   };
@@ -149,6 +216,21 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
       skills: profile?.candidateProfile?.skills?.map((s: any) => s.name).join(', ') || '',
       educations: profile?.candidateProfile?.educations || [],
       experiences: profile?.candidateProfile?.experiences || [],
+      gender: profile?.candidateProfile?.gender || '',
+      dateOfBirth: profile?.candidateProfile?.dateOfBirth ? new Date(profile?.candidateProfile?.dateOfBirth).toISOString().split('T')[0] : '',
+      maritalStatus: profile?.candidateProfile?.maritalStatus || '',
+      secondaryContactNumber: profile?.candidateProfile?.secondaryContactNumber || '',
+      educationQualification: profile?.candidateProfile?.educationQualification || '',
+      totalWorkExperienceYears: profile?.candidateProfile?.totalWorkExperienceYears || '',
+      currentWorkingDetails: profile?.candidateProfile?.currentWorkingDetails || '',
+      fatherName: profile?.candidateProfile?.fatherName || '',
+      fatherOccupation: profile?.candidateProfile?.fatherOccupation || '',
+      motherName: profile?.candidateProfile?.motherName || '',
+      motherOccupation: profile?.candidateProfile?.motherOccupation || '',
+      currentSalary: profile?.candidateProfile?.currentSalary || '',
+      currentStay: profile?.candidateProfile?.currentStay || '',
+      nativePlace: profile?.candidateProfile?.nativePlace || '',
+      interestFieldToWork: profile?.candidateProfile?.interestFieldToWork || [],
     });
     setIsEditing(false);
   };
@@ -168,44 +250,25 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
   const inputClass = "w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-shadow";
 
   return (
-    <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden font-sans">
+    <div className="font-sans">
       
       {/* Header Actions */}
-      <div className="bg-zinc-50 border-b border-zinc-200 px-6 py-4 flex flex-wrap gap-4 justify-between items-center">
-        <h2 className="text-xl font-bold text-zinc-800 hidden sm:block">My Profile</h2>
-        <div className="ml-auto flex items-center">
-        {!isEditing ? (
+      <div className="flex flex-wrap gap-4 justify-end items-center mb-4">
+        {!isEditing && (
           <button 
             onClick={() => setIsEditing(true)} 
-            className="flex items-center gap-2 bg-blue-50 hover:bg-amber-50 text-blue-700 px-4 py-2 rounded-lg font-medium transition-colors text-sm"
+            className="flex items-center gap-2 bg-blue-50 hover:bg-[#003c71] text-blue-800 hover:text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow-md"
           >
             <Pencil className="w-4 h-4" /> Edit Profile
           </button>
-        ) : (
-          <div className="flex items-center gap-2">
-            <button 
-              onClick={handleCancel} 
-              className="flex items-center gap-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 px-4 py-2 rounded-lg font-medium transition-colors text-sm"
-            >
-              <X className="w-4 h-4" /> Cancel
-            </button>
-            <button 
-              onClick={handleSave} 
-              disabled={saving}
-              className="flex items-center gap-2 bg-blue-800 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm disabled:opacity-70"
-            >
-              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} 
-              Save Changes
-            </button>
-          </div>
         )}
-        </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row">
+      <div className="flex flex-col lg:flex-row gap-8">
         
-        {/* LEFT COLUMN */}
-        <div className="w-full lg:w-1/3 border-r border-zinc-200 p-8 flex flex-col items-center bg-zinc-50/50">
+        {/* LEFT COLUMN - Sticky Floating Card */}
+        <div className="w-full lg:w-1/3 flex flex-col gap-6">
+          <div className="bg-white rounded-3xl p-8 flex flex-col items-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-zinc-100 sticky top-24">
           
           {/* Avatar Section */}
           <div className="relative group mb-4">
@@ -296,28 +359,94 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
           </div>
           
         </div>
+        </div>
 
         {/* RIGHT COLUMN */}
-        <div className="w-full lg:w-2/3 p-8">
+        <div className="w-full lg:w-2/3 flex flex-col gap-6">
           
-          {/* Basic Info Grid */}
-          <div className="mb-10">
-            <h3 className="text-lg font-bold text-zinc-900 mb-4 border-b border-zinc-100 pb-2">Basic Information</h3>
+          {/* Basic Info Card */}
+          <div className="bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-zinc-100 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all">
+            <h3 className="text-xl font-black text-zinc-900 mb-6 flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#003c71] flex items-center justify-center">
+                <User className="w-4 h-4" />
+              </div>
+              Basic Details
+            </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Experience</span>
-                <p className="text-sm font-medium text-zinc-800">{calculateExperience()}</p>
+                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">First Name</span>
+                {isEditing ? (
+                  <input type="text" name="firstName" value={form.firstName} onChange={handleChange} className={inputClass} />
+                ) : (
+                  <p className="text-sm font-medium text-zinc-800">{form.firstName}</p>
+                )}
+              </div>
+              
+              <div>
+                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Last Name</span>
+                {isEditing ? (
+                  <input type="text" name="lastName" value={form.lastName} onChange={handleChange} className={inputClass} />
+                ) : (
+                  <p className="text-sm font-medium text-zinc-800">{form.lastName}</p>
+                )}
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Phone</span>
+                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Gender *</span>
+                {isEditing ? (
+                  <select name="gender" value={form.gender} onChange={handleChange} className={inputClass} required>
+                    <option value="">Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                ) : (
+                  <p className="text-sm font-medium text-zinc-800">{form.gender || 'Not specified'}</p>
+                )}
+              </div>
+
+              <div>
+                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Date of Birth *</span>
+                {isEditing ? (
+                  <input type="date" name="dateOfBirth" value={form.dateOfBirth} onChange={handleChange} className={inputClass} required />
+                ) : (
+                  <p className="text-sm font-medium text-zinc-800">{form.dateOfBirth ? new Date(form.dateOfBirth).toLocaleDateString() : 'Not specified'}</p>
+                )}
+              </div>
+
+              <div>
+                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Marital status *</span>
+                {isEditing ? (
+                  <select name="maritalStatus" value={form.maritalStatus} onChange={handleChange} className={inputClass} required>
+                    <option value="">Select</option>
+                    <option value="Single">Single</option>
+                    <option value="Married">Married</option>
+                  </select>
+                ) : (
+                  <p className="text-sm font-medium text-zinc-800">{form.maritalStatus || 'Not specified'}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Contact Details Card */}
+          <div className="bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-zinc-100 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all">
+            <h3 className="text-xl font-black text-zinc-900 mb-6 flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <Phone className="w-4 h-4" />
+              </div>
+              Contact Details
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Primary contact *</span>
                 {isEditing ? (
                   <div className="flex gap-1 mt-1">
-                     <div className="w-20 flex-shrink-0">
+                     <div className="w-28 flex-shrink-0">
                        <CountrySelect value={form.countryCode} onChange={(val) => setForm({ ...form, countryCode: val })} />
                      </div>
-                     <input type="tel" name="phone" value={form.phone} onChange={handleChange} className={`${inputClass} flex-1`} placeholder="Phone" />
+                     <input type="tel" name="phone" value={form.phone} onChange={handleChange} className={`${inputClass} flex-1`} required />
                   </div>
                 ) : (
                   <p className="text-sm font-medium text-zinc-800">{form.countryCode} {form.phone}</p>
@@ -325,38 +454,209 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Email</span>
+                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Secondary contact *</span>
                 {isEditing ? (
-                  <input type="email" name="email" value={form.email} onChange={handleChange} className={`${inputClass} mt-1`} />
+                  <input type="tel" name="secondaryContactNumber" value={form.secondaryContactNumber} onChange={handleChange} className={inputClass} required />
                 ) : (
-                  <p className="text-sm font-medium text-zinc-800 break-all">{form.email}</p>
+                  <p className="text-sm font-medium text-zinc-800">{form.secondaryContactNumber || 'Not specified'}</p>
                 )}
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Expected CTC</span>
+                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Email *</span>
+                <p className="text-sm font-medium text-zinc-800 break-all">{form.email}</p>
+              </div>
+
+              <div>
+                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Current stay *</span>
                 {isEditing ? (
-                   <input type="text" name="expectedSalary" value={form.expectedSalary} onChange={handleChange} className={`${inputClass} mt-1`} placeholder="e.g. 15 LPA" />
+                   <input type="text" name="currentStay" value={form.currentStay} onChange={handleChange} className={inputClass} required />
                 ) : (
-                  <p className="text-sm font-medium text-zinc-800">{form.expectedSalary || 'Not specified'}</p>
+                  <p className="text-sm font-medium text-zinc-800">{form.currentStay || 'Not specified'}</p>
                 )}
               </div>
 
-              <div className="sm:col-span-2 lg:col-span-1">
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Location</span>
+              <div>
+                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Native place *</span>
                 {isEditing ? (
-                   <input type="text" name="address" value={form.address} onChange={handleChange} className={`${inputClass} mt-1`} placeholder="City, Country" />
+                   <input type="text" name="nativePlace" value={form.nativePlace} onChange={handleChange} className={inputClass} required />
                 ) : (
-                  <p className="text-sm font-medium text-zinc-800">{form.address || 'Not specified'}</p>
+                  <p className="text-sm font-medium text-zinc-800">{form.nativePlace || 'Not specified'}</p>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Experience Section */}
-          <div className="mb-10">
-            <div className="flex justify-between items-end mb-4 border-b border-zinc-100 pb-2">
-              <h3 className="text-lg font-bold text-zinc-900">Experience</h3>
+          {/* Family Details Card */}
+          <div className="bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-zinc-100 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all">
+            <h3 className="text-xl font-black text-zinc-900 mb-6 flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center">
+                <Users className="w-4 h-4" />
+              </div>
+              Family Details
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Father Name</span>
+                {isEditing ? (
+                  <input type="text" name="fatherName" value={form.fatherName} onChange={handleChange} className={inputClass} />
+                ) : (
+                  <p className="text-sm font-medium text-zinc-800">{form.fatherName || 'Not specified'}</p>
+                )}
+              </div>
+              <div>
+                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Father occupation</span>
+                {isEditing ? (
+                  <input type="text" name="fatherOccupation" value={form.fatherOccupation} onChange={handleChange} className={inputClass} />
+                ) : (
+                  <p className="text-sm font-medium text-zinc-800">{form.fatherOccupation || 'Not specified'}</p>
+                )}
+              </div>
+              <div>
+                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Mother Name</span>
+                {isEditing ? (
+                  <input type="text" name="motherName" value={form.motherName} onChange={handleChange} className={inputClass} />
+                ) : (
+                  <p className="text-sm font-medium text-zinc-800">{form.motherName || 'Not specified'}</p>
+                )}
+              </div>
+              <div>
+                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Mother occupation</span>
+                {isEditing ? (
+                  <input type="text" name="motherOccupation" value={form.motherOccupation} onChange={handleChange} className={inputClass} />
+                ) : (
+                  <p className="text-sm font-medium text-zinc-800">{form.motherOccupation || 'Not specified'}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Professional Details Card */}
+          <div className="bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-zinc-100 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all">
+            <h3 className="text-xl font-black text-zinc-900 mb-6 flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                <Briefcase className="w-4 h-4" />
+              </div>
+              Professional Details
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Education qualification</span>
+                {isEditing ? (
+                  <input type="text" name="educationQualification" value={form.educationQualification} onChange={handleChange} className={inputClass} />
+                ) : (
+                  <p className="text-sm font-medium text-zinc-800">{form.educationQualification || 'Not specified'}</p>
+                )}
+              </div>
+              <div>
+                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Total work experience years</span>
+                {isEditing ? (
+                  <input type="text" name="totalWorkExperienceYears" value={form.totalWorkExperienceYears} onChange={handleChange} className={inputClass} />
+                ) : (
+                  <p className="text-sm font-medium text-zinc-800">{form.totalWorkExperienceYears || 'Not specified'}</p>
+                )}
+              </div>
+              <div className="sm:col-span-2">
+                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Current working details</span>
+                {isEditing ? (
+                  <textarea name="currentWorkingDetails" value={form.currentWorkingDetails} onChange={handleChange} className={inputClass} />
+                ) : (
+                  <p className="text-sm font-medium text-zinc-800">{form.currentWorkingDetails || 'Not specified'}</p>
+                )}
+              </div>
+              <div>
+                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Current Salary(Rs)/Month *</span>
+                {isEditing ? (
+                  <input type="text" name="currentSalary" value={form.currentSalary} onChange={handleChange} className={inputClass} required />
+                ) : (
+                  <p className="text-sm font-medium text-zinc-800">{form.currentSalary || 'Not specified'}</p>
+                )}
+              </div>
+              <div>
+                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Expected Salary(Rs) /Month *</span>
+                {isEditing ? (
+                  <input type="text" name="expectedSalary" value={form.expectedSalary} onChange={handleChange} className={inputClass} required />
+                ) : (
+                  <p className="text-sm font-medium text-zinc-800">{form.expectedSalary || 'Not specified'}</p>
+                )}
+              </div>
+              
+              <div className="sm:col-span-2">
+                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Interest field to work</span>
+                {isEditing ? (
+                  <div className="mt-2 text-sm text-zinc-900">
+                    <Select 
+                      isMulti
+                      options={JOB_ROLES.map(role => ({ value: role, label: role }))}
+                      value={form.interestFieldToWork.map((item: string) => ({ value: item, label: item }))}
+                      onChange={(selected) => setForm({ ...form, interestFieldToWork: selected.map(s => s.value) })}
+                      placeholder="Search and select fields..."
+                      className="react-select-container"
+                      classNamePrefix="react-select"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {form.interestFieldToWork && form.interestFieldToWork.length > 0 ? form.interestFieldToWork.map((opt: string) => (
+                      <span key={opt} className="px-3 py-1 bg-blue-50 border border-blue-100 text-blue-800 rounded-full text-xs font-medium capitalize">{opt}</span>
+                    )) : <p className="text-sm font-medium text-zinc-800">Not specified</p>}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            </div>
+
+          {/* Resume Upload Card */}
+          <div className="bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-zinc-100 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all">
+            <h3 className="text-xl font-black text-zinc-900 mb-6 flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                <BookOpen className="w-4 h-4" />
+              </div>
+              Resume
+            </h3>
+            <div className="flex flex-col md:flex-row items-center gap-6">
+              {isEditing ? (
+                <div className="flex-1 w-full">
+                  <label className="block w-full border-2 border-dashed border-zinc-300 hover:border-amber-500 rounded-2xl p-6 text-center cursor-pointer transition-colors bg-zinc-50">
+                    <input type="file" className="hidden" accept=".pdf,.doc,.docx" onChange={handleResumeUpload} disabled={uploadingResume} />
+                    {uploadingResume ? (
+                      <div className="flex flex-col items-center">
+                        <Loader2 className="h-6 w-6 text-blue-800 animate-spin mb-2" />
+                        <span className="font-bold text-sm text-zinc-600">Uploading...</span>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center">
+                        <Upload className="h-6 w-6 text-blue-800 mb-2" />
+                        <span className="font-bold text-sm text-zinc-900 block mb-1">Click to upload resume</span>
+                        <span className="text-xs text-zinc-500">PDF, DOCX up to 100KB</span>
+                      </div>
+                    )}
+                  </label>
+                </div>
+              ) : null}
+              {form.resumeUrl ? (
+                <div className={`w-full ${isEditing ? 'md:w-1/3' : 'md:w-1/2'} bg-blue-50 border border-blue-100 rounded-2xl p-6 text-center flex flex-col items-center justify-center`}>
+                  <BookOpen className="h-8 w-8 text-blue-800 mb-2" />
+                  <h4 className="font-bold text-sm text-blue-900 mb-2">Resume Uploaded</h4>
+                  <a href={`\${'https://skyo-backend.onrender.com'}${form.resumeUrl}`} target="_blank" rel="noreferrer" className="text-sm text-blue-800 hover:underline font-medium">View Current Resume</a>
+                </div>
+              ) : (
+                !isEditing && <p className="text-sm font-medium text-zinc-800">No resume uploaded</p>
+              )}
+            </div>
+
+            </div>
+
+          {/* Experience Card */}
+          <div className="bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-zinc-100 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-black text-zinc-900 flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
+                  <Building className="w-4 h-4" />
+                </div>
+                Experience
+              </h3>
               {isEditing && (
                 <button onClick={() => setForm({...form, experiences: [...form.experiences, { title: '', company: '', startDate: '', endDate: '', description: '' }]})} className="text-blue-800 hover:text-blue-700 text-sm font-bold flex items-center gap-1">
                   <Plus className="w-4 h-4" /> Add
@@ -401,12 +701,17 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 );
               })}
             </div>
-          </div>
+            </div>
 
-          {/* Education Section */}
-          <div>
-            <div className="flex justify-between items-end mb-4 border-b border-zinc-100 pb-2">
-              <h3 className="text-lg font-bold text-zinc-900">Education</h3>
+          {/* Education Card */}
+          <div className="bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-zinc-100 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all mb-8">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-black text-zinc-900 flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-violet-50 text-violet-600 flex items-center justify-center">
+                  <GraduationCap className="w-4 h-4" />
+                </div>
+                Education
+              </h3>
               {isEditing && (
                 <button onClick={() => setForm({...form, educations: [...form.educations, { institution: '', degree: '', fieldOfStudy: '', startDate: '', endDate: '' }]})} className="text-blue-800 hover:text-blue-700 text-sm font-bold flex items-center gap-1">
                   <Plus className="w-4 h-4" /> Add
@@ -453,6 +758,26 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
 
         </div>
       </div>
+
+      {/* Footer Actions */}
+      {isEditing && (
+        <div className="w-full flex items-center justify-end gap-4 border-t border-zinc-200 pt-8 mt-4">
+          <button 
+            onClick={handleCancel} 
+            className="flex items-center gap-2 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 px-8 py-3 rounded-xl font-bold transition-all shadow-sm text-lg"
+          >
+            <X className="w-5 h-5" /> Cancel
+          </button>
+          <button 
+            onClick={handleSave} 
+            disabled={saving}
+            className="flex items-center gap-2 bg-[#003c71] hover:bg-[#002b52] text-white px-8 py-3 rounded-xl font-bold transition-all shadow-md hover:shadow-lg disabled:opacity-70 text-lg"
+          >
+            {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />} 
+            Save Changes
+          </button>
+        </div>
+      )}
     </div>
   );
 }

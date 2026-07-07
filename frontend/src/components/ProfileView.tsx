@@ -172,8 +172,11 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
         candidateProfile: {
           fullName: `${form.firstName || ''} ${form.lastName || ''}`.trim(),
           phone: form.phone,
+          address: form.address,
           summary: form.summary,
           expectedSalary: form.expectedSalary,
+          preferredLocation: form.preferredLocation,
+          preferredJobType: form.preferredJobType,
           resumeUrl: form.resumeUrl,
           avatarUrl: form.avatarUrl,
           gender: form.gender,

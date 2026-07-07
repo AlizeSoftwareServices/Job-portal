@@ -73,6 +73,8 @@ export async function PUT(req: NextRequest) {
           ...(data.candidateProfile.address && { address: data.candidateProfile.address }),
           ...(data.candidateProfile.summary && { summary: data.candidateProfile.summary }),
           ...(data.candidateProfile.expectedSalary && { expectedSalary: data.candidateProfile.expectedSalary }),
+          ...(data.candidateProfile.preferredLocation && { preferredLocation: data.candidateProfile.preferredLocation }),
+          ...(data.candidateProfile.preferredJobType && { preferredJobType: data.candidateProfile.preferredJobType }),
           ...(data.candidateProfile.gender && { gender: data.candidateProfile.gender }),
           ...(data.candidateProfile.dateOfBirth && { dateOfBirth: new Date(data.candidateProfile.dateOfBirth) }),
           ...(data.candidateProfile.maritalStatus && { maritalStatus: data.candidateProfile.maritalStatus }),

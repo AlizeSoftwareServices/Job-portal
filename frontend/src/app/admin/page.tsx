@@ -48,7 +48,8 @@ export default function AdminDashboard() {
   const [applications, setApplications] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [employersList, setEmployersList] = useState<any[]>([]);
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<any>({ totalJobs: 0, activeJobs: 0, completedJobs: 0 });
+  const [jobToConfirmStatus, setJobToConfirmStatus] = useState<{id: string, currentStatus: string} | null>(null);
   const [loading, setLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [jobRouteTypes, setJobRouteTypes] = useState<Record<string, string>>({});
@@ -498,9 +499,14 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleToggleJobStatus = async (id: string, currentStatus: string) => {
+  const handleToggleJobStatus = (id: string, currentStatus: string) => {
+    setJobToConfirmStatus({ id, currentStatus });
+  };
+
+  const confirmJobStatusUpdate = async () => {
+    if (!jobToConfirmStatus) return;
+    const { id, currentStatus } = jobToConfirmStatus;
     const newStatus = currentStatus === 'ACTIVE' ? 'COMPLETED' : 'ACTIVE';
-    if (!confirm(`Mark this job as ${newStatus}?`)) return;
     try {
       const res = await fetch(`${API_URL}/jobs/${id}`, {
         method: 'PUT',
@@ -510,6 +516,7 @@ export default function AdminDashboard() {
       if (res.ok) { fetchJobs(); fetchStats(); }
       else alert('Failed to update job status.');
     } catch (err) { console.error(err); }
+    setJobToConfirmStatus(null);
   };
 
   const handleDeleteCategory = async (id: string) => {
@@ -1910,6 +1917,32 @@ export default function AdminDashboard() {
                     )}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          )}
+
+          {/* Job Status Confirmation Modal */}
+          {jobToConfirmStatus && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+              <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200">
+                <div className="p-6">
+                  <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mb-4">
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 mb-2">Confirm Status Change</h3>
+                  <p className="text-slate-600 text-sm">
+                    Are you sure you want to mark this job as <strong className="text-slate-800">{jobToConfirmStatus.currentStatus === 'ACTIVE' ? 'COMPLETED' : 'ACTIVE'}</strong>?
+                    {jobToConfirmStatus.currentStatus === 'ACTIVE' && " This will remove it from the public job board (after 2 days) and prevent new applications."}
+                  </p>
+                </div>
+                <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                  <button onClick={() => setJobToConfirmStatus(null)} className="px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">
+                    Cancel
+                  </button>
+                  <button onClick={confirmJobStatusUpdate} className="px-4 py-2 text-sm font-bold text-white bg-[#003c71] hover:bg-[#002b52] rounded-lg transition-colors shadow-sm">
+                    Yes, Change Status
+                  </button>
+                </div>
               </div>
             </div>
           )}

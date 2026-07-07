@@ -114,9 +114,9 @@ export default function JobDetails({ params }: { params: Promise<{ id: string }>
                 />
                 <div>
                   <h1 className="text-3xl font-bold text-zinc-900 mb-2">{job.title}</h1>
-                  <div className="flex items-center gap-2">
-                    <span className="inline-block bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">{job.category}</span>
-                    <span className="inline-block bg-zinc-100 text-zinc-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">{job.jobCode}</span>
+                  <div className="flex flex-wrap items-center gap-2 mb-4">
+                    <span className="inline-block bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">{typeof job.category === 'object' ? job.category?.name : job.category}</span>
+                    <span className="inline-block bg-zinc-100 text-zinc-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">{job.jobCode}</span>
                   </div>
                 </div>
               </div>

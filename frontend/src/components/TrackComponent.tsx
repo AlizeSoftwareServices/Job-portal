@@ -19,7 +19,7 @@ export default function TrackComponent() {
     setError('');
     setApplication(null);
     try {
-      const res = await fetch(`\${'https://skyo-backend.onrender.com'}/applications/track/${ref}`);
+      const res = await fetch(`\${'/api'}/applications/track/${ref}`);
       if (!res.ok) {
         throw new Error('Application not found. Please check your reference number.');
       }

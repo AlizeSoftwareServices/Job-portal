@@ -176,7 +176,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch(`${API_URL}/jobs/admin-all`);
       const data = await res.json();
-      setJobs(data);
+      if(Array.isArray(data)) setJobs(data);
     } catch (err) { console.error(err); }
   };
 
@@ -184,7 +184,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch(`${API_URL}/applications`);
       const data = await res.json();
-      setApplications(data);
+      if(Array.isArray(data)) setApplications(data);
     } catch (err) { console.error(err); }
   };
 
@@ -192,7 +192,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch(`${API_URL}/categories`);
       const data = await res.json();
-      setCategories(data);
+      if(Array.isArray(data)) setCategories(data);
     } catch (err) { console.error(err); }
   };
 
@@ -200,7 +200,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch(`${API_URL}/admin/employers`);
       const data = await res.json();
-      setEmployersList(data);
+      if(Array.isArray(data)) setEmployersList(data);
     } catch (err) { console.error(err); }
   };
 

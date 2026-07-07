@@ -19,7 +19,17 @@ export async function POST(req: NextRequest) {
         process.env.JWT_SECRET || 'fallback_secret',
         { expiresIn: '7d' }
       );
-      return NextResponse.json({ token }, { status: 200 });
+      const response = NextResponse.json({ token }, { status: 200 });
+      response.cookies.set({
+        name: 'skyo_admin_token',
+        value: token,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 7 * 24 * 60 * 60 // 7 days
+      });
+      return response;
     } else {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }

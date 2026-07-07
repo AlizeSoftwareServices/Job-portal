@@ -82,11 +82,23 @@ export async function POST(req: NextRequest) {
       { expiresIn: '7d' }
     );
 
-    return NextResponse.json({ 
+    const response = NextResponse.json({ 
       message: 'Registration successful', 
       token, 
       user: { id: user.id, email: user.email, firstName: user.firstName, role: user.role } 
     }, { status: 200 });
+    
+    response.cookies.set({
+      name: 'skyo_token',
+      value: token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 // 7 days
+    });
+
+    return response;
 
   } catch (error: any) {
     console.error(error);

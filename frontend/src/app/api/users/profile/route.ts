@@ -88,6 +88,8 @@ export async function PUT(req: NextRequest) {
           ...(data.candidateProfile.currentStay && { currentStay: data.candidateProfile.currentStay }),
           ...(data.candidateProfile.nativePlace && { nativePlace: data.candidateProfile.nativePlace }),
           ...(data.candidateProfile.interestFieldToWork && { interestFieldToWork: data.candidateProfile.interestFieldToWork }),
+          ...(data.candidateProfile.resumeUrl !== undefined && { resumeUrl: data.candidateProfile.resumeUrl }),
+          ...(data.candidateProfile.avatarUrl !== undefined && { avatarUrl: data.candidateProfile.avatarUrl }),
           // Handle relationships (delete old and create new)
           ...(data.candidateProfile.skills && {
             skills: {
@@ -120,7 +122,8 @@ export async function PUT(req: NextRequest) {
           ...(data.employerProfile.hrName && { hrName: data.employerProfile.hrName }),
           ...(data.employerProfile.hrContactNumber && { hrContactNumber: data.employerProfile.hrContactNumber }),
           ...(data.employerProfile.officialMailId && { officialMailId: data.employerProfile.officialMailId }),
-          ...(data.employerProfile.secondaryContactNumber && { secondaryContactNumber: data.employerProfile.secondaryContactNumber })
+          ...(data.employerProfile.secondaryContactNumber && { secondaryContactNumber: data.employerProfile.secondaryContactNumber }),
+          ...(data.employerProfile.companyLogoUrl !== undefined && { companyLogoUrl: data.employerProfile.companyLogoUrl })
         }
       });
     }

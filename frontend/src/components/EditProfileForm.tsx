@@ -87,7 +87,7 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
 
     try {
       const token = localStorage.getItem('skyo_token');
-      const res = await fetch(`\${'/api'}/users/profile/resume`, {
+      const res = await fetch(`/api/users/profile/resume`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
         body: formData
@@ -198,8 +198,38 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
     const skillsArray = form.skills.split(',').map((s: string) => s.trim()).filter((s: string) => s.length > 0);
     
     const payload = {
-      ...form,
-      skills: skillsArray,
+      firstName: form.firstName,
+      lastName: form.lastName,
+      email: form.email,
+      countryCode: form.countryCode,
+      phone: form.phone,
+      candidateProfile: {
+        address: form.address,
+        summary: form.summary,
+        resumeUrl: form.resumeUrl,
+        expectedSalary: form.expectedSalary,
+        preferredLocation: form.preferredLocation,
+        preferredJobType: form.preferredJobType,
+        avatarUrl: form.avatarUrl,
+        skills: skillsArray,
+        educations: form.educations,
+        experiences: form.experiences,
+        gender: form.gender,
+        dateOfBirth: form.dateOfBirth,
+        maritalStatus: form.maritalStatus,
+        secondaryContactNumber: form.secondaryContactNumber,
+        educationQualification: form.educationQualification,
+        totalWorkExperienceYears: form.totalWorkExperienceYears,
+        currentWorkingDetails: form.currentWorkingDetails,
+        fatherName: form.fatherName,
+        fatherOccupation: form.fatherOccupation,
+        motherName: form.motherName,
+        motherOccupation: form.motherOccupation,
+        currentSalary: form.currentSalary,
+        currentStay: form.currentStay,
+        nativePlace: form.nativePlace,
+        interestFieldToWork: form.interestFieldToWork,
+      }
     };
 
     try {
@@ -435,7 +465,7 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
             <div className="w-full md:w-1/3 bg-blue-50 border border-blue-100 rounded-2xl p-6 text-center flex flex-col items-center justify-center">
               <FileText className="h-10 w-10 text-blue-800 mb-3" />
               <h4 className="font-bold text-blue-900 mb-2">Resume Uploaded</h4>
-              <a href={`\${'/api'}${form.resumeUrl}`} target="_blank" rel="noreferrer" className="text-sm text-blue-800 hover:underline font-medium">View Current Resume</a>
+              <a href={form.resumeUrl} target="_blank" rel="noreferrer" className="text-sm text-blue-800 hover:underline font-medium">View Current Resume</a>
             </div>
           )}
         </div>

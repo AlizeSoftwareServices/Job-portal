@@ -304,7 +304,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
           <div className="relative group mb-4">
             <div className="w-32 h-32 rounded-full border-4 border-white shadow-md overflow-hidden bg-white flex items-center justify-center">
               {form.avatarUrl ? (
-                <img src={form.avatarUrl.startsWith('http') || form.avatarUrl.startsWith('/presets') || form.avatarUrl.startsWith('/avatars') ? form.avatarUrl : `\${'/api'}${form.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
+                <img src={form.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
                 <User className="w-12 h-12 text-zinc-300" />
               )}
@@ -672,7 +672,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 <div className={`w-full ${isEditing ? 'md:w-1/3' : 'md:w-1/2'} bg-blue-50 border border-blue-100 rounded-2xl p-6 text-center flex flex-col items-center justify-center`}>
                   <BookOpen className="h-8 w-8 text-blue-800 mb-2" />
                   <h4 className="font-bold text-sm text-blue-900 mb-2">Resume Uploaded</h4>
-                  <a href={`\${'/api'}${form.resumeUrl}`} target="_blank" rel="noreferrer" className="text-sm text-blue-800 hover:underline font-medium">View Current Resume</a>
+                  <a href={form.resumeUrl} target="_blank" rel="noreferrer" className="text-sm text-blue-800 hover:underline font-medium">View Current Resume</a>
                 </div>
               ) : (
                 !isEditing && <p className="text-sm font-medium text-zinc-800">No resume uploaded</p>

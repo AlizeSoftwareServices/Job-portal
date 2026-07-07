@@ -17,7 +17,7 @@ export default function JobSearchAutocomplete() {
     // Fetch all jobs to get their titles for autocomplete
     const fetchJobs = async () => {
       try {
-        const res = await fetch(`\${'/api'}/jobs`);
+        const res = await fetch(`/api/jobs`);
         if (res.ok) {
           const jobs = await res.json();
           // Extract unique titles

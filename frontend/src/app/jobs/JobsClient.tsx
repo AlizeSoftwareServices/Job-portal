@@ -6,20 +6,20 @@ import JobCard from '../../components/JobCard';
 import { MapPin, Filter, ChevronRight, Clock, Building, Briefcase, ChevronLeft } from 'lucide-react';
 import ShareButton from '../../components/ShareButton';
 import GlobalSearchBar from '../../components/GlobalSearchBar';
+import { useSearchParams } from 'next/navigation';
 
 export default function JobsClient({ 
   initialJobs, 
-  initialCategories = [],
-  initialQuery = '', 
-  initialLoc = '',
-  initialCategory = ''
+  initialCategories = []
 }: { 
   initialJobs: any[], 
-  initialCategories?: any[],
-  initialQuery?: string, 
-  initialLoc?: string,
-  initialCategory?: string 
+  initialCategories?: any[]
 }) {
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams?.get('q') || '';
+  const initialLoc = searchParams?.get('loc') || '';
+  const initialCategory = searchParams?.get('category') || '';
+
   const [selectedJobType, setSelectedJobType] = useState('All');
   const [selectedExperience, setSelectedExperience] = useState('All');
   const [selectedCategory, setSelectedCategory] = useState(initialCategory || 'All');

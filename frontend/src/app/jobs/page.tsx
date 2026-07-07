@@ -6,7 +6,7 @@ import ProfileLink from '../../components/ProfileLink';
 import Footer from '../../components/Footer';
 import Navbar from '../../components/Navbar';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60; // Cache for 60 seconds (ISR)
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
@@ -66,11 +66,7 @@ async function getCategories() {
   }
 }
 
-export default async function JobsListing({ searchParams }: { searchParams: Promise<{ q?: string, loc?: string, category?: string }> }) {
-  const params = await searchParams;
-  const q = params?.q || '';
-  const loc = params?.loc || '';
-  const category = params?.category || '';
+export default async function JobsListing() {
   const jobs = await getJobs();
   const categories = await getCategories();
   return (
@@ -79,7 +75,7 @@ export default async function JobsListing({ searchParams }: { searchParams: Prom
       <Navbar />
 
       <Suspense fallback={<div className="p-10 text-center animate-pulse">Loading jobs...</div>}>
-        <JobsClient initialJobs={jobs} initialCategories={categories} initialQuery={q} initialLoc={loc} initialCategory={category} />
+        <JobsClient initialJobs={jobs} initialCategories={categories} />
       </Suspense>
       <div className="mt-auto">
         <Footer />

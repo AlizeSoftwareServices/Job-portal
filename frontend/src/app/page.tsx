@@ -7,7 +7,7 @@ import GlobalSearchBar from '../components/GlobalSearchBar';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60; // Cache for 60 seconds (ISR)
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 

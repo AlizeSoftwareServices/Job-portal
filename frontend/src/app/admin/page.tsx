@@ -233,11 +233,17 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    if (localStorage.getItem('skyo_admin_auth') === 'true') {
+    const token = localStorage.getItem('skyo_admin_token');
+    if (localStorage.getItem('skyo_admin_auth') === 'true' && token) {
       setIsAdminAuthenticated(true);
+      Promise.all([fetchJobs(), fetchApplications(), fetchCategories(), fetchEmployersList(), fetchStats()]).then(() => setLoading(false));
+    } else {
+      localStorage.removeItem('skyo_admin_auth');
+      localStorage.removeItem('skyo_admin_token');
+      setIsAdminAuthenticated(false);
+      setLoading(false);
     }
     setAdminAuthChecked(true);
-    Promise.all([fetchJobs(), fetchApplications(), fetchCategories(), fetchEmployersList(), fetchStats()]).then(() => setLoading(false));
   }, []);
 
   const handleSaveJob = async (e: React.FormEvent) => {

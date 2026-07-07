@@ -498,6 +498,20 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleToggleJobStatus = async (id: string, currentStatus: string) => {
+    const newStatus = currentStatus === 'ACTIVE' ? 'COMPLETED' : 'ACTIVE';
+    if (!confirm(`Mark this job as ${newStatus}?`)) return;
+    try {
+      const res = await fetch(`${API_URL}/jobs/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (res.ok) { fetchJobs(); fetchStats(); }
+      else alert('Failed to update job status.');
+    } catch (err) { console.error(err); }
+  };
+
   const handleDeleteCategory = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this category? All jobs within this category will ALSO be deleted permanently!")) return;
     try {
@@ -1352,9 +1366,19 @@ export default function AdminDashboard() {
                     )}
 
                     <div className="pt-4 border-t border-slate-100 flex justify-between items-center">
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 flex-wrap">
                         <button onClick={() => window.open(`${API_URL}/admin/jobs/${job.id}/export`, '_blank')} className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded hover:bg-emerald-100 flex items-center gap-1 border border-emerald-200">
                           Export Excel
+                        </button>
+                        <button
+                          onClick={() => handleToggleJobStatus(job.id, job.status)}
+                          className={`text-xs font-bold px-3 py-1.5 rounded border transition-colors ${
+                            job.status === 'ACTIVE'
+                              ? 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100'
+                              : 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'
+                          }`}
+                        >
+                          {job.status === 'ACTIVE' ? '✓ Mark Completed' : '↺ Mark Active'}
                         </button>
                       </div>
                       <div className="flex gap-3">

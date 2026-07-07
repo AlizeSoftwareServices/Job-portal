@@ -58,6 +58,13 @@ export async function POST(req: NextRequest) {
         categoryId: data.categoryId,
         employerId: user.sub,
         approvalStatus: 'PENDING_APPROVAL', 
+        salary: data.salary,
+        salaryType: data.salaryType || 'Month',
+        salaryVisible: data.salaryVisible !== undefined ? data.salaryVisible : true,
+        vacancyCount: Number(data.vacancyCount) || 1,
+        shiftTimings: data.shiftTimings,
+        benefits: data.benefits,
+        generalComments: data.generalComments,
         salaryMin: data.salaryMin ? parseInt(data.salaryMin, 10) : null,
         salaryMax: data.salaryMax ? parseInt(data.salaryMax, 10) : null
       }

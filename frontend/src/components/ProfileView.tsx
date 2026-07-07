@@ -207,7 +207,6 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
         }
       };
 
-      const token = localStorage.getItem('skyo_token');
       const res = await fetch(`/api/users/profile`, {
         method: 'PUT',
         headers: {

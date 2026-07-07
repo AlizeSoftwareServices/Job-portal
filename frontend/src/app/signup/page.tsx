@@ -142,7 +142,11 @@ export default function SignUp() {
 
       // Save token and redirect
       localStorage.setItem('skyo_token', data.token);
-      router.push('/');
+      if (data.user?.role === 'EMPLOYER') {
+        router.push('/employer/dashboard');
+      } else {
+        router.push('/');
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {

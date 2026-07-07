@@ -64,7 +64,21 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 font-sans flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
+    <style>{`
+        @keyframes loadingBarSlide {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+        .animate-loading-bar {
+          animation: loadingBarSlide 1.5s infinite linear;
+        }
+      `}</style>
+      <div className="min-h-screen bg-zinc-50 font-sans flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
+        {loading && (
+          <div className="fixed top-0 left-0 w-full h-1.5 bg-green-100 z-50 overflow-hidden">
+            <div className="h-full w-full bg-green-500 animate-loading-bar rounded-r-full shadow-[0_0_10px_#22c55e]"></div>
+          </div>
+        )}
       <div className="absolute top-6 left-6 md:top-10 md:left-10 z-10">
         <Link href="/" className="flex items-center text-sm font-medium text-zinc-600 hover:text-blue-800 transition-colors bg-white px-4 py-2 rounded-full border border-zinc-200 shadow-sm">
           <ArrowLeft className="h-4 w-4 mr-2" /> Back to Home

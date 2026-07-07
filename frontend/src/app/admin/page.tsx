@@ -13,19 +13,32 @@ export default function AdminDashboard() {
   const [adminPassword, setAdminPassword] = useState('');
   const [showAdminPassword, setShowAdminPassword] = useState(false);
 
-  const handleAdminLogin = (e: React.FormEvent) => {
+    const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (adminUsername === 'Skyoadmin' && adminPassword === 'SkyoMPC') {
-      localStorage.setItem('skyo_admin_auth', 'true');
-      setIsAdminAuthenticated(true);
-    } else {
-      alert('Invalid username or password');
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: adminUsername, password: adminPassword })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem('skyo_admin_token', data.token);
+        localStorage.setItem('skyo_admin_auth', 'true');
+        setIsAdminAuthenticated(true);
+        window.location.reload();
+      } else {
+        alert('Invalid username or password');
+      }
+    } catch (err) {
+      alert('Login failed');
     }
   };
 
   const handleAdminLogout = () => {
     if (!window.confirm('Are you sure you want to log out?')) return;
     localStorage.removeItem('skyo_admin_auth');
+    localStorage.removeItem('skyo_admin_token');
     setIsAdminAuthenticated(false);
   };
 
@@ -175,7 +188,7 @@ export default function AdminDashboard() {
 
   const fetchJobs = async () => {
     try {
-      const res = await fetch(`${API_URL}/jobs/admin-all`);
+      const res = await fetch(`${API_URL}/jobs/admin-all`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
       const data = await res.json();
       if(Array.isArray(data)) setJobs(data);
     } catch (err) { console.error(err); }
@@ -183,7 +196,7 @@ export default function AdminDashboard() {
 
   const fetchApplications = async () => {
     try {
-      const res = await fetch(`${API_URL}/applications`);
+      const res = await fetch(`${API_URL}/applications`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
       const data = await res.json();
       if(Array.isArray(data)) setApplications(data);
     } catch (err) { console.error(err); }
@@ -191,7 +204,7 @@ export default function AdminDashboard() {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch(`${API_URL}/categories`);
+      const res = await fetch(`${API_URL}/categories`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
       const data = await res.json();
       if(Array.isArray(data)) setCategories(data);
     } catch (err) { console.error(err); }
@@ -199,7 +212,7 @@ export default function AdminDashboard() {
 
   const fetchEmployersList = async () => {
     try {
-      const res = await fetch(`${API_URL}/admin/employers`);
+      const res = await fetch(`${API_URL}/admin/employers`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
       const data = await res.json();
       if(Array.isArray(data)) setEmployersList(data);
     } catch (err) { console.error(err); }
@@ -207,7 +220,7 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch(`${API_URL}/admin/dashboard-data`);
+      const res = await fetch(`${API_URL}/admin/dashboard-data`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
       if (!res.ok) {
         throw new Error('Stats fetch failed');
       }

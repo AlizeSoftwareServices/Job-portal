@@ -297,6 +297,7 @@ export default function EmployerDashboard() {
       });
       if (res.ok) {
         alert('Profile updated successfully!');
+        setIsEditingProfile(false);
       } else {
         alert('Failed to update profile');
       }

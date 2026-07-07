@@ -799,6 +799,14 @@ export default function EmployerDashboard() {
                             <p className="text-xs font-bold text-slate-500 mb-1">Work Mode</p>
                             <p className="font-medium text-slate-800">{selectedJob.workMode}</p>
                           </div>
+                          <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <p className="text-xs font-bold text-slate-500 mb-1">Salary</p>
+                            <p className="font-medium text-slate-800">{selectedJob.salary ? `₹${selectedJob.salary} / ${selectedJob.salaryType}` : 'Not disclosed'}</p>
+                          </div>
+                          <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <p className="text-xs font-bold text-slate-500 mb-1">Shift Timings</p>
+                            <p className="font-medium text-slate-800">{selectedJob.shiftTimings || 'Standard'}</p>
+                          </div>
                         </div>
                         <div className="space-y-4">
                           <div>
@@ -809,6 +817,18 @@ export default function EmployerDashboard() {
                             <div>
                               <p className="text-sm font-bold text-slate-800 mb-1">Requirements</p>
                               <p className="text-sm text-slate-600 whitespace-pre-wrap">{selectedJob.requirements}</p>
+                            </div>
+                          )}
+                          {selectedJob.benefits && (
+                            <div>
+                              <p className="text-sm font-bold text-slate-800 mb-1">Other Benefits</p>
+                              <p className="text-sm text-slate-600 whitespace-pre-wrap">{selectedJob.benefits}</p>
+                            </div>
+                          )}
+                          {selectedJob.generalComments && (
+                            <div>
+                              <p className="text-sm font-bold text-slate-800 mb-1">General Comments</p>
+                              <p className="text-sm text-slate-600 whitespace-pre-wrap">{selectedJob.generalComments}</p>
                             </div>
                           )}
                         </div>

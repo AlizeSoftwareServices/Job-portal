@@ -3,9 +3,15 @@ import { prisma } from '@/lib/prisma';
 import { MailService } from '@/lib/mail';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
   try {
+    const rateLimit = checkRateLimit(req, 5, 5 * 60 * 1000); // 5 attempts per 5 mins
+    if (!rateLimit.success) {
+      return NextResponse.json({ message: 'Too many attempts. Please try again later.' }, { status: 429 });
+    }
+
     const data = await req.json();
     const { firstName, lastName, countryCode, phone, email, password, otp, role, companyName, secondaryContactNumber } = data;
 

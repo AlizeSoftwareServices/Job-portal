@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { MailService } from '@/lib/mail';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
   try {
+    const rateLimit = checkRateLimit(req, 3, 15 * 60 * 1000); // 3 requests per 15 minutes
+    if (!rateLimit.success) {
+      return NextResponse.json({ message: 'Too many requests. Please try again later.' }, { status: 429 });
+    }
+
     const { email } = await req.json();
 
     const existingUser = await prisma.user.findUnique({ where: { email } });

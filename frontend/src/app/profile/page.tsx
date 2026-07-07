@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 import ProfileClient from './ProfileClient';
 
 export default async function ProfilePage() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get('skyo_token')?.value;
 
   if (!token) {
@@ -21,7 +21,7 @@ export default async function ProfilePage() {
 
   const userId = decoded.sub;
 
-  const user = await prisma.user.findUnique({
+  const user: any = await prisma.user.findUnique({
     where: { id: userId },
     include: {
       candidateProfile: true,
@@ -52,13 +52,13 @@ export default async function ProfilePage() {
         }
       }
     },
-    orderBy: { createdAt: 'desc' }
+    orderBy: { appliedAt: 'desc' }
   });
 
   // Format data for client component
   const profileData = {
     ...user,
-    savedJobs: user.savedJobs.map(sj => sj.job)
+    savedJobs: (user.savedJobs || []).map((sj: any) => sj.job)
   };
 
   return <ProfileClient initialProfile={profileData} initialApplications={applications} />;

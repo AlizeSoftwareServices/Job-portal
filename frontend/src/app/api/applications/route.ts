@@ -47,3 +47,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }
+
+export async function GET(req: NextRequest) {
+  try {
+    const { user, error } = await verifyAuth(req);
+    if (error || !user) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+
+    let applications;
+    if (user.role === 'ADMIN') {
+      applications = await prisma.application.findMany({ include: { job: { include: { category: true } }, candidate: true }, orderBy: { appliedAt: 'desc' } });
+    } else if (user.role === 'EMPLOYER') {
+      applications = await prisma.application.findMany({ where: { job: { employerId: user.sub } }, include: { job: { include: { category: true } }, candidate: true }, orderBy: { appliedAt: 'desc' } });
+    } else {
+      applications = await prisma.application.findMany({ where: { candidateId: user.sub }, include: { job: { include: { category: true } }, candidate: true }, orderBy: { appliedAt: 'desc' } });
+    }
+    return NextResponse.json(applications, { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+  }
+}

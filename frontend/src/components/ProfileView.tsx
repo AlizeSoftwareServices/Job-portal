@@ -174,6 +174,8 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
           phone: form.phone,
           summary: form.summary,
           expectedSalary: form.expectedSalary,
+          resumeUrl: form.resumeUrl,
+          avatarUrl: form.avatarUrl,
           gender: form.gender,
           dateOfBirth: form.dateOfBirth ? new Date(form.dateOfBirth).toISOString() : null,
           maritalStatus: form.maritalStatus,

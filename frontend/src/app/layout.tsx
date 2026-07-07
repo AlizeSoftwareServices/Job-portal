@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   description: "Job Search Platform",
 };
 
+import NextTopLoader from 'nextjs-toploader';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -22,7 +24,10 @@ export default function RootLayout({
       lang="en"
       className={`${montserrat.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans">{children}</body>
+      <body className="min-h-full flex flex-col font-sans">
+        <NextTopLoader color="#22c55e" showSpinner={false} height={4} />
+        {children}
+      </body>
     </html>
   );
 }

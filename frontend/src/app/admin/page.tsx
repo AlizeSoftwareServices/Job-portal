@@ -607,7 +607,7 @@ export default function AdminDashboard() {
 
   const filteredJobs = jobs.filter(job => {
     const loc = `${job.locationCity}, ${job.locationState}`;
-    if (jobCategoryFilter !== 'All' && job.category !== jobCategoryFilter) return false;
+    if (jobCategoryFilter !== 'All' && job.category?.name !== jobCategoryFilter) return false;
     if (jobLocationFilter !== 'All' && loc !== jobLocationFilter) return false;
     if (jobStatusFilter !== 'All' && job.status !== jobStatusFilter) return false;
     return true;
@@ -1315,7 +1315,7 @@ export default function AdminDashboard() {
                     </div>
                     
                     <div className="flex flex-wrap gap-2 text-xs font-bold mb-4">
-                      <span className="bg-purple-50 text-purple-700 px-2 py-1 rounded-md border border-purple-100 flex items-center gap-1"><Layers className="h-3 w-3"/> {job.category || 'General'}</span>
+                      <span className="bg-purple-50 text-purple-700 px-2 py-1 rounded-md border border-purple-100 flex items-center gap-1"><Layers className="h-3 w-3"/> {job.category?.name || 'General'}</span>
                       <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded-md border border-slate-200">{job.jobType}</span>
                       <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded-md border border-slate-200">{job.experienceLevel}</span>
                     </div>

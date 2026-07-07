@@ -36,9 +36,18 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const token = localStorage.getItem('skyo_token');
+        
+        if (!token) {
+          router.push('/login?redirect=/jobs/' + jobId + '/apply');
+          return;
+        }
+
         const [jobRes, profileRes] = await Promise.all([
           fetch(`${API_URL}/jobs/${jobId}`),
-          fetch(`${API_URL}/users/profile`)
+          fetch(`${API_URL}/users/profile`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          })
         ]);
 
         if (profileRes.status === 401) {
@@ -92,10 +101,12 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
     setSubmitting(true);
 
     try {
+      const token = localStorage.getItem('skyo_token');
       const response = await fetch(`${API_URL}/applications`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           jobId,

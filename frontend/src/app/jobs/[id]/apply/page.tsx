@@ -118,7 +118,42 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-gray-50">Loading profile data...</div>;
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        {/* Skeleton Header matching Open CV Blue Theme */}
+        <div className="bg-[#003c71] pt-20 pb-24 px-4 sm:px-6 lg:px-8 relative">
+          <div className="max-w-4xl mx-auto relative z-10 animate-pulse">
+            <div className="h-4 w-32 bg-blue-800 rounded mb-6"></div>
+            <div className="h-10 w-64 bg-blue-800 rounded mb-4"></div>
+            <div className="h-6 w-96 bg-blue-800 rounded"></div>
+          </div>
+        </div>
+
+        {/* Skeleton Form Card */}
+        <div className="max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 -mt-16 pb-20 relative z-20">
+          <div className="bg-white rounded-xl shadow-xl overflow-hidden animate-pulse">
+            <div className="p-8 sm:p-12">
+              <div className="mb-8">
+                <div className="h-6 w-40 bg-gray-200 rounded mb-4"></div>
+                <div className="mt-4 p-5 bg-gray-100 rounded-lg h-24 w-full"></div>
+              </div>
+              <div className="space-y-8">
+                <div>
+                  <div className="h-5 w-48 bg-gray-200 rounded mb-6"></div>
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <div className="h-14 bg-gray-100 rounded"></div>
+                    <div className="h-14 bg-gray-100 rounded"></div>
+                    <div className="h-14 bg-gray-100 rounded"></div>
+                    <div className="h-14 bg-gray-100 rounded"></div>
+                    <div className="h-14 bg-gray-100 rounded sm:col-span-2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!job) {

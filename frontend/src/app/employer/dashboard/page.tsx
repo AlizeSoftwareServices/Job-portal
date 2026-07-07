@@ -125,7 +125,7 @@ export default function EmployerDashboard() {
       const token = localStorage.getItem('skyo_token');
       const res = await fetch(`${API_URL}/applications`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
-      if(Array.isArray(data)) setDirectApps(data.filter((a: any) => a.job?.recruitmentPosition === 'DIRECT'));
+      if(Array.isArray(data)) setDirectApps(data.filter((a: any) => a.job?.employerId === empId && a.assignedEmployerId !== empId));
     } catch(err) { console.error(err); }
   };
 
@@ -134,7 +134,7 @@ export default function EmployerDashboard() {
       const token = localStorage.getItem('skyo_token');
       const res = await fetch(`${API_URL}/applications`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
-      if(Array.isArray(data)) setSkyoApps(data.filter((a: any) => a.job?.recruitmentPosition === 'SKYO_CONSULTANCY'));
+      if(Array.isArray(data)) setSkyoApps(data.filter((a: any) => a.assignedEmployerId === empId));
     } catch(err) { console.error(err); }
   };
 

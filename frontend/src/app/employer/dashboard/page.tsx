@@ -296,7 +296,7 @@ export default function EmployerDashboard() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}` 
         },
-        body: JSON.stringify(profile)
+        body: JSON.stringify({ employerProfile: profile })
       });
       if (res.ok) {
         alert('Profile updated successfully!');

@@ -79,15 +79,13 @@ export async function PUT(req: NextRequest) {
         where: { userId },
         data: {
           ...(data.employerProfile.companyName && { companyName: data.employerProfile.companyName }),
-          ...(data.employerProfile.hrName && { hrName: data.employerProfile.hrName }),
-          ...(data.employerProfile.secondaryContactNumber && { secondaryContactNumber: data.employerProfile.secondaryContactNumber }),
-          ...(data.employerProfile.website && { website: data.employerProfile.website }),
-          ...(data.employerProfile.location && { location: data.employerProfile.location }),
-          ...(data.employerProfile.description && { description: data.employerProfile.description }),
-          ...(data.employerProfile.establishedYear && { establishedYear: data.employerProfile.establishedYear }),
+          ...(data.employerProfile.companyWebsite && { companyWebsite: data.employerProfile.companyWebsite }),
           ...(data.employerProfile.industry && { industry: data.employerProfile.industry }),
-          ...(data.employerProfile.teamSize && { teamSize: data.employerProfile.teamSize }),
-          ...(data.employerProfile.socialLinks && { socialLinks: data.employerProfile.socialLinks }),
+          ...(data.employerProfile.companyLocation && { companyLocation: data.employerProfile.companyLocation }),
+          ...(data.employerProfile.hrName && { hrName: data.employerProfile.hrName }),
+          ...(data.employerProfile.hrContactNumber && { hrContactNumber: data.employerProfile.hrContactNumber }),
+          ...(data.employerProfile.officialMailId && { officialMailId: data.employerProfile.officialMailId }),
+          ...(data.employerProfile.secondaryContactNumber && { secondaryContactNumber: data.employerProfile.secondaryContactNumber })
         }
       });
     }

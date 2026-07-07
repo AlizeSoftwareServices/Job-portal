@@ -177,8 +177,8 @@ export default function JobDetails({ params }: { params: Promise<{ id: string }>
                     {job.employer.employerProfile.companyName && (
                       <p><span className="font-semibold text-blue-900/60 uppercase text-[10px] tracking-wider block">Company Name</span> {job.employer.employerProfile.companyName}</p>
                     )}
-                    {job.employer.employerProfile.contactPerson && (
-                      <p><span className="font-semibold text-blue-900/60 uppercase text-[10px] tracking-wider block">Contact Person</span> {job.employer.employerProfile.contactPerson}</p>
+                    {job.employer.employerProfile.hrName && (
+                      <p><span className="font-semibold text-blue-900/60 uppercase text-[10px] tracking-wider block">Contact Person</span> {job.employer.employerProfile.hrName}</p>
                     )}
                     {job.employer.employerProfile.companyWebsite && (
                       <p><span className="font-semibold text-blue-900/60 uppercase text-[10px] tracking-wider block">Website</span> <a href={job.employer.employerProfile.companyWebsite} target="_blank" className="underline">{job.employer.employerProfile.companyWebsite}</a></p>

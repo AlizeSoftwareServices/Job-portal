@@ -79,7 +79,7 @@ export async function PUT(req: NextRequest) {
         where: { userId },
         data: {
           ...(data.employerProfile.companyName && { companyName: data.employerProfile.companyName }),
-          ...(data.employerProfile.contactPerson && { contactPerson: data.employerProfile.contactPerson }),
+          ...(data.employerProfile.hrName && { hrName: data.employerProfile.hrName }),
           ...(data.employerProfile.secondaryContactNumber && { secondaryContactNumber: data.employerProfile.secondaryContactNumber }),
           ...(data.employerProfile.website && { website: data.employerProfile.website }),
           ...(data.employerProfile.location && { location: data.employerProfile.location }),

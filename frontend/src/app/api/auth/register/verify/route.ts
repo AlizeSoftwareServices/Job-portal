@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
           employerProfile: {
             create: {
               companyName: companyName || `${firstName} Company`,
-              contactPerson: `${firstName} ${lastName || ''}`.trim(),
+              hrName: `${firstName} ${lastName || ''}`.trim(),
               secondaryContactNumber: secondaryContactNumber || null,
             }
           }

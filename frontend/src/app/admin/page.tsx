@@ -26,6 +26,7 @@ export default function AdminDashboard() {
         localStorage.setItem('skyo_admin_token', data.token);
         localStorage.setItem('skyo_admin_auth', 'true');
         setIsAdminAuthenticated(true);
+      sessionStorage.setItem('active_portal', 'ADMIN');
         window.location.reload();
       } else {
         alert('Invalid username or password');

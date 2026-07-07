@@ -56,6 +56,7 @@ function ProfileContent() {
       setProfile(profileData);
       // Just filter mock for now or use real ones if candidate ID matches
       setApplications(appsData.slice(0, 3));
+      sessionStorage.setItem('active_portal', 'CANDIDATE');
       setLoading(false);
     })
     .catch(err => {

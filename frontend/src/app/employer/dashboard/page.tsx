@@ -83,7 +83,8 @@ export default function EmployerDashboard() {
       fetchDirectApps(empId),
       fetchSkyoApps(empId)
     ]);
-    setLoading(false);
+    sessionStorage.setItem('active_portal', 'EMPLOYER');
+      setLoading(false);
   }
 
   const fetchJobs = async (empId: string) => {

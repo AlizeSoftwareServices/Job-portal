@@ -73,7 +73,57 @@ function ProfileContent() {
     router.push('/login');
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-xl text-blue-800 animate-pulse">Loading Profile...</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-zinc-50 font-sans text-zinc-900 pb-20 flex flex-col">
+        <Navbar />
+        
+        {/* Skeleton Premium Hero Banner */}
+        <div className="w-full bg-gradient-to-r from-[#002b52] via-[#003c71] to-[#0055a4] pt-16 pb-32 relative overflow-hidden">
+          <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center justify-between">
+            <div className="text-center md:text-left mb-6 md:mb-0 animate-pulse">
+              <div className="h-12 w-64 bg-blue-800/50 rounded mb-4"></div>
+              <div className="h-6 w-96 bg-blue-800/50 rounded"></div>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-6xl mx-auto px-6 -mt-20 relative z-20 w-full animate-pulse">
+          {/* Skeleton Tabs */}
+          <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/50 p-2 shadow-[0_8px_30px_rgb(0,0,0,0.08)] mb-8 flex gap-2">
+            <div className="h-12 w-32 bg-gray-200 rounded-xl"></div>
+            <div className="h-12 w-32 bg-gray-200 rounded-xl hidden sm:block"></div>
+            <div className="h-12 w-32 bg-gray-200 rounded-xl hidden sm:block"></div>
+            <div className="h-12 w-32 bg-gray-200 rounded-xl hidden sm:block"></div>
+          </div>
+
+          {/* Skeleton Content */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+            <div className="flex flex-col md:flex-row gap-8">
+              {/* Sidebar Profile skeleton */}
+              <div className="w-full md:w-1/3 flex flex-col items-center">
+                <div className="h-32 w-32 rounded-full bg-gray-200 mb-6"></div>
+                <div className="h-6 w-48 bg-gray-200 rounded mb-4"></div>
+                <div className="h-4 w-64 bg-gray-200 rounded mb-2"></div>
+                <div className="h-4 w-40 bg-gray-200 rounded"></div>
+              </div>
+              {/* Main Content skeleton */}
+              <div className="w-full md:w-2/3 space-y-6">
+                <div className="h-8 w-48 bg-gray-200 rounded mb-6"></div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="h-16 w-full bg-gray-100 rounded-xl"></div>
+                  <div className="h-16 w-full bg-gray-100 rounded-xl"></div>
+                  <div className="h-16 w-full bg-gray-100 rounded-xl"></div>
+                  <div className="h-16 w-full bg-gray-100 rounded-xl"></div>
+                </div>
+                <div className="h-32 w-full bg-gray-100 rounded-xl mt-6"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-zinc-50 font-sans text-zinc-900 pb-20">

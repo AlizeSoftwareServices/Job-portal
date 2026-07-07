@@ -10,7 +10,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
     const job = await prisma.job.update({
       where: { id: resolvedParams.id },
-      data: { status: 'CLOSED', approvalStatus: 'APPROVED' }
+      data: { status: 'COMPLETED', approvalStatus: 'APPROVED' }
     });
     
     return NextResponse.json(job, { status: 200 });

@@ -1177,20 +1177,7 @@ export default function AdminDashboard() {
                         <FieldToggle field="salary" />
                       </div>
 
-                      {editingJobId && (
-                        <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-xl gap-4">
-                          <div className="flex-1">
-                            <label className="block text-sm font-bold text-slate-800">Job Status</label>
-                            <p className="text-xs text-slate-500 mt-0.5">Toggle off to mark this job as Completed.</p>
-                          </div>
-                          <div className="flex items-center gap-3 shrink-0">
-                            <span className="text-xs font-bold text-slate-500">{newJob.status === 'ACTIVE' ? 'Active' : 'Completed'}</span>
-                            <button type="button" onClick={() => setNewJob({...newJob, status: newJob.status === 'ACTIVE' ? 'COMPLETED' : 'ACTIVE'})} className={`w-12 h-6 rounded-full relative transition-colors ${newJob.status === 'ACTIVE' ? 'bg-emerald-500' : 'bg-slate-400'}`}>
-                              <span className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full transition-all ${newJob.status === 'ACTIVE' ? 'left-7' : 'left-1'}`}></span>
-                            </button>
-                          </div>
-                        </div>
-                      )}
+
 
                       <div className="md:col-span-2 flex gap-2 items-start">
                         <div className="flex-1">

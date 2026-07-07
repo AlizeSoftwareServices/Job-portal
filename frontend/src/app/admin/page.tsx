@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Briefcase, Users, Layers, TrendingUp, Settings, LogOut, Search, Bell, Menu, MapPin, Clock, ChevronRight, Eye, EyeOff, Trash2, Edit, Save, X, Upload, Download, Building2, PieChart as PieChartIcon } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import RelationalFlowChart from '@/components/RelationalFlowChart';
 
 export default function AdminDashboard() {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
@@ -837,48 +838,8 @@ export default function AdminDashboard() {
 
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 w-full mb-8">
                 <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2"><PieChartIcon className="h-5 w-5 text-amber-500" /> Platform Advanced Distribution (Categories &rarr; Jobs)</h3>
-                <div className="h-[600px] w-full outline-none focus:outline-none flex justify-center items-center">
-                  <ResponsiveContainer width="100%" height="100%" className="outline-none focus:outline-none">
-                    <PieChart>
-                      <Pie
-                        data={categoryInnerData}
-                        dataKey="value"
-                        nameKey="name"
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={160}
-                        fill="#8884d8"
-                      >
-                        {categoryInnerData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Pie
-                        data={jobsOuterData}
-                        dataKey="value"
-                        nameKey="name"
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={180}
-                        outerRadius={240}
-                        fill="#82ca9d"
-                        label={({ name }) => (name || '').length > 15 ? (name || '').substring(0,15)+'...' : (name || '')}
-                      >
-                        {jobsOuterData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[(index + 2) % COLORS.length]} opacity={0.8} />
-                        ))}
-                      </Pie>
-                      <Tooltip 
-                        contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
-                        formatter={(value: any, name: any, props: any) => [
-                          props.payload?.jobsCount !== undefined 
-                            ? `${props.payload?.jobsCount} Active Jobs, ${props.payload?.appsCount ?? 0} Applications`
-                            : `${props.payload?.appsCount ?? 0} Applications`, 
-                          String(name)
-                        ]}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
+                <div className="w-full">
+                  <RelationalFlowChart categories={categories} jobs={jobs} applications={applications} />
                 </div>
               </div>
             </div>

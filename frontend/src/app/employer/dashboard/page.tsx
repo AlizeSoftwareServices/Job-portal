@@ -868,14 +868,14 @@ export default function EmployerDashboard() {
                         <td className="p-5">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold text-sm shrink-0">
-                              {app.firstName.charAt(0)}{app.lastName.charAt(0)}
+                              {(app.firstName || app.candidate?.firstName || 'U').charAt(0)}{(app.lastName || app.candidate?.lastName || 'U').charAt(0)}
                             </div>
-                            <span className="font-bold text-sm text-slate-800">{app.firstName} {app.lastName}</span>
+                            <span className="font-bold text-sm text-slate-800">{(app.firstName || app.candidate?.firstName || 'Unknown')} {(app.lastName || app.candidate?.lastName || '')}</span>
                           </div>
                         </td>
                         <td className="p-5">
-                          <p className="text-sm font-bold text-slate-700">{app.email}</p>
-                          <p className="text-xs font-medium text-slate-500 mt-0.5">{app.phone}</p>
+                          <p className="text-sm font-bold text-slate-700">{app.email || app.candidate?.email || 'N/A'}</p>
+                          <p className="text-xs font-medium text-slate-500 mt-0.5">{app.phone || app.candidate?.phone || 'N/A'}</p>
                         </td>
                         <td className="p-5">
                           <span className="inline-flex px-3 py-1 rounded-lg bg-blue-50 text-blue-700 text-xs font-bold border border-blue-100">{app.job?.title}</span>
@@ -925,14 +925,14 @@ export default function EmployerDashboard() {
                         <td className="p-5">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-sm shrink-0">
-                              {app.firstName.charAt(0)}{app.lastName.charAt(0)}
+                              {(app.firstName || app.candidate?.firstName || 'U').charAt(0)}{(app.lastName || app.candidate?.lastName || 'U').charAt(0)}
                             </div>
-                            <span className="font-bold text-sm text-slate-800">{app.firstName} {app.lastName}</span>
+                            <span className="font-bold text-sm text-slate-800">{(app.firstName || app.candidate?.firstName || 'Unknown')} {(app.lastName || app.candidate?.lastName || '')}</span>
                           </div>
                         </td>
                         <td className="p-5">
-                          <p className="text-sm font-bold text-slate-700">{app.email}</p>
-                          <p className="text-xs font-medium text-slate-500 mt-0.5">{app.phone}</p>
+                          <p className="text-sm font-bold text-slate-700">{app.email || app.candidate?.email || 'N/A'}</p>
+                          <p className="text-xs font-medium text-slate-500 mt-0.5">{app.phone || app.candidate?.phone || 'N/A'}</p>
                         </td>
                         <td className="p-5">
                           <span className="inline-flex px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-100">{app.job?.title}</span>

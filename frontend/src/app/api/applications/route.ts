@@ -65,7 +65,16 @@ export async function GET(req: NextRequest) {
     if (user.role === 'ADMIN') {
       applications = await prisma.application.findMany({ include: { job: { include: { category: true } }, candidate: true }, orderBy: { appliedAt: 'desc' } });
     } else if (user.role === 'EMPLOYER') {
-      applications = await prisma.application.findMany({ where: { job: { employerId: user.sub } }, include: { job: { include: { category: true } }, candidate: true }, orderBy: { appliedAt: 'desc' } });
+      applications = await prisma.application.findMany({ 
+        where: { 
+          OR: [
+            { job: { employerId: user.sub } },
+            { assignedEmployerId: user.sub }
+          ]
+        }, 
+        include: { job: { include: { category: true } }, candidate: true }, 
+        orderBy: { appliedAt: 'desc' } 
+      });
     } else {
       applications = await prisma.application.findMany({ where: { candidateId: user.sub }, include: { job: { include: { category: true } }, candidate: true }, orderBy: { appliedAt: 'desc' } });
     }

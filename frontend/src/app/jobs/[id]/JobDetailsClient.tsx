@@ -12,6 +12,8 @@ export default function JobDetailsClient({ job }: { job: any }) {
   
   const [hasApplied, setHasApplied] = useState(false);
   const [candidateProfile, setCandidateProfile] = useState<any>(null);
+  const [isSaved, setIsSaved] = useState(false);
+  const [savingJob, setSavingJob] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('skyo_token');
@@ -26,6 +28,16 @@ export default function JobDetailsClient({ job }: { job: any }) {
           const applied = profile.applications.some((app: any) => app.jobId === job.id);
           setHasApplied(applied);
         }
+      })
+      .catch(console.error);
+
+      // Check saved status
+      fetch(`${API_URL}/jobs/${job.id}/save`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        setIsSaved(data.isSaved);
       })
       .catch(console.error);
     }
@@ -52,12 +64,27 @@ export default function JobDetailsClient({ job }: { job: any }) {
     }
   };
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => {
     const token = localStorage.getItem('skyo_token');
     if (!token) {
       router.push('/login');
     } else {
-      alert('Job saved to your profile!');
+      if (savingJob) return;
+      setSavingJob(true);
+      try {
+        const res = await fetch(`${API_URL}/jobs/${job.id}/save`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setIsSaved(data.isSaved);
+        }
+      } catch (err) {
+        console.error('Failed to save job', err);
+      } finally {
+        setSavingJob(false);
+      }
     }
   };
 
@@ -138,10 +165,11 @@ export default function JobDetailsClient({ job }: { job: any }) {
                 )}
                 <button 
                   onClick={handleSaveClick}
-                  className="bg-white border-none text-blue-800 hover:text-blue-800 px-4 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                  disabled={savingJob}
+                  className={`bg-white border-none px-4 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${isSaved ? 'text-blue-500 hover:text-blue-600' : 'text-blue-800 hover:text-blue-800'}`}
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                  Save Job
+                  <svg className="w-5 h-5" fill={isSaved ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                  {isSaved ? 'Saved' : 'Save Job'}
                 </button>
               </div>
 

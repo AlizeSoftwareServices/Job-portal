@@ -27,6 +27,7 @@ function ProfileContent() {
   }, [tabParam]);
 
   const [applications, setApplications] = useState<any[]>([]);
+  const [savedJobs, setSavedJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
   const [profile, setProfile] = useState<any>(null);
@@ -54,6 +55,7 @@ function ProfileContent() {
     ])
     .then(([profileData, appsData]) => {
       setProfile(profileData);
+      setSavedJobs(profileData.savedJobs || []);
       // Just filter mock for now or use real ones if candidate ID matches
       setApplications(appsData.slice(0, 3));
       sessionStorage.setItem('active_portal', 'CANDIDATE');
@@ -162,9 +164,22 @@ function ProfileContent() {
           )}
 
           {activeTab === 'saved' && (
-             <div className="text-center py-16 bg-white rounded-2xl border border-zinc-200">
-               <Bookmark className="h-12 w-12 text-zinc-300 mx-auto mb-4" />
-               <h3 className="text-lg font-bold text-zinc-800">No saved jobs</h3>
+             <div className="bg-white rounded-2xl border border-zinc-200 p-6 md:p-8">
+               <h2 className="text-2xl font-black text-zinc-900 mb-6">Saved Jobs</h2>
+               {savedJobs.length === 0 ? (
+                 <div className="text-center py-16 bg-zinc-50 rounded-xl border border-zinc-100">
+                   <Bookmark className="h-12 w-12 text-zinc-300 mx-auto mb-4" />
+                   <h3 className="text-lg font-bold text-zinc-800">No saved jobs</h3>
+                   <p className="text-zinc-500 mt-2 max-w-sm mx-auto">Jobs you save will appear here. Find jobs you are interested in and click the save button.</p>
+                   <Link href="/jobs" className="mt-4 inline-block bg-blue-800 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors">Find Jobs</Link>
+                 </div>
+               ) : (
+                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                   {savedJobs.map((saved) => (
+                     <JobCard key={saved.id} job={saved.job} />
+                   ))}
+                 </div>
+               )}
              </div>
           )}
 

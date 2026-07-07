@@ -152,6 +152,11 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
   };
 
   const handleSave = async () => {
+    if (!form.resumeUrl) {
+      alert('Please upload your resume before saving the profile.');
+      return;
+    }
+    
     setSaving(true);
     try {
       const token = localStorage.getItem('skyo_token');

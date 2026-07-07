@@ -19,7 +19,12 @@ export async function GET(req: NextRequest) {
             certifications: true
           }
         },
-        employerProfile: true
+        employerProfile: true,
+        savedJobs: {
+          include: {
+            job: true
+          }
+        }
       }
     });
 

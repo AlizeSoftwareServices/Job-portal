@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect, use, useRef } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-
+import { ArrowLeft } from 'lucide-react';
 
 export default function ApplyPage({ params }: { params: Promise<{ id: string }> }) {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
@@ -30,62 +30,84 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
     qualification: '',
     experience: '',
     skills: '',
+    resumeUrl: ''
   });
-  const [resumeFile, setResumeFile] = useState<File | null>(null);
 
   useEffect(() => {
-    fetch(`${API_URL}/jobs/${jobId}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setJob(data);
+    const fetchData = async () => {
+      try {
+        const [jobRes, profileRes] = await Promise.all([
+          fetch(`${API_URL}/jobs/${jobId}`),
+          fetch(`${API_URL}/users/profile`)
+        ]);
+
+        if (profileRes.status === 401) {
+          router.push('/login?redirect=/jobs/' + jobId + '/apply');
+          return;
+        }
+
+        const jobData = await jobRes.json();
+        const profileData = await profileRes.json();
+
+        setJob(jobData);
+
+        // Check if profile is complete
+        const c = profileData.candidateProfile;
+        if (!c || !c.resumeUrl || !profileData.firstName || !profileData.lastName || !profileData.phone) {
+          alert('Please complete your candidate profile (including Resume) before applying for jobs.');
+          router.push('/profile');
+          return;
+        }
+
+        // Auto-fill
+        setFormData({
+          firstName: profileData.firstName || '',
+          lastName: profileData.lastName || '',
+          phone: profileData.phone || '',
+          email: profileData.email || '',
+          noticePeriod: c.noticePeriod || '',
+          street: c.addressStreet || '',
+          city: c.addressCity || '',
+          state: c.addressState || '',
+          country: c.addressCountry || '',
+          zipCode: c.addressZip || '',
+          qualification: c.highestQualification || '',
+          experience: c.totalExperienceYears?.toString() || '',
+          skills: c.skills || '',
+          resumeUrl: c.resumeUrl || ''
+        });
+
         setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error(err);
         setLoading(false);
-      });
-  }, [jobId]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      if (file.size > 100 * 1024) {
-        alert('File size exceeds the 100KB limit. Please upload a smaller file.');
-        e.target.value = '';
-        setResumeFile(null);
-        return;
       }
-      setResumeFile(file);
-    }
-  };
+    };
+
+    fetchData();
+  }, [jobId, router, API_URL]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
 
     try {
-      const data = new FormData();
-      data.append('jobId', jobId);
-      Object.keys(formData).forEach((key) => {
-        data.append(key, (formData as any)[key]);
-      });
-      if (resumeFile) {
-        data.append('resume', resumeFile);
-      }
-
       const response = await fetch(`${API_URL}/applications`, {
         method: 'POST',
-        body: data,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          jobId,
+          resumeUrl: formData.resumeUrl
+        }),
       });
 
       if (response.ok) {
         setSuccess(true);
       } else {
-        alert('Failed to submit application. Please try again.');
+        const err = await response.json();
+        alert(err.message || 'Failed to submit application. Please try again.');
       }
     } catch (error) {
       console.error(error);
@@ -96,7 +118,7 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-gray-50">Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center bg-gray-50">Loading profile data...</div>;
   }
 
   if (!job) {
@@ -124,126 +146,94 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header matching Adecco style (Red header) */}
-      <div className="bg-[#cc0000] text-white pt-20 pb-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold mb-4">Register / Apply</h1>
-          <p className="text-xl opacity-90">Find a great job anywhere in the world.</p>
+      {/* Header matching Open CV Blue Theme */}
+      <div className="bg-[#003c71] text-white pt-20 pb-24 px-4 sm:px-6 lg:px-8 relative">
+        <div className="max-w-4xl mx-auto relative z-10">
+          <Link href={`/jobs/${jobId}`} className="inline-flex items-center text-blue-200 hover:text-white transition-colors mb-6 text-sm font-medium">
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Back to Job Details
+          </Link>
+          <h1 className="text-4xl font-bold mb-4">Confirm Application</h1>
+          <p className="text-xl opacity-90 text-blue-100">Review your profile details before submitting.</p>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 pb-20">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 pb-20 relative z-20">
         <div className="bg-white rounded-xl shadow-xl overflow-hidden">
           <div className="p-8 sm:p-12">
             <div className="mb-8">
-              <h2 className="text-xl text-gray-800 mb-1">Thank you for your interest!</h2>
-              <p className="text-sm text-gray-600">Please fill in your personal information and upload your CV to apply for this position.</p>
+              <h2 className="text-xl font-bold text-gray-800 mb-1">Applying for:</h2>
               
-              <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-100 flex items-center justify-between">
+              <div className="mt-4 p-5 bg-blue-50/50 rounded-lg border border-blue-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <span className="text-xs text-gray-500 uppercase font-semibold tracking-wider">Job Title</span>
-                  <h3 className="text-lg font-medium text-gray-900 mt-1">{job.title}</h3>
+                  <h3 className="text-xl font-bold text-blue-900">{job.title}</h3>
+                  <span className="inline-block px-2.5 py-1 bg-white border border-blue-200 text-blue-800 text-xs font-bold rounded mt-2">{job.jobCode}</span>
                 </div>
-                <div className="text-right">
-                   <span className="text-xs text-gray-500 uppercase font-semibold tracking-wider">Location</span>
-                   <p className="text-sm font-medium text-gray-700 mt-1">{job.locationCity}, {job.locationState}</p>
+                <div className="sm:text-right">
+                   <p className="text-sm font-medium text-gray-700">{job.locationCity}, {job.locationState}</p>
+                   <p className="text-xs text-gray-500 mt-1">{job.jobType} • {job.workMode}</p>
                 </div>
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-8">
               <div>
-                <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4 border-b pb-2">Personal Details</h3>
+                <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4 border-b pb-2 flex justify-between items-center">
+                  Personal Details
+                  <Link href="/profile" className="text-blue-600 hover:text-blue-800 text-xs normal-case">Edit in Profile</Link>
+                </h3>
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">First Name *</label>
-                    <input type="text" name="firstName" required value={formData.firstName} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border" />
+                    <label className="block text-sm font-medium text-gray-500">First Name</label>
+                    <p className="mt-1 font-medium text-gray-900">{formData.firstName || '-'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Last Name *</label>
-                    <input type="text" name="lastName" required value={formData.lastName} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border" />
+                    <label className="block text-sm font-medium text-gray-500">Last Name</label>
+                    <p className="mt-1 font-medium text-gray-900">{formData.lastName || '-'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Email *</label>
-                    <input type="email" name="email" required value={formData.email} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border" />
+                    <label className="block text-sm font-medium text-gray-500">Email</label>
+                    <p className="mt-1 font-medium text-gray-900">{formData.email || '-'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Phone (Primary) *</label>
-                    <input type="tel" name="phone" required value={formData.phone} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border" />
+                    <label className="block text-sm font-medium text-gray-500">Phone</label>
+                    <p className="mt-1 font-medium text-gray-900">{formData.phone || '-'}</p>
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700">Notice Period *</label>
-                    <select name="noticePeriod" required value={formData.noticePeriod} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border">
-                      <option value="">-- None --</option>
-                      <option value="Immediate">Immediate</option>
-                      <option value="15 Days">15 Days</option>
-                      <option value="1 Month">1 Month</option>
-                      <option value="2 Months">2 Months</option>
-                      <option value="3 Months+">3 Months+</option>
-                    </select>
+                    <label className="block text-sm font-medium text-gray-500">Notice Period</label>
+                    <p className="mt-1 font-medium text-gray-900">{formData.noticePeriod || '-'}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-4">
+              <div className="pt-2">
                 <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4 border-b pb-2">Professional Details</h3>
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Highest Qualification *</label>
-                    <input type="text" name="qualification" required value={formData.qualification} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border" placeholder="e.g. B.Tech, MBA" />
+                    <label className="block text-sm font-medium text-gray-500">Highest Qualification</label>
+                    <p className="mt-1 font-medium text-gray-900">{formData.qualification || '-'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Total Experience (Years) *</label>
-                    <input type="text" name="experience" required value={formData.experience} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border" placeholder="e.g. 2, 5, Fresher" />
+                    <label className="block text-sm font-medium text-gray-500">Total Experience (Years)</label>
+                    <p className="mt-1 font-medium text-gray-900">{formData.experience || '-'}</p>
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700">Skills *</label>
-                    <input type="text" name="skills" required value={formData.skills} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border" placeholder="e.g. React, Node.js, Communication" />
+                    <label className="block text-sm font-medium text-gray-500">Skills</label>
+                    <p className="mt-1 font-medium text-gray-900">{formData.skills || '-'}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-4">
-                <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4 border-b pb-2">Address Details</h3>
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                  <div className="sm:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700">Street</label>
-                    <input type="text" name="street" value={formData.street} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border" />
-                  </div>
+              <div className="pt-2">
+                <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4 border-b pb-2 flex justify-between items-center">
+                  Resume
+                  <Link href="/profile" className="text-blue-600 hover:text-blue-800 text-xs normal-case">Update Resume</Link>
+                </h3>
+                <div className="mt-1 flex items-center p-4 border border-green-200 bg-green-50 rounded-md">
+                  <svg className="w-6 h-6 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">City</label>
-                    <input type="text" name="city" value={formData.city} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">State/Province</label>
-                    <input type="text" name="state" value={formData.state} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Country</label>
-                    <input type="text" name="country" value={formData.country} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Zip/Postal Code</label>
-                    <input type="text" name="zipCode" value={formData.zipCode} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-4">
-                <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4 border-b pb-2">Upload CV / Resume</h3>
-                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md bg-gray-50 hover:bg-gray-100 transition">
-                  <div className="space-y-1 text-center">
-                    <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                      <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    <div className="flex text-sm text-gray-600 justify-center">
-                      <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-800 hover:text-amber-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500 px-2 py-1">
-                        <span>Upload a file</span>
-                        <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept=".pdf,.doc,.docx" required />
-                      </label>
-                    </div>
-                    <p className="text-xs text-gray-500">PDF, DOC, DOCX up to 100KB</p>
-                    {resumeFile && <p className="text-sm font-medium text-green-600 mt-2">Selected: {resumeFile.name}</p>}
+                    <p className="text-sm font-medium text-green-800">Your resume is attached from your profile.</p>
+                    <a href={`${API_URL}${formData.resumeUrl}`} target="_blank" rel="noreferrer" className="text-xs text-green-700 hover:underline mt-1 inline-block">View Document</a>
                   </div>
                 </div>
               </div>
@@ -264,9 +254,9 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#008c44] hover:bg-[#006e35] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 transition"
+                  className="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-md text-base font-bold text-white bg-[#003c71] hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition"
                 >
-                  {submitting ? 'Submitting...' : 'Submit Application'}
+                  {submitting ? 'Submitting Application...' : 'Confirm & Submit Application'}
                 </button>
               </div>
             </form>

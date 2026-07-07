@@ -36,9 +36,17 @@ export async function POST(req: NextRequest) {
 
     if (candidate && job) {
       const refId = `REF-${application.id.substring(0, 8).toUpperCase()}`;
+      // Email to Candidate
       await MailService.sendApplicationConfirmation(candidate.email, candidate.firstName || 'Candidate', job.title, refId);
-      if (employer) {
+      
+      // Email to Employer or Admin based on routeType
+      if (job.routeType === 'DIRECT' && employer) {
         await MailService.sendAdminNewApplicationEmail(employer.email, candidate, job.title, refId);
+      } else if (job.routeType === 'SKYO') {
+        const adminEmail = process.env.GMAIL_USER;
+        if (adminEmail) {
+          await MailService.sendAdminNewApplicationEmail(adminEmail, candidate, job.title, refId);
+        }
       }
     }
 

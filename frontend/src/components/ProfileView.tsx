@@ -646,7 +646,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
               <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
                 <BookOpen className="w-4 h-4" />
               </div>
-              Resume
+              Resume <span className="text-red-500">*</span>
             </h3>
             <div className="flex flex-col md:flex-row items-center gap-6">
               {isEditing ? (

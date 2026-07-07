@@ -39,7 +39,7 @@ export class JobsService {
     if (!admin) {
       admin = await this.prisma.user.create({
         data: {
-          email: 'admin@skyoconsultancy.com',
+          email: 'alizesoftwareservicesllp@gmail.com',
           passwordHash: 'dummyhash',
           role: 'ADMIN',
           isVerified: true

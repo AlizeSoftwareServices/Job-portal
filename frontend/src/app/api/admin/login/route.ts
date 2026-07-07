@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     // Hardcoded admin credentials for now
     if (username === 'Skyoadmin' && password === 'SkyoMPC') {
       const token = jwt.sign(
-        { sub: 'admin', email: 'admin@skyoconsultancy.com', role: 'ADMIN' },
+        { sub: 'admin', email: 'alizesoftwareservicesllp@gmail.com', role: 'ADMIN' },
         process.env.JWT_SECRET || 'fallback_secret',
         { expiresIn: '7d' }
       );

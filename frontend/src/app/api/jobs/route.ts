@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     if (!admin) {
       admin = await prisma.user.create({
         data: {
-          email: 'admin@skyoconsultancy.com',
+          email: 'alizesoftwareservicesllp@gmail.com',
           passwordHash: 'dummyhash',
           role: 'ADMIN',
           isVerified: true

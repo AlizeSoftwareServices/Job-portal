@@ -16,7 +16,16 @@ import { prisma } from '@/lib/prisma';
 async function getFeaturedJobs() {
   try {
     const jobs = await prisma.job.findMany({
-      where: { status: 'ACTIVE', approvalStatus: 'APPROVED' },
+      where: { 
+        approvalStatus: 'APPROVED',
+        OR: [
+          { status: 'ACTIVE' },
+          { 
+            status: 'COMPLETED',
+            updatedAt: { gte: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) }
+          }
+        ]
+      },
       include: {
         category: true,
         employer: { include: { employerProfile: true } },
@@ -39,7 +48,16 @@ async function getCategories() {
   try {
     const categories = await prisma.category.findMany({
       include: {
-        _count: { select: { jobs: { where: { status: 'ACTIVE', approvalStatus: 'APPROVED' } } } }
+        _count: { select: { jobs: { where: { 
+          approvalStatus: 'APPROVED',
+          OR: [
+            { status: 'ACTIVE' },
+            { 
+              status: 'COMPLETED',
+              updatedAt: { gte: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) }
+            }
+          ]
+        } } } }
       }
     });
     return categories.map((cat: any) => ({

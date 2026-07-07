@@ -25,6 +25,11 @@ export default function JobCard({ job, showAppliedBadge }: JobCardProps) {
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg> Applied
               </span>
             )}
+            {job.status === 'COMPLETED' && (
+              <span className="text-[10px] md:text-xs font-bold text-zinc-700 bg-zinc-200 px-2 py-1 md:px-3 md:py-1 rounded-full mb-2 inline-flex items-center gap-1 shadow-sm">
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg> Hired
+              </span>
+            )}
             <span className="text-[10px] md:text-xs font-bold text-blue-800 bg-blue-50 px-2 py-1 rounded-md inline-block uppercase tracking-wider">{job.jobCode}</span>
           </div>
         </div>

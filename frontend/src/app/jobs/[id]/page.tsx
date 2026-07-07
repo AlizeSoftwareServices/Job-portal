@@ -152,13 +152,22 @@ export default function JobDetails({ params }: { params: Promise<{ id: string }>
               </div>
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-6">
-                <button 
-                  onClick={hasApplied ? undefined : handleApplyClick}
-                  disabled={hasApplied}
-                  className={`${hasApplied ? 'bg-green-600 cursor-not-allowed' : 'bg-[#003c71] hover:bg-[#002b52]'} text-white px-8 py-3 rounded-lg font-bold transition-colors shadow-sm text-center uppercase tracking-wider text-sm flex items-center justify-center gap-2`}
-                >
-                  {hasApplied ? <><CheckCircle2 className="w-5 h-5" /> Applied</> : 'Apply Now'}
-                </button>
+                {job.status === 'COMPLETED' ? (
+                  <button 
+                    disabled
+                    className="bg-zinc-400 cursor-not-allowed text-white px-8 py-3 rounded-lg font-bold shadow-sm text-center uppercase tracking-wider text-sm flex items-center justify-center gap-2"
+                  >
+                    <CheckCircle2 className="w-5 h-5" /> Hired
+                  </button>
+                ) : (
+                  <button 
+                    onClick={hasApplied ? undefined : handleApplyClick}
+                    disabled={hasApplied}
+                    className={`${hasApplied ? 'bg-green-600 cursor-not-allowed' : 'bg-[#003c71] hover:bg-[#002b52]'} text-white px-8 py-3 rounded-lg font-bold transition-colors shadow-sm text-center uppercase tracking-wider text-sm flex items-center justify-center gap-2`}
+                  >
+                    {hasApplied ? <><CheckCircle2 className="w-5 h-5" /> Applied</> : 'Apply Now'}
+                  </button>
+                )}
                 <button 
                   onClick={handleSaveClick}
                   className="bg-white border-none text-blue-800 hover:text-blue-800 px-4 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"

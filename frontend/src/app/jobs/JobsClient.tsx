@@ -29,8 +29,8 @@ export default function JobsClient({
 
   const filteredJobs = useMemo(() => {
     return initialJobs.filter(job => {
-      // Only show active jobs to users
-      if (job.status && job.status !== 'ACTIVE') return false;
+      // Only show active or recently completed jobs to users
+      if (job.status && job.status !== 'ACTIVE' && job.status !== 'COMPLETED') return false;
 
       // Job Type filtering
       const matchType = selectedJobType === 'All' || job.jobType === selectedJobType;

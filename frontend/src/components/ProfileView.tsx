@@ -129,7 +129,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
 
     try {
       const token = localStorage.getItem('skyo_token');
-      const res = await fetch(`\${'/api'}/users/profile/resume`, {
+      const res = await fetch(`/api/users/profile/resume`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
         body: formData
@@ -207,7 +207,8 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
         }
       };
 
-      const res = await fetch(`\${'/api'}/users/profile`, {
+      const token = localStorage.getItem('skyo_token');
+      const res = await fetch(`/api/users/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

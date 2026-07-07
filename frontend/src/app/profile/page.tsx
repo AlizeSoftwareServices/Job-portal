@@ -58,7 +58,7 @@ export default async function ProfilePage() {
   // Format data for client component
   const profileData = {
     ...user,
-    savedJobs: (user.savedJobs || []).map((sj: any) => sj.job)
+    savedJobs: user.savedJobs || []
   };
 
   return <ProfileClient initialProfile={profileData} initialApplications={applications} />;

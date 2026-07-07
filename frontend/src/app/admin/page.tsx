@@ -18,7 +18,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch('/api/admin/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: JSON.stringify({ username: adminUsername, password: adminPassword })
       });
       if (res.ok) {
@@ -263,7 +263,7 @@ export default function AdminDashboard() {
       if (newJob.newCategoryName.trim() !== '') {
         const catRes = await fetch(`${API_URL}/categories`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
           body: JSON.stringify({ name: newJob.newCategoryName.trim() })
         });
         const catData = await catRes.json();
@@ -277,7 +277,7 @@ export default function AdminDashboard() {
 
       const res = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: JSON.stringify({ ...newJob, categoryId: finalCategoryId, vacancyCount: Number(newJob.vacancyCount) || 1 }) 
       });
       if (res.ok) {
@@ -356,6 +356,7 @@ export default function AdminDashboard() {
       
       const res = await fetch(`${API_URL}/categories/upload-image`, {
         method: 'POST',
+        headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: formData
       });
       
@@ -401,6 +402,7 @@ export default function AdminDashboard() {
       
       const res = await fetch(`${API_URL}/categories/upload-image`, {
         method: 'POST',
+        headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: formData
       });
       
@@ -422,7 +424,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch(`${API_URL}/categories`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: JSON.stringify(newCategory)
       });
       if (res.ok) {
@@ -444,7 +446,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch(`${API_URL}/categories/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: JSON.stringify({ name: editingCategoryName, imageUrl: editingCategoryImage })
       });
       if (res.ok) {
@@ -466,7 +468,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch(`${API_URL}/jobs/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: JSON.stringify({ approvalStatus: status, routeType })
       });
       if (res.ok) {
@@ -482,7 +484,7 @@ export default function AdminDashboard() {
 
   const handleApproveClosure = async (id: string) => {
     try {
-      const res = await fetch(`${API_URL}/jobs/${id}/approve-closure`, { method: 'PUT' });
+      const res = await fetch(`${API_URL}/jobs/${id}/approve-closure`, { method: 'PUT', headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
       if (res.ok) {
         alert('Job closure approved and marked as COMPLETED.');
         fetchJobs();
@@ -499,7 +501,8 @@ export default function AdminDashboard() {
     if (!window.confirm("Are you sure you want to delete this category? All jobs within this category will ALSO be deleted permanently!")) return;
     try {
       const res = await fetch(`${API_URL}/categories/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` }
       });
       if (res.ok) {
         alert('Category and associated jobs deleted successfully!');
@@ -519,7 +522,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch(`${API_URL}/applications/${appId}/status`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: JSON.stringify({ status })
       });
       if (res.ok) {
@@ -532,7 +535,8 @@ export default function AdminDashboard() {
     if(!window.confirm('Are you sure you want to pass this applicant to the selected employer?')) return;
     try {
       const res = await fetch(`${API_URL}/admin/applications/${appId}/assign-employer/${employerId}`, {
-        method: 'GET'
+        method: 'POST',
+        headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` }
       });
       if (res.ok) {
         alert('Applicant passed to employer successfully!');
@@ -570,7 +574,7 @@ export default function AdminDashboard() {
       await updateAppStatus(appId, 'UNDER_REVIEW');
     }
     try {
-      await fetch(`${API_URL}/applications/${appId}/review`, { method: 'PATCH' });
+      await fetch(`${API_URL}/applications/${appId}/review`, { method: 'PATCH', headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
     } catch (err) {
       console.error('Failed to mark as reviewed', err);
     }
@@ -583,7 +587,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch(`${API_URL}/applications/${appId}/send-email`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: JSON.stringify({ subject: emailSubject, message: emailMessage })
       });
       if (res.ok) {

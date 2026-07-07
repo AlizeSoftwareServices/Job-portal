@@ -88,7 +88,7 @@ export default function EmployerDashboard() {
 
   const fetchJobs = async (empId: string) => {
     try {
-      const res = await fetch(`${API_URL}/jobs/employer/${empId}`);
+      const res = await fetch(`${API_URL}/jobs?employerId=${empId}`);
       const data = await res.json();
       setJobs(data);
     } catch (err) { console.error(err); }
@@ -125,17 +125,19 @@ export default function EmployerDashboard() {
   
   const fetchDirectApps = async (empId: string) => {
     try {
-      const res = await fetch(`${API_URL}/applications/employer/${empId}/direct`);
+      const token = localStorage.getItem('skyo_token');
+      const res = await fetch(`${API_URL}/applications`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
-      setDirectApps(data);
+      if(Array.isArray(data)) setDirectApps(data.filter((a: any) => a.job?.recruitmentPosition === 'DIRECT'));
     } catch(err) { console.error(err); }
   };
 
   const fetchSkyoApps = async (empId: string) => {
     try {
-      const res = await fetch(`${API_URL}/applications/employer/${empId}/skyo`);
+      const token = localStorage.getItem('skyo_token');
+      const res = await fetch(`${API_URL}/applications`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
-      setSkyoApps(data);
+      if(Array.isArray(data)) setSkyoApps(data.filter((a: any) => a.job?.recruitmentPosition === 'SKYO_CONSULTANCY'));
     } catch(err) { console.error(err); }
   };
 
@@ -207,7 +209,8 @@ export default function EmployerDashboard() {
   const handleRequestClosure = async (jobId: string) => {
     if (!confirm('Are you sure you want to mark this job as Hired/Closed? It will be sent to the Admin for final completion.')) return;
     try {
-      const res = await fetch(`${API_URL}/jobs/${jobId}/request-closure`, { method: 'PUT' });
+      const token = localStorage.getItem('skyo_token');
+      const res = await fetch(`${API_URL}/jobs/${jobId}/request-closure`, { method: 'PUT', headers: { Authorization: `Bearer ${token}` } });
       if (res.ok) {
         alert('Closure requested! The job is now marked as Completed for you, pending Admin finalization.');
         fetchJobs(employerId);
@@ -218,7 +221,8 @@ export default function EmployerDashboard() {
   const handleRepostJob = async (jobId: string) => {
     if (!confirm('Are you sure you want to re-post this job? It will go back into Pending Approval state.')) return;
     try {
-      const res = await fetch(`${API_URL}/jobs/${jobId}/repost`, { method: 'PUT' });
+      const token = localStorage.getItem('skyo_token');
+      const res = await fetch(`${API_URL}/jobs/${jobId}/repost`, { method: 'PUT', headers: { Authorization: `Bearer ${token}` } });
       if (res.ok) {
         alert('Job re-posted successfully!');
         fetchJobs(employerId);

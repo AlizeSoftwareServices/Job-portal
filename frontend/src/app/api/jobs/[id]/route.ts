@@ -30,9 +30,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     if (error || !user) return NextResponse.json({ message: error }, { status: 401 });
 
     const data = await req.json();
+    const { newCategoryName, ...updateData } = data;
     const job = await prisma.job.update({
       where: { id: resolvedParams.id },
-      data
+      data: updateData
     });
     return NextResponse.json(job, { status: 200 });
   } catch (error: any) {

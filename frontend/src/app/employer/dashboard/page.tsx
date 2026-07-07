@@ -23,7 +23,7 @@ export default function EmployerDashboard() {
   
   const [activeTab, setActiveTab] = useState('profile'); // profile, jobs, direct, skyo
   const [jobSubTab, setJobSubTab] = useState<'active'|'completed'>('active');
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://skyo-backend.onrender.com';
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
      
     
 

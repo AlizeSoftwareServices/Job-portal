@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
 export default function RegisterCVPage() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://skyo-backend.onrender.com';
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
      
     
   const [submitting, setSubmitting] = useState(false);

@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 
 export default function ApplyPage({ params }: { params: Promise<{ id: string }> }) {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://skyo-backend.onrender.com';
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
   const unwrappedParams = use(params);
   const jobId = unwrappedParams.id;
   

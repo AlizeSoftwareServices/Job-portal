@@ -168,7 +168,7 @@ export default function AdminDashboard() {
     setJobCurrentPage(1);
   }, [jobCategoryFilter, jobLocationFilter, jobStatusFilter]);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://skyo-backend.onrender.com';
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
      
     
 

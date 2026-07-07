@@ -11,7 +11,7 @@ import JobCard from '../../components/JobCard';
 import Navbar from '../../components/Navbar';
 
 function ProfileContent() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://skyo-backend.onrender.com';
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
      
     
   const router = useRouter();

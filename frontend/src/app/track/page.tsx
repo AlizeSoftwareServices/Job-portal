@@ -9,7 +9,7 @@ import ProfileLink from '../../components/ProfileLink';
 import Navbar from '../../components/Navbar';
 
 function TrackContent() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://skyo-backend.onrender.com';
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
      
     
   const searchParams = useSearchParams();

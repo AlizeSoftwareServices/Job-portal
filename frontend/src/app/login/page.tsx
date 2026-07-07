@@ -7,7 +7,7 @@ import { ArrowLeft, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { jwtDecode } from 'jwt-decode';
 
 export default function Login() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://skyo-backend.onrender.com';
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
      
     
   const router = useRouter();

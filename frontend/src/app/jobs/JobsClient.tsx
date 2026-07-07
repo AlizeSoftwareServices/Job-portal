@@ -56,7 +56,7 @@ export default function JobsClient({
         
       // Category filtering
       const matchCategory = selectedCategory === 'All' || 
-        (job.category && job.category.toLowerCase() === selectedCategory.toLowerCase());
+        (job.category?.name && job.category.name.toLowerCase() === selectedCategory.toLowerCase());
         
       return matchType && matchExp && matchTitle && matchLoc && matchCategory;
     });

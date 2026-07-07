@@ -100,6 +100,7 @@ export async function GET(req: NextRequest) {
       where.employerId = employerId;
     } else {
       where.status = 'ACTIVE';
+      where.approvalStatus = 'APPROVED';
     }
     
     if (search) {

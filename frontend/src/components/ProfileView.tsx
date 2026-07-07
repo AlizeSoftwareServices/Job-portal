@@ -159,22 +159,47 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
       const skillsArray = form.skills.split(',').map((s: string) => s.trim()).filter((s: string) => s.length > 0);
       
       const payload = {
-        ...form,
-        skills: skillsArray,
-        educations: form.educations.map((e: any) => ({
-          institution: e.institution,
-          degree: e.degree,
-          fieldOfStudy: e.fieldOfStudy,
-          startDate: new Date(e.startDate).toISOString(),
-          endDate: e.endDate ? new Date(e.endDate).toISOString() : null,
-        })),
-        experiences: form.experiences.map((exp: any) => ({
-          company: exp.company,
-          title: exp.title,
-          startDate: new Date(exp.startDate).toISOString(),
-          endDate: exp.endDate ? new Date(exp.endDate).toISOString() : null,
-          description: exp.description,
-        })),
+        firstName: form.firstName,
+        lastName: form.lastName,
+        phone: form.phone,
+        countryCode: form.countryCode,
+        email: form.email,
+        candidateProfile: {
+          fullName: `${form.firstName || ''} ${form.lastName || ''}`.trim(),
+          phone: form.phone,
+          summary: form.summary,
+          expectedSalary: form.expectedSalary,
+          gender: form.gender,
+          dateOfBirth: form.dateOfBirth ? new Date(form.dateOfBirth).toISOString() : null,
+          maritalStatus: form.maritalStatus,
+          secondaryContactNumber: form.secondaryContactNumber,
+          educationQualification: form.educationQualification,
+          totalWorkExperienceYears: form.totalWorkExperienceYears,
+          currentWorkingDetails: form.currentWorkingDetails,
+          fatherName: form.fatherName,
+          fatherOccupation: form.fatherOccupation,
+          motherName: form.motherName,
+          motherOccupation: form.motherOccupation,
+          currentSalary: form.currentSalary,
+          currentStay: form.currentStay,
+          nativePlace: form.nativePlace,
+          interestFieldToWork: form.interestFieldToWork,
+          skills: skillsArray,
+          educations: form.educations.map((e: any) => ({
+            institution: e.institution,
+            degree: e.degree,
+            fieldOfStudy: e.fieldOfStudy,
+            startDate: e.startDate ? new Date(e.startDate).toISOString() : new Date().toISOString(),
+            endDate: e.endDate ? new Date(e.endDate).toISOString() : null,
+          })),
+          experiences: form.experiences.map((exp: any) => ({
+            company: exp.company,
+            title: exp.title,
+            startDate: exp.startDate ? new Date(exp.startDate).toISOString() : new Date().toISOString(),
+            endDate: exp.endDate ? new Date(exp.endDate).toISOString() : null,
+            description: exp.description,
+          }))
+        }
       };
 
       const res = await fetch(`\${'/api'}/users/profile`, {
@@ -330,7 +355,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
           {/* Summary */}
           <div className="w-full mb-8">
             {isEditing ? (
-              <textarea name="summary" value={form.summary} onChange={handleChange} className={`${inputClass} min-h-[120px] text-sm`} placeholder="Write your professional summary..."></textarea>
+              <textarea name="summary" value={form.summary} onChange={handleChange} maxLength={1000} className={`${inputClass} min-h-[120px] text-sm`} placeholder="Write your professional summary..."></textarea>
             ) : (
               <p className="text-sm text-zinc-600 text-center leading-relaxed">
                 {form.summary || "No professional summary added yet."}
@@ -567,7 +592,10 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
               <div>
                 <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Current Salary(Rs)/Month *</span>
                 {isEditing ? (
-                  <input type="text" name="currentSalary" value={form.currentSalary} onChange={handleChange} className={inputClass} required />
+                  <>
+                    <input type="text" name="currentSalary" value={form.currentSalary} onChange={handleChange} className={inputClass} required />
+                    <span className="text-[10px] text-zinc-500 mt-1 block">If u are a student, put NIL</span>
+                  </>
                 ) : (
                   <p className="text-sm font-medium text-zinc-800">{form.currentSalary || 'Not specified'}</p>
                 )}

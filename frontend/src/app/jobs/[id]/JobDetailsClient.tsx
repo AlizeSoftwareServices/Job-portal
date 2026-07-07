@@ -40,10 +40,10 @@ export default function JobDetailsClient({ job }: { job: any }) {
       if (candidateProfile) {
         // Check if profile is complete
         const profile = candidateProfile.candidateProfile;
-        const isComplete = profile?.fullName && profile?.phone && profile?.preferredLocation && profile?.educationQualification && profile?.totalWorkExperienceYears;
+        const isComplete = profile?.fullName && profile?.phone && profile?.preferredLocation && profile?.educationQualification && profile?.totalWorkExperienceYears && profile?.resumeUrl;
         
         if (!isComplete) {
-          alert('Please complete your candidate profile before applying for jobs.');
+          alert('Please complete your candidate profile (including Resume) before applying for jobs.');
           router.push('/profile');
           return;
         }

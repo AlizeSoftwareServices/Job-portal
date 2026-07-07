@@ -64,14 +64,44 @@ export async function PUT(req: NextRequest) {
         where: { userId },
         data: {
           ...(data.candidateProfile.fullName && { fullName: data.candidateProfile.fullName }),
-          ...(data.candidateProfile.title && { title: data.candidateProfile.title }),
           ...(data.candidateProfile.phone && { phone: data.candidateProfile.phone }),
           ...(data.candidateProfile.address && { address: data.candidateProfile.address }),
-          ...(data.candidateProfile.currentLocation && { currentLocation: data.candidateProfile.currentLocation }),
+          ...(data.candidateProfile.summary && { summary: data.candidateProfile.summary }),
           ...(data.candidateProfile.expectedSalary && { expectedSalary: data.candidateProfile.expectedSalary }),
-          ...(data.candidateProfile.dob && { dob: new Date(data.candidateProfile.dob) }),
+          ...(data.candidateProfile.gender && { gender: data.candidateProfile.gender }),
+          ...(data.candidateProfile.dateOfBirth && { dateOfBirth: new Date(data.candidateProfile.dateOfBirth) }),
           ...(data.candidateProfile.maritalStatus && { maritalStatus: data.candidateProfile.maritalStatus }),
-          ...(data.candidateProfile.about && { about: data.candidateProfile.about }),
+          ...(data.candidateProfile.secondaryContactNumber && { secondaryContactNumber: data.candidateProfile.secondaryContactNumber }),
+          ...(data.candidateProfile.educationQualification && { educationQualification: data.candidateProfile.educationQualification }),
+          ...(data.candidateProfile.totalWorkExperienceYears && { totalWorkExperienceYears: data.candidateProfile.totalWorkExperienceYears }),
+          ...(data.candidateProfile.currentWorkingDetails && { currentWorkingDetails: data.candidateProfile.currentWorkingDetails }),
+          ...(data.candidateProfile.fatherName && { fatherName: data.candidateProfile.fatherName }),
+          ...(data.candidateProfile.fatherOccupation && { fatherOccupation: data.candidateProfile.fatherOccupation }),
+          ...(data.candidateProfile.motherName && { motherName: data.candidateProfile.motherName }),
+          ...(data.candidateProfile.motherOccupation && { motherOccupation: data.candidateProfile.motherOccupation }),
+          ...(data.candidateProfile.currentSalary && { currentSalary: data.candidateProfile.currentSalary }),
+          ...(data.candidateProfile.currentStay && { currentStay: data.candidateProfile.currentStay }),
+          ...(data.candidateProfile.nativePlace && { nativePlace: data.candidateProfile.nativePlace }),
+          ...(data.candidateProfile.interestFieldToWork && { interestFieldToWork: data.candidateProfile.interestFieldToWork }),
+          // Handle relationships (delete old and create new)
+          ...(data.candidateProfile.skills && {
+            skills: {
+              deleteMany: {},
+              create: data.candidateProfile.skills.map((name: string) => ({ name }))
+            }
+          }),
+          ...(data.candidateProfile.educations && {
+            educations: {
+              deleteMany: {},
+              create: data.candidateProfile.educations
+            }
+          }),
+          ...(data.candidateProfile.experiences && {
+            experiences: {
+              deleteMany: {},
+              create: data.candidateProfile.experiences
+            }
+          })
         }
       });
     } else if (user.role === 'EMPLOYER' && data.employerProfile) {

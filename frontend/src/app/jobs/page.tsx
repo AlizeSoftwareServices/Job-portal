@@ -10,11 +10,23 @@ export const dynamic = 'force-dynamic';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
+import { prisma } from '@/lib/prisma';
+
 async function getJobs() {
   try {
-    const res = await fetch(`${API_URL}/jobs`, { cache: 'no-store' });
-    if (!res.ok) return [];
-    return res.json();
+    const jobs = await prisma.job.findMany({
+      where: { status: 'ACTIVE', approvalStatus: 'APPROVED' },
+      include: {
+        category: true,
+        employer: { include: { employerProfile: true } },
+        _count: { select: { applications: true } }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+    return jobs.map((job: any) => ({
+      ...job,
+      applicationsCount: job._count.applications
+    }));
   } catch (err) {
     return [];
   }
@@ -22,9 +34,15 @@ async function getJobs() {
 
 async function getCategories() {
   try {
-    const res = await fetch(`${API_URL}/categories`, { cache: 'no-store' });
-    if (!res.ok) return [];
-    return res.json();
+    const categories = await prisma.category.findMany({
+      include: {
+        _count: { select: { jobs: { where: { status: 'ACTIVE', approvalStatus: 'APPROVED' } } } }
+      }
+    });
+    return categories.map((cat: any) => ({
+      ...cat,
+      jobCount: cat._count.jobs
+    }));
   } catch (err) {
     return [];
   }

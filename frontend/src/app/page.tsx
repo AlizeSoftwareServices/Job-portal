@@ -11,12 +11,24 @@ export const dynamic = 'force-dynamic';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
+import { prisma } from '@/lib/prisma';
+
 async function getFeaturedJobs() {
   try {
-    const res = await fetch(`${API_URL}/jobs`, { cache: 'no-store' });
-    if (!res.ok) return [];
-    const jobs = await res.json();
-    return jobs.filter((j: any) => j.status === 'ACTIVE' || !j.status).slice(0, 6); // Just show top 6 active
+    const jobs = await prisma.job.findMany({
+      where: { status: 'ACTIVE', approvalStatus: 'APPROVED' },
+      include: {
+        category: true,
+        employer: { include: { employerProfile: true } },
+        _count: { select: { applications: true } }
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 6
+    });
+    return jobs.map((job: any) => ({
+      ...job,
+      applicationsCount: job._count.applications
+    }));
   } catch (err) {
     console.error('Failed to fetch jobs:', err);
     return [];
@@ -25,9 +37,15 @@ async function getFeaturedJobs() {
 
 async function getCategories() {
   try {
-    const res = await fetch(`${API_URL}/categories`, { cache: 'no-store' });
-    if (!res.ok) return [];
-    return await res.json();
+    const categories = await prisma.category.findMany({
+      include: {
+        _count: { select: { jobs: { where: { status: 'ACTIVE', approvalStatus: 'APPROVED' } } } }
+      }
+    });
+    return categories.map((cat: any) => ({
+      ...cat,
+      jobCount: cat._count.jobs
+    }));
   } catch (err) {
     console.error('Failed to fetch categories:', err);
     return [];

@@ -617,7 +617,23 @@ export default function AdminDashboard() {
   const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
   const totalJobPages = Math.ceil(filteredJobs.length / jobsPerPage);
 
-  if (loading || !adminAuthChecked) return <div className="min-h-screen flex items-center justify-center bg-[#0B132B] text-blue-400 font-bold animate-pulse text-xl">Loading Admin Portal...</div>;
+  if (loading || !adminAuthChecked) return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-50">
+      <div className="animate-[pulse_1.5s_ease-in-out_infinite] flex flex-col items-center">
+        <img src="/logo.png" alt="Skyo Logo" className="h-28 md:h-36 w-auto object-contain mix-blend-multiply" />
+        <div className="mt-8 w-48 h-1.5 bg-zinc-200 rounded-full overflow-hidden">
+          <div className="h-full bg-blue-600 rounded-full w-1/2 animate-[slideRight_1s_ease-in-out_infinite]" style={{ animation: 'slideRight 1s ease-in-out infinite alternate' }}>
+            <style>{`
+              @keyframes slideRight {
+                0% { transform: translateX(0%); }
+                100% { transform: translateX(100%); }
+              }
+            `}</style>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
   if (!isAdminAuthenticated) {
     return (

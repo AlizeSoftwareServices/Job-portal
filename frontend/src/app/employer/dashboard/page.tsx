@@ -143,6 +143,25 @@ export default function EmployerDashboard() {
     checkAuth();
   }, []);
 
+  // Real-time polling
+  useEffect(() => {
+    if (!employerId) return;
+    
+    const fetchCurrentTab = () => {
+      fetchJobs(employerId);
+      if (activeTab === 'direct') fetchDirectApps(employerId);
+      if (activeTab === 'skyo') fetchSkyoApps(employerId);
+    };
+
+    window.addEventListener('focus', fetchCurrentTab);
+    const interval = setInterval(fetchCurrentTab, 3000); // 3-second polling
+
+    return () => {
+      window.removeEventListener('focus', fetchCurrentTab);
+      clearInterval(interval);
+    };
+  }, [employerId, activeTab]);
+
   const handleLogout = () => {
     if (!window.confirm('Are you sure you want to log out?')) return;
     localStorage.removeItem('skyo_token');

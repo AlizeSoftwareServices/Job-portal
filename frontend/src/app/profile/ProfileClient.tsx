@@ -23,9 +23,14 @@ export default function ProfileClient({ initialProfile, initialApplications }: {
     }
   }, [tabParam]);
 
-  const [applications] = useState<any[]>(initialApplications.slice(0, 3) || []);
+  const applications = initialApplications.slice(0, 3) || [];
   const [savedJobs, setSavedJobs] = useState<any[]>(initialProfile?.savedJobs || []);
   const [profile, setProfile] = useState<any>(initialProfile);
+
+  useEffect(() => {
+    setProfile(initialProfile);
+    setSavedJobs(initialProfile?.savedJobs || []);
+  }, [initialProfile]);
   
   const getPhoneMaxLength = (code: string) => {
     if (code === '+91') return 10;
@@ -37,7 +42,19 @@ export default function ProfileClient({ initialProfile, initialApplications }: {
 
   useEffect(() => {
     sessionStorage.setItem('active_portal', 'CANDIDATE');
-  }, []);
+
+    const refreshData = () => {
+      router.refresh();
+    };
+
+    window.addEventListener('focus', refreshData);
+    const interval = setInterval(refreshData, 3000);
+
+    return () => {
+      window.removeEventListener('focus', refreshData);
+      clearInterval(interval);
+    };
+  }, [router]);
 
   const handleLogout = async () => {
     if (!window.confirm('Are you sure you want to log out?')) return;

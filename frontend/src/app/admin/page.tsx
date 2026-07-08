@@ -212,8 +212,27 @@ export default function AdminDashboard() {
   }, [jobDebouncedSearch, jobStatusFilter]);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
-     
+
+  // Real-time polling
+  useEffect(() => {
+    if (!isAdminAuthenticated) return;
     
+    const fetchCurrentTab = () => {
+      fetchStats();
+      fetchFlowchartStats();
+      if (activeTab === 'jobs') fetchJobs();
+      if (activeTab === 'applications') fetchApplications();
+    };
+
+    window.addEventListener('focus', fetchCurrentTab);
+    const interval = setInterval(fetchCurrentTab, 3000); // 3-second real-time polling
+
+    return () => {
+      window.removeEventListener('focus', fetchCurrentTab);
+      clearInterval(interval);
+    };
+  }, [isAdminAuthenticated, activeTab, jobCurrentPage, jobDebouncedSearch, jobStatusFilter, appCurrentPage, appDebouncedSearch, appStatusFilter]);
+
 
   const fetchJobs = async (signal?: AbortSignal) => {
     try {
@@ -221,8 +240,12 @@ export default function AdminDashboard() {
         page: jobCurrentPage.toString(),
         limit: jobsPerPage.toString(),
         search: jobDebouncedSearch,
-        status: jobStatusFilter,
       });
+      if (jobStatusFilter === 'PENDING_APPROVAL' || jobStatusFilter === 'REJECTED') {
+        params.append('approvalStatus', jobStatusFilter);
+      } else if (jobStatusFilter !== 'All') {
+        params.append('status', jobStatusFilter);
+      }
       const res = await fetch(`${API_URL}/jobs/admin-all?${params.toString()}`, { 
         headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         signal 
@@ -1276,6 +1299,8 @@ export default function AdminDashboard() {
                     <option value="All">All Statuses</option>
                     <option value="ACTIVE">Active</option>
                     <option value="COMPLETED">Completed</option>
+                    <option value="PENDING_APPROVAL">Pending Approval</option>
+                    <option value="REJECTED">Rejected</option>
                   </select>
                 </div>
                 <div className="flex-1">

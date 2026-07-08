@@ -52,10 +52,16 @@ export default function JobDetailsClient({ job }: { job: any }) {
       if (candidateProfile) {
         // Check if profile is complete
         const profile = candidateProfile.candidateProfile;
-        const isComplete = profile?.fullName && profile?.phone && profile?.preferredLocation && profile?.educationQualification && profile?.totalWorkExperienceYears && profile?.resumeUrl;
-        
-        if (!isComplete) {
-          alert('Please complete your candidate profile (including Resume) before applying for jobs.');
+        const missingFields = [];
+        if (!profile?.fullName) missingFields.push('Full Name');
+        if (!profile?.phone && !candidateProfile.phone) missingFields.push('Phone Number');
+        if (!profile?.preferredLocation) missingFields.push('Preferred Location');
+        if (!profile?.educationQualification) missingFields.push('Highest Education');
+        if (!profile?.totalWorkExperienceYears) missingFields.push('Total Experience');
+        if (!profile?.resumeUrl) missingFields.push('Resume');
+
+        if (missingFields.length > 0) {
+          alert(`Please complete the following fields in your profile before applying:\n- ${missingFields.join('\n- ')}\n\nMake sure to click "Save Profile" after uploading your resume or making changes.`);
           router.push('/profile');
           return;
         }

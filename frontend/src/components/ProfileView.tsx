@@ -99,6 +99,14 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
       if (!res.ok) throw new Error();
       const body = await res.json();
       setForm({ ...form, avatarUrl: body.avatarUrl });
+      try {
+        const token = localStorage.getItem('skyo_token');
+        await fetch(`/api/users/profile`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ candidateProfile: { avatarUrl: body.avatarUrl } })
+        });
+      } catch (e) {}
     } catch {
       alert('Failed to upload avatar.');
     } finally {
@@ -135,7 +143,14 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
       if (res.ok) {
         const data = await res.json();
         setForm({ ...form, resumeUrl: data.resumeUrl });
-        alert('Resume uploaded! Save profile to keep changes.');
+        try {
+          await fetch(`/api/users/profile`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ candidateProfile: { resumeUrl: data.resumeUrl } })
+          });
+        } catch (e) {}
+        alert('Resume uploaded successfully!');
       } else {
         const err = await res.json();
         alert(err.message || 'Upload failed');

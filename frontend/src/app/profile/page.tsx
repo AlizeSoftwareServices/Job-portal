@@ -24,7 +24,15 @@ export default async function ProfilePage() {
   const user: any = await prisma.user.findUnique({
     where: { id: userId },
     include: {
-      candidateProfile: true,
+      candidateProfile: {
+        include: {
+          skills: true,
+          experiences: true,
+          educations: true,
+          projects: true,
+          certifications: true
+        }
+      },
       savedJobs: {
         include: {
           job: {

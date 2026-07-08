@@ -338,23 +338,15 @@ export default function AdminDashboard() {
       return;
     }
 
-    if (file.size > 10 * 1024 * 1024) {
-      alert('File size too large before compression.');
+    if (file.size > 50 * 1024) {
+      alert('Image size exceeds 50KB limit. Please upload a smaller image.');
       e.target.value = '';
       return;
     }
 
     try {
-      const options = {
-        maxSizeMB: 0.05,
-        maxWidthOrHeight: 800,
-        useWebWorker: true
-      };
-      // @ts-ignore
-      const compressedFile = await imageCompression(file, options);
-      
       const formData = new FormData();
-      formData.append('file', compressedFile);
+      formData.append('file', file); // Use original file since it's already under 50KB
       
       const res = await fetch(`${API_URL}/categories/upload-image`, {
         method: 'POST',
@@ -384,23 +376,15 @@ export default function AdminDashboard() {
       return;
     }
 
-    if (file.size > 10 * 1024 * 1024) {
-      alert('File size too large before compression.');
+    if (file.size > 50 * 1024) {
+      alert('Image size exceeds 50KB limit. Please upload a smaller image.');
       e.target.value = '';
       return;
     }
 
     try {
-      const options = {
-        maxSizeMB: 0.05,
-        maxWidthOrHeight: 800,
-        useWebWorker: true
-      };
-      // @ts-ignore
-      const compressedFile = await imageCompression(file, options);
-      
       const formData = new FormData();
-      formData.append('file', compressedFile);
+      formData.append('file', file); // Use original file since it's already under 50KB
       
       const res = await fetch(`${API_URL}/categories/upload-image`, {
         method: 'POST',
@@ -978,7 +962,7 @@ export default function AdminDashboard() {
                       <input type="text" required value={newCategory.name} onChange={e => setNewCategory({...newCategory, name: e.target.value})} className="w-full border border-purple-200 p-2.5 rounded-lg outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 bg-white" placeholder="e.g. Sales" />
                     </div>
                     <div className="flex-1">
-                      <label className="block text-sm font-bold text-slate-700 mb-1">Upload Image (Max 100KB, JPG/PNG)</label>
+                      <label className="block text-sm font-bold text-slate-700 mb-1">Upload Image (Max 50KB, JPG/PNG)</label>
                       <input 
                         type="file" 
                         accept=".jpg,.jpeg,.png"

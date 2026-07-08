@@ -74,8 +74,8 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
     const file = e.target.files?.[0];
     if (!file) return;
     
-    if (file.size > 10 * 1024 * 1024) {
-      alert('Avatar size too large before compression.');
+    if (file.size > 50 * 1024) {
+      alert('Image size exceeds 50KB limit. Please upload a smaller image.');
       e.target.value = '';
       return;
     }
@@ -88,12 +88,8 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
 
     setUploadingAvatar(true);
     try {
-      const options = { maxSizeMB: 0.05, maxWidthOrHeight: 800, useWebWorker: true };
-      // @ts-ignore
-      const compressedFile = await imageCompression(file, options);
-      
       const data = new FormData();
-      data.append('file', compressedFile);
+      data.append('file', file);
       const token = localStorage.getItem('skyo_token');
       const res = await fetch(`/api/users/profile/avatar`, {
         method: 'POST',
@@ -327,6 +323,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
             )}
             <input type="file" ref={avatarInputRef} className="hidden" accept="image/jpeg,image/png,image/jpg" onChange={handleAvatarUpload} />
           </div>
+          <p className="text-[10px] text-slate-400 font-bold mb-4 text-center">(Max size 50KB, JPEG/PNG/JPG only)</p>
 
           {isEditing && form.avatarUrl && (
             <button 

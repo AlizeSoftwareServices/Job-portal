@@ -29,6 +29,7 @@ export default function EmployerDashboard() {
 
   // New Job Form State
   const [isCreatingJob, setIsCreatingJob] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const defaultJobState = {
     title: '',
@@ -151,6 +152,7 @@ export default function EmployerDashboard() {
 
   const handleSaveJob = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
     const confirmed = window.confirm("Are you sure you want to submit this Job Post Request? Once submitted, it cannot be edited.");
     if (!confirmed) return;
     if (!newJob.title?.trim()) return alert('Please enter a Job Title');
@@ -160,12 +162,16 @@ export default function EmployerDashboard() {
     if (!newJob.description?.trim()) return alert('Please enter a Description');
     if (!newJob.requirements?.trim()) return alert('Please enter Requirements');
 
+    setIsSubmitting(true);
     try {
       const token = localStorage.getItem('skyo_token');
       
       let finalCategoryId = newJob.categoryId;
       if (newJob.categoryId === 'NEW') {
-        if (!newJob.newCategoryName.trim()) return alert('Please enter new category name');
+        if (!newJob.newCategoryName.trim()) {
+          setIsSubmitting(false);
+          return alert('Please enter new category name');
+        }
       }
 
       if (newJob.newCategoryName.trim() !== '') {
@@ -203,6 +209,9 @@ export default function EmployerDashboard() {
       }
     } catch (err) {
       console.error(err);
+      alert('An error occurred.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -695,7 +704,7 @@ export default function EmployerDashboard() {
                         </div>
                         <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-slate-100">
                           <button type="button" onClick={() => { setNewJob(defaultJobState); setIsCreatingJob(false); }} className="px-8 py-3 rounded-xl font-bold text-slate-600 hover:bg-slate-100 transition-colors">Cancel</button>
-                          <button type="submit" formNoValidate className="bg-[#003c71] text-white font-bold py-3 px-8 rounded-xl hover:bg-[#002b52] shadow-md hover:shadow-lg transition-all">Submit for Approval</button>
+                          <button type="submit" formNoValidate disabled={isSubmitting} className={`bg-[#003c71] text-white font-bold py-3 px-8 rounded-xl shadow-md transition-all ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#002b52] hover:shadow-lg'}`}>{isSubmitting ? 'Submitting...' : 'Submit for Approval'}</button>
                         </div>
                       </form>
                   </div>

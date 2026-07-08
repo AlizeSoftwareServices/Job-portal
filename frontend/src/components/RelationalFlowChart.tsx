@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Briefcase, Layers, Users, ChevronRight } from 'lucide-react';
 
 interface RelationalFlowChartProps {
@@ -12,6 +12,8 @@ interface RelationalFlowChartProps {
 export default function RelationalFlowChart({ categories = [], jobs = [], applications = [], categoryDetailedList = [] }: RelationalFlowChartProps) {
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [selectedJob, setSelectedJob] = useState<any>(null);
+  const [lazyApplications, setLazyApplications] = useState<any[]>([]);
+  const [isLoadingApps, setIsLoadingApps] = useState(false);
 
   // Derive unique categories from jobs if category list is empty or for safety
   const activeCategories = useMemo(() => {
@@ -31,8 +33,28 @@ export default function RelationalFlowChart({ categories = [], jobs = [], applic
   // Derive applications for selected job
   const jobApplications = useMemo(() => {
     if (!selectedJob) return [];
+    if (categoryDetailedList && categoryDetailedList.length > 0) return lazyApplications;
     return applications.filter(a => a.job?.id === selectedJob.id || a.jobId === selectedJob.id);
-  }, [applications, selectedJob]);
+  }, [applications, selectedJob, categoryDetailedList, lazyApplications]);
+
+  useEffect(() => {
+    if (selectedJob && categoryDetailedList && categoryDetailedList.length > 0) {
+      setIsLoadingApps(true);
+      fetch(`/api/applications/job/${selectedJob.id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) setLazyApplications(data);
+          else setLazyApplications([]);
+        })
+        .catch(err => {
+          console.error(err);
+          setLazyApplications([]);
+        })
+        .finally(() => setIsLoadingApps(false));
+    } else {
+      setLazyApplications([]);
+    }
+  }, [selectedJob, categoryDetailedList]);
 
   const handleCategoryClick = (cat: any) => {
     if (selectedCategory?.id === cat.id && selectedCategory?.name === cat.name) {
@@ -132,9 +154,9 @@ export default function RelationalFlowChart({ categories = [], jobs = [], applic
             <Users className="w-4 h-4" /> Applications for {selectedJob.title}
           </h3>
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 pb-4 max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
-            {categoryDetailedList && categoryDetailedList.length > 0 ? (
+            {isLoadingApps ? (
               <div className="text-slate-500 italic p-4 text-sm bg-white border border-slate-200 rounded-xl xl:col-span-2">
-                Applications are lazy-loaded. Go to the Applications tab in the sidebar to view candidate details for this job.
+                Loading applications...
               </div>
             ) : jobApplications.length > 0 ? jobApplications.map(app => {
               
@@ -149,6 +171,9 @@ export default function RelationalFlowChart({ categories = [], jobs = [], applic
               }
               
               if (!name) name = 'Unknown Candidate';
+
+              const phone = app.phone || app.candidate?.candidateProfile?.phone || 'No phone provided';
+              const resume = app.resumeUrl || app.candidate?.candidateProfile?.resumeUrl;
 
               const statusColors: any = {
                 'APPLIED': 'bg-slate-100 text-slate-700',
@@ -166,18 +191,25 @@ export default function RelationalFlowChart({ categories = [], jobs = [], applic
                       <div className="h-10 w-10 rounded-full bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center shrink-0">
                         <Users className="h-5 w-5" />
                       </div>
-                      <div className="truncate">
+                      <div className="truncate flex-1">
                         <h4 className="font-bold text-slate-800 truncate" title={name}>{name}</h4>
-                        <p className="text-xs text-slate-500 truncate mt-0.5">{app.email || app.candidate?.email || 'No email provided'}</p>
+                        <p className="text-xs text-slate-500 truncate mt-0.5">{phone}</p>
                       </div>
                     </div>
                   </div>
                   
                   <div className="flex items-center justify-between border-t border-slate-100 pt-3 mt-1">
                     <span className="text-xs text-slate-400 font-medium">{new Date(app.appliedAt || app.createdAt).toLocaleDateString()}</span>
-                    <span className={`text-[9px] font-bold px-2 py-1 rounded border uppercase tracking-wider ${statusColors[app.status] || 'bg-slate-50 border-slate-200'}`}>
-                      {app.status === 'SELECTED' ? 'APPOINTED' : app.status.replace('_', ' ')}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      {resume && (
+                        <a href={resume} target="_blank" rel="noopener noreferrer" className="text-[9px] font-bold px-2 py-1 rounded border uppercase tracking-wider bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100">
+                          View Resume
+                        </a>
+                      )}
+                      <span className={`text-[9px] font-bold px-2 py-1 rounded border uppercase tracking-wider ${statusColors[app.status] || 'bg-slate-50 border-slate-200'}`}>
+                        {app.status === 'SELECTED' ? 'APPOINTED' : app.status.replace('_', ' ')}
+                      </span>
+                    </div>
                   </div>
                 </div>
               );

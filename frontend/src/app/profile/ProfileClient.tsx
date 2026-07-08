@@ -87,31 +87,35 @@ export default function ProfileClient({ initialProfile, initialApplications }: {
       <div className="max-w-6xl mx-auto px-6 -mt-20 relative z-20">
         
         {/* Modern Navigation Tabs (Glassmorphic) */}
-        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/50 p-2 shadow-[0_8px_30px_rgb(0,0,0,0.08)] mb-8 flex overflow-x-auto no-scrollbar">
-          <div className="flex gap-2 min-w-max w-full">
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/50 p-1.5 md:p-2 shadow-[0_8px_30px_rgb(0,0,0,0.08)] mb-8">
+          <div className="grid grid-cols-4 gap-1.5 md:gap-2 w-full">
             <button 
               onClick={() => setActiveTab('profile')}
-              className={`flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold transition-all text-sm ${activeTab === 'profile' ? 'bg-[#003c71] text-white shadow-md transform scale-[1.02]' : 'text-zinc-600 hover:bg-white/60 hover:text-blue-800'}`}
+              className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 md:px-6 md:py-3.5 rounded-xl font-bold transition-all text-[10px] sm:text-xs md:text-sm text-center ${activeTab === 'profile' ? 'bg-[#003c71] text-white shadow-md transform md:scale-[1.02]' : 'text-zinc-600 hover:bg-white/60 hover:text-blue-800'}`}
             >
-              <User className="h-4 w-4 shrink-0" /> My Profile
+              <User className="h-4 w-4 shrink-0" /> 
+              <span className="leading-tight">My Profile</span>
             </button>
             <button 
               onClick={() => setActiveTab('applied')}
-              className={`flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold transition-all text-sm ${activeTab === 'applied' ? 'bg-[#003c71] text-white shadow-md transform scale-[1.02]' : 'text-zinc-600 hover:bg-white/60 hover:text-blue-800'}`}
+              className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 md:px-6 md:py-3.5 rounded-xl font-bold transition-all text-[10px] sm:text-xs md:text-sm text-center ${activeTab === 'applied' ? 'bg-[#003c71] text-white shadow-md transform md:scale-[1.02]' : 'text-zinc-600 hover:bg-white/60 hover:text-blue-800'}`}
             >
-              <Briefcase className="h-4 w-4 shrink-0" /> Applied Jobs
+              <Briefcase className="h-4 w-4 shrink-0" /> 
+              <span className="leading-tight">Applied Jobs</span>
             </button>
             <button 
               onClick={() => setActiveTab('saved')}
-              className={`flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold transition-all text-sm ${activeTab === 'saved' ? 'bg-[#003c71] text-white shadow-md transform scale-[1.02]' : 'text-zinc-600 hover:bg-white/60 hover:text-blue-800'}`}
+              className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 md:px-6 md:py-3.5 rounded-xl font-bold transition-all text-[10px] sm:text-xs md:text-sm text-center ${activeTab === 'saved' ? 'bg-[#003c71] text-white shadow-md transform md:scale-[1.02]' : 'text-zinc-600 hover:bg-white/60 hover:text-blue-800'}`}
             >
-              <Bookmark className="h-4 w-4 shrink-0" /> Saved Jobs
+              <Bookmark className="h-4 w-4 shrink-0" /> 
+              <span className="leading-tight">Saved Jobs</span>
             </button>
             <button 
               onClick={() => setActiveTab('track')}
-              className={`flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold transition-all text-sm ${activeTab === 'track' ? 'bg-[#003c71] text-white shadow-md transform scale-[1.02]' : 'text-zinc-600 hover:bg-white/60 hover:text-blue-800'}`}
+              className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 md:px-6 md:py-3.5 rounded-xl font-bold transition-all text-[10px] sm:text-xs md:text-sm text-center ${activeTab === 'track' ? 'bg-[#003c71] text-white shadow-md transform md:scale-[1.02]' : 'text-zinc-600 hover:bg-white/60 hover:text-blue-800'}`}
             >
-              <Search className="h-4 w-4 shrink-0" /> Track
+              <Search className="h-4 w-4 shrink-0" /> 
+              <span className="leading-tight">Track</span>
             </button>
           </div>
         </div>

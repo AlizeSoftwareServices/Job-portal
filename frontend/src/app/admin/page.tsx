@@ -950,12 +950,12 @@ export default function AdminDashboard() {
           {/* JOBS & CATEGORIES TAB */}
           {activeTab === 'jobs' && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="flex justify-between items-center mb-6">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <div>
                   <h2 className="text-2xl font-black text-slate-800">Job Postings & Categories</h2>
                   <p className="text-slate-500 text-sm mt-1">Manage jobs and job categories in one place.</p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-2 md:gap-3 w-full md:w-auto">
                   <button 
                     onClick={() => setShowCategoryForm(!showCategoryForm)}
                     className="bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2.5 rounded-lg text-sm font-bold transition-colors flex items-center gap-2"

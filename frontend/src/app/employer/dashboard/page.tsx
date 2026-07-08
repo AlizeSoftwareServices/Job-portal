@@ -181,31 +181,16 @@ export default function EmployerDashboard() {
     if (!newJob.description?.trim()) return alert('Please enter a Description');
     if (!newJob.requirements?.trim()) return alert('Please enter Requirements');
 
+    if (newJob.categoryId === 'NEW' && !newJob.newCategoryName?.trim()) {
+      return alert('Please enter new category name');
+    }
+
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem('skyo_token');
       
-      let finalCategoryId = newJob.categoryId;
-      if (newJob.categoryId === 'NEW') {
-        if (!newJob.newCategoryName.trim()) {
-          setIsSubmitting(false);
-          return alert('Please enter new category name');
-        }
-      }
-
-      if (newJob.newCategoryName.trim() !== '') {
-        const catRes = await fetch(`${API_URL}/categories`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: newJob.newCategoryName.trim() })
-        });
-        const catData = await catRes.json();
-        finalCategoryId = catData.id;
-      }
-
       const jobData = {
         ...newJob,
-        categoryId: finalCategoryId,
         employerId,
         vacancyCount: Number(newJob.vacancyCount) || 1
       };

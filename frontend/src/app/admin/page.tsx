@@ -218,10 +218,12 @@ export default function AdminDashboard() {
     if (!isAdminAuthenticated) return;
     
     const fetchCurrentTab = () => {
-      fetchStats();
-      fetchFlowchartStats();
+      fetchStats(true);
+      fetchFlowchartStats(true);
       if (activeTab === 'jobs') fetchJobs();
       if (activeTab === 'applications') fetchApplications();
+      if (activeTab === 'categories') fetchCategories(true);
+      if (activeTab === 'employers') fetchEmployers(true);
     };
 
     window.addEventListener('focus', fetchCurrentTab);
@@ -280,8 +282,8 @@ export default function AdminDashboard() {
     } catch (err) { if ((err as any).name !== 'AbortError') console.error(err); }
   };
 
-  const fetchCategories = async () => {
-    if (loadedTabs.has('categories')) return;
+  const fetchCategories = async (force = false) => {
+    if (!force && loadedTabs.has('categories')) return;
     try {
       const res = await fetch(`${API_URL}/categories`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
       const data = await res.json();
@@ -290,8 +292,8 @@ export default function AdminDashboard() {
     } catch (err) { console.error(err); }
   };
 
-  const fetchEmployersList = async () => {
-    if (loadedTabs.has('employers')) return;
+  const fetchEmployers = async (force = false) => {
+    if (!force && loadedTabs.has('employers')) return;
     try {
       const res = await fetch(`${API_URL}/admin/employers`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
       const data = await res.json();
@@ -300,8 +302,8 @@ export default function AdminDashboard() {
     } catch (err) { console.error(err); }
   };
 
-  const fetchFlowchartStats = async () => {
-    if (loadedTabs.has('dashboard_stats')) return;
+  const fetchFlowchartStats = async (force = false) => {
+    if (!force && loadedTabs.has('dashboard_stats')) return;
     try {
       const res = await fetch(`${API_URL}/admin/flowchart-stats`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
       if(res.ok) {
@@ -311,8 +313,8 @@ export default function AdminDashboard() {
       }
     } catch (err) { console.error(err); }
   };
-  const fetchStats = async () => {
-    if (loadedTabs.has('dashboard_stats')) return;
+  const fetchStats = async (force = false) => {
+    if (!force && loadedTabs.has('dashboard_stats')) return;
     try {
       const res = await fetch(`${API_URL}/admin/dashboard-data`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
       if (!res.ok) {
@@ -344,7 +346,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!isAdminAuthenticated) return;
     if (activeTab === 'categories') fetchCategories();
-    if (activeTab === 'employers') fetchEmployersList();
+    if (activeTab === 'employers') fetchEmployers();
   }, [activeTab, isAdminAuthenticated]);
 
   const handleSaveJob = async (e: React.FormEvent) => {
@@ -912,8 +914,7 @@ export default function AdminDashboard() {
                   <div className="absolute top-0 right-0 w-24 h-24 bg-orange-50 rounded-full mix-blend-multiply opacity-50 -mr-8 -mt-8 group-hover:scale-150 transition-transform duration-700"></div>
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="text-sm font-bold text-slate-500 mb-1">Categories</p>
-                      <p className="text-3xl font-black text-slate-800">{stats.categoryBreakdown?.length || 0}</p>
+                      <p className="text-3xl font-black text-slate-800">{stats.totalCategories || 0}</p>
                     </div>
                     <div className="p-3 bg-orange-100 text-orange-600 rounded-xl"><Layers className="h-5 w-5" /></div>
                   </div>
@@ -927,7 +928,7 @@ export default function AdminDashboard() {
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="text-sm font-bold text-slate-500 mb-1">Total Employers</p>
-                      <p className="text-3xl font-black text-slate-800">{employersList?.length || 0}</p>
+                      <p className="text-3xl font-black text-slate-800">{stats.totalEmployers || 0}</p>
                     </div>
                     <div className="p-3 bg-blue-100 text-blue-700 rounded-xl"><Building2 className="h-5 w-5" /></div>
                   </div>

@@ -44,6 +44,20 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    let finalCategoryId = data.categoryId;
+    if (finalCategoryId === 'NEW' && data.newCategoryName) {
+      let category = await prisma.category.findFirst({ where: { name: data.newCategoryName.trim() } });
+      if (!category) {
+        category = await prisma.category.create({
+          data: {
+            name: data.newCategoryName.trim(),
+            imageUrl: null
+          }
+        });
+      }
+      finalCategoryId = category.id;
+    }
+
     const job = await prisma.job.create({
       data: {
         title: data.title,
@@ -55,7 +69,7 @@ export async function POST(req: NextRequest) {
         description: data.description,
         requirements: data.requirements || '',
         jobCode,
-        categoryId: data.categoryId,
+        categoryId: finalCategoryId,
         employerId: user.sub,
         approvalStatus: 'PENDING_APPROVAL', 
         salary: data.salary,

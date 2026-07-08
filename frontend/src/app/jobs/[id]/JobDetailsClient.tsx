@@ -271,7 +271,11 @@ export default function JobDetailsClient({ job }: { job: any }) {
 
               {/* Bottom Apply Button */}
               <div className="pt-8 mt-8 border-t border-zinc-200">
-                {hasApplied ? (
+                {job.status === 'COMPLETED' ? (
+                  <button disabled className="inline-flex items-center gap-2 bg-zinc-400 text-white px-8 py-3 rounded-lg font-bold shadow-sm text-center uppercase tracking-wider text-sm cursor-not-allowed">
+                    <CheckCircle2 className="w-5 h-5" /> Hired
+                  </button>
+                ) : hasApplied ? (
                   <button disabled className="inline-flex items-center gap-2 bg-green-600 text-white px-8 py-3 rounded-lg font-bold shadow-sm text-center uppercase tracking-wider text-sm cursor-not-allowed">
                     <CheckCircle2 className="w-5 h-5" /> Applied
                   </button>

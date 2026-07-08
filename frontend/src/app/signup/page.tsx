@@ -232,29 +232,29 @@ export default function SignUp() {
                 <>
                   <div>
                     <label className="block text-sm font-medium text-zinc-700 mb-1">Full Name</label>
-                    <input required type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none" />
+                    <input required type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-zinc-700 mb-1">Company Name</label>
-                    <input required type="text" value={formData.companyName} onChange={e => setFormData({...formData, companyName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none" />
+                    <input required type="text" value={formData.companyName} onChange={e => setFormData({...formData, companyName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" />
                   </div>
                 </>
               ) : (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-zinc-700 mb-1">First name</label>
-                    <input required type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none" />
+                    <input required type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-zinc-700 mb-1">Last name</label>
-                    <input required type="text" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none" />
+                    <input required type="text" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" />
                   </div>
                 </div>
               )}
 
               <div>
                 <label className="block text-sm font-medium text-zinc-700 mb-1">E-mail id</label>
-                <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none" />
+                <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" />
               </div>
 
               <div>
@@ -272,7 +272,7 @@ export default function SignUp() {
                     maxLength={getPhoneMaxLength(formData.countryCode)}
                     value={formData.phone} 
                     onChange={e => setFormData({...formData, phone: e.target.value.replace(/[^0-9]/g, '')})} 
-                    className="flex-1 border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none min-w-0" 
+                    className="flex-1 border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none min-w-0 text-zinc-900" 
                     placeholder="Phone Number" 
                   />
                 </div>
@@ -294,7 +294,7 @@ export default function SignUp() {
                       maxLength={getPhoneMaxLength(formData.countryCode)}
                       value={formData.secondaryContactNumber} 
                       onChange={e => setFormData({...formData, secondaryContactNumber: e.target.value.replace(/[^0-9]/g, '')})} 
-                      className="flex-1 border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none min-w-0" 
+                      className="flex-1 border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none min-w-0 text-zinc-900" 
                       placeholder="Phone Number" 
                     />
                   </div>
@@ -304,7 +304,7 @@ export default function SignUp() {
               <div>
                 <label className="block text-sm font-medium text-zinc-700 mb-1">Create Password</label>
                 <div className="relative">
-                  <input required type={showPassword ? 'text' : 'password'} value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 pr-10 focus:ring-2 focus:ring-blue-500 outline-none" />
+                  <input required type={showPassword ? 'text' : 'password'} value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 pr-10 focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-400">
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -315,14 +315,14 @@ export default function SignUp() {
               <div>
                 <label className="block text-sm font-medium text-zinc-700 mb-1">Confirm Password</label>
                 <div className="relative">
-                  <input required type={showConfirmPassword ? 'text' : 'password'} value={formData.confirmPassword} onChange={e => setFormData({...formData, confirmPassword: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 pr-10 focus:ring-2 focus:ring-blue-500 outline-none" />
+                  <input required type={showConfirmPassword ? 'text' : 'password'} value={formData.confirmPassword} onChange={e => setFormData({...formData, confirmPassword: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 pr-10 focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" />
                   <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-400">
                     {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
 
-              <button type="submit" disabled={loading} className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-blue-800 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50">
+              <button type="submit" disabled={loading} className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-blue-800 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 text-zinc-900">
                 {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Send Verification OTP'}
               </button>
             </form>
@@ -335,7 +335,7 @@ export default function SignUp() {
 
               <div>
                 <label className="block text-sm font-medium text-zinc-700 mb-1">Enter OTP</label>
-                <input required type="text" maxLength={6} value={formData.otp} onChange={e => setFormData({...formData, otp: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-3 text-center tracking-[0.5em] text-xl font-bold focus:ring-2 focus:ring-blue-500 outline-none" placeholder="------" />
+                <input required type="text" maxLength={6} value={formData.otp} onChange={e => setFormData({...formData, otp: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-3 text-center tracking-[0.5em] text-xl font-bold focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" placeholder="------" />
               </div>
 
               <button type="submit" disabled={loading} className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-blue-800 hover:bg-blue-700 disabled:opacity-50">

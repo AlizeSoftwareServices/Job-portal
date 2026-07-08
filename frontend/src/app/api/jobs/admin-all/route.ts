@@ -24,8 +24,8 @@ export async function GET(req: NextRequest) {
           { jobCode: { contains: search, mode: 'insensitive' } },
         ]
       }),
-      ...(status && status !== 'ALL' && { status: status as any }),
-      ...(approvalStatus && approvalStatus !== 'ALL' && { approvalStatus: approvalStatus as any }),
+      ...(status && !status.toUpperCase().startsWith('ALL') && { status: status as any }),
+      ...(approvalStatus && !approvalStatus.toUpperCase().startsWith('ALL') && { approvalStatus: approvalStatus as any }),
     };
 
     const [totalItems, jobs] = await Promise.all([

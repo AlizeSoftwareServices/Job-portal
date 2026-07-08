@@ -270,7 +270,7 @@ export default function EmployerDashboard() {
       });
       if (res.ok) {
         const body = await res.json();
-        setProfile({ ...profile, avatarUrl: body.avatarUrl });
+        setProfile({ ...profile, companyLogoUrl: body.avatarUrl });
       } else {
         alert('Failed to upload avatar');
       }
@@ -421,8 +421,8 @@ export default function EmployerDashboard() {
                   <div className="flex flex-col items-center mb-6 pb-6 border-b border-zinc-100">
                     <div className="relative group mb-3">
                       <div className="w-24 h-24 rounded-2xl bg-zinc-100 flex items-center justify-center overflow-hidden border-2 border-dashed border-zinc-300">
-                        {profile.avatarUrl ? (
-                          <img src={`${API_URL}${profile.avatarUrl}`} alt="Company Logo" className="w-full h-full object-cover" />
+                        {profile.companyLogoUrl ? (
+                          <img src={`${API_URL}${profile.companyLogoUrl}`} alt="Company Logo" className="w-full h-full object-cover" />
                         ) : (
                           <Building className="w-8 h-8 text-zinc-400" />
                         )}

@@ -125,7 +125,7 @@ export async function GET(req: NextRequest) {
 
     const where = {
       ...baseWhere,
-      ...(status && status !== 'ALL' && { status: status as any }),
+      ...(status && !status.toUpperCase().startsWith('ALL') && { status: status as any }),
       ...(search && {
         OR: [
           { candidate: { firstName: { contains: search, mode: 'insensitive' } } },

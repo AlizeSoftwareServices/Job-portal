@@ -909,7 +909,7 @@ export default function AdminDashboard() {
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 w-full mb-8">
                 <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2"><PieChartIcon className="h-5 w-5 text-amber-500" /> Platform Advanced Distribution (Categories &rarr; Jobs)</h3>
                 <div className="w-full">
-                  <RelationalFlowChart categories={categories} jobs={jobs} applications={applications} />
+                  <RelationalFlowChart categories={categories} jobs={jobs} applications={applications} categoryDetailedList={categoryDetailedList} />
                 </div>
               </div>
             </div>

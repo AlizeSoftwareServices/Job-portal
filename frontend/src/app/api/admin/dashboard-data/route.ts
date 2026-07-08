@@ -14,7 +14,8 @@ export async function GET(req: NextRequest) {
       totalApplications,
       pendingApplications,
       totalCandidates,
-      totalEmployers
+      totalEmployers,
+      totalCategories
     ] = await Promise.all([
       prisma.job.count(),
       prisma.job.count({ where: { status: 'ACTIVE' } }),
@@ -22,13 +23,14 @@ export async function GET(req: NextRequest) {
       prisma.application.count(),
       prisma.application.count({ where: { status: 'APPLIED' } }),
       prisma.user.count({ where: { role: 'CANDIDATE' } }),
-      prisma.user.count({ where: { role: 'EMPLOYER' } })
+      prisma.user.count({ where: { role: 'EMPLOYER' } }),
+      prisma.category.count()
     ]);
 
     return NextResponse.json({
       totalJobs, activeJobs, pendingJobs,
       totalApplications, pendingApplications,
-      totalCandidates, totalEmployers
+      totalCandidates, totalEmployers, totalCategories
     }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });

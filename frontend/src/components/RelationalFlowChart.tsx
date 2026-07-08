@@ -3,27 +3,30 @@ import React, { useState, useMemo } from 'react';
 import { Briefcase, Layers, Users, ChevronRight } from 'lucide-react';
 
 interface RelationalFlowChartProps {
-  categories: any[];
-  jobs: any[];
-  applications: any[];
+  categories?: any[];
+  jobs?: any[];
+  applications?: any[];
+  categoryDetailedList?: any[];
 }
 
-export default function RelationalFlowChart({ categories, jobs, applications }: RelationalFlowChartProps) {
+export default function RelationalFlowChart({ categories = [], jobs = [], applications = [], categoryDetailedList = [] }: RelationalFlowChartProps) {
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [selectedJob, setSelectedJob] = useState<any>(null);
 
   // Derive unique categories from jobs if category list is empty or for safety
   const activeCategories = useMemo(() => {
+    if (categoryDetailedList && categoryDetailedList.length > 0) return categoryDetailedList.filter(c => c.jobs && c.jobs.length > 0);
     if (categories && categories.length > 0) return categories;
     const catSet = new Set(jobs.map(j => j.category?.name).filter(Boolean));
     return Array.from(catSet).map(name => ({ id: name, name }));
-  }, [categories, jobs]);
+  }, [categories, jobs, categoryDetailedList]);
 
   // Derive active jobs for selected category
   const categoryJobs = useMemo(() => {
     if (!selectedCategory) return [];
+    if (categoryDetailedList && categoryDetailedList.length > 0) return selectedCategory.jobs;
     return jobs.filter(j => j.status === 'ACTIVE' && (j.category?.name === selectedCategory.name || j.categoryId === selectedCategory.id));
-  }, [jobs, selectedCategory]);
+  }, [jobs, selectedCategory, categoryDetailedList]);
 
   // Derive applications for selected job
   const jobApplications = useMemo(() => {
@@ -60,7 +63,7 @@ export default function RelationalFlowChart({ categories, jobs, applications }: 
         <div className={`grid gap-3 ${selectedCategory ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
           {activeCategories.map((cat) => {
             const isSelected = selectedCategory?.name === cat.name;
-            const activeJobsCount = jobs.filter(j => j.status === 'ACTIVE' && (j.category?.name === cat.name || j.categoryId === cat.id)).length;
+            const activeJobsCount = categoryDetailedList && categoryDetailedList.length > 0 ? (cat.jobs?.length || 0) : jobs.filter(j => j.status === 'ACTIVE' && (j.category?.name === cat.name || j.categoryId === cat.id)).length;
             
             return (
               <div 
@@ -92,9 +95,9 @@ export default function RelationalFlowChart({ categories, jobs, applications }: 
             <Briefcase className="w-4 h-4" /> Jobs in {selectedCategory.name}
           </h3>
           <div className={`grid gap-3 ${selectedJob ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
-            {categoryJobs.length > 0 ? categoryJobs.map(job => {
+            {categoryJobs.length > 0 ? categoryJobs.map((job: any) => {
               const isSelected = selectedJob?.id === job.id;
-              const appsCount = applications.filter(a => a.job?.id === job.id || a.jobId === job.id).length;
+              const appsCount = categoryDetailedList && categoryDetailedList.length > 0 ? (job.appsCount || 0) : applications.filter(a => a.job?.id === job.id || a.jobId === job.id).length;
               
               return (
                 <div 
@@ -129,7 +132,11 @@ export default function RelationalFlowChart({ categories, jobs, applications }: 
             <Users className="w-4 h-4" /> Applications for {selectedJob.title}
           </h3>
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 pb-4 max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
-            {jobApplications.length > 0 ? jobApplications.map(app => {
+            {categoryDetailedList && categoryDetailedList.length > 0 ? (
+              <div className="text-slate-500 italic p-4 text-sm bg-white border border-slate-200 rounded-xl xl:col-span-2">
+                Applications are lazy-loaded. Go to the Applications tab in the sidebar to view candidate details for this job.
+              </div>
+            ) : jobApplications.length > 0 ? jobApplications.map(app => {
               
               // FIX: Determine name safely without yielding 'undefined undefined'
               let name = 'Unknown Candidate';

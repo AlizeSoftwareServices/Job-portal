@@ -9,25 +9,10 @@ export default function ProfileLink() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const activePortal = sessionStorage.getItem('active_portal');
     const adminToken = localStorage.getItem('skyo_admin_token');
     const userToken = localStorage.getItem('skyo_token');
 
-    // 1. Strict mapping based on active session storage
-    if (activePortal === 'ADMIN') {
-      setProfileUrl('/admin');
-      return;
-    }
-    if (activePortal === 'EMPLOYER') {
-      setProfileUrl('/employer/dashboard');
-      return;
-    }
-    if (activePortal === 'CANDIDATE') {
-      setProfileUrl('/profile');
-      return;
-    }
-
-    // 2. Fallback checking tokens
+    // Tokens are the true source of truth
     if (adminToken) {
       setProfileUrl('/admin');
       return;

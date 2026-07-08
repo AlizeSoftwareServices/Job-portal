@@ -51,6 +51,12 @@ export default function Login() {
       localStorage.setItem('skyo_token', data.token);
       
       const decoded: any = jwtDecode(data.token);
+      
+      if (decoded.role !== loginRole) {
+        localStorage.removeItem('skyo_token');
+        throw new Error(`Please sign in as ${decoded.role === 'EMPLOYER' ? 'Employer' : 'Candidate'} with these credentials.`);
+      }
+
       if (decoded.role === 'EMPLOYER') {
         router.push('/employer/dashboard');
       } else {

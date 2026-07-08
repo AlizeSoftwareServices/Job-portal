@@ -45,6 +45,7 @@ export default function ProfileClient({ initialProfile, initialApplications }: {
       await fetch('/api/auth/logout', { method: 'POST' });
     } catch(e) {}
     localStorage.removeItem('skyo_token');
+    sessionStorage.removeItem('active_portal');
     router.push('/login');
   };
 

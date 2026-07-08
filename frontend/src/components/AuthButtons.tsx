@@ -16,6 +16,7 @@ export default function AuthButtons() {
   const handleLogout = () => {
     if (!window.confirm('Are you sure you want to log out?')) return;
     localStorage.removeItem('skyo_token');
+    sessionStorage.removeItem('active_portal');
     setIsLoggedIn(false);
     router.push('/');
   };

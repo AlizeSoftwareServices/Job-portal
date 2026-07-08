@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
     headers.set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     headers.set('Content-Disposition', `attachment; filename=${fileName}`);
 
-    return new NextResponse(buffer as Buffer, { status: 200, headers });
+    return new NextResponse(buffer as any, { status: 200, headers });
   } catch (error) {
     console.error(error);
     return new NextResponse('Internal Server Error', { status: 500 });

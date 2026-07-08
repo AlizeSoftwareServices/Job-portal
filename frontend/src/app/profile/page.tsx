@@ -21,47 +21,64 @@ export default async function ProfilePage() {
 
   const userId = decoded.sub;
 
-  const user: any = await prisma.user.findUnique({
-    where: { id: userId },
-    include: {
-      candidateProfile: {
-        include: {
-          skills: true,
-          experiences: true,
-          educations: true,
-          projects: true,
-          certifications: true
-        }
-      },
-      savedJobs: {
-        include: {
-          job: {
-            include: {
-              employer: { include: { employerProfile: true } },
-              category: true
+  const [user, applications] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        candidateProfile: {
+          include: {
+            skills: true,
+            experiences: true,
+            educations: true,
+            projects: true,
+            certifications: true
+          }
+        },
+        savedJobs: {
+          include: {
+            job: {
+              select: {
+                id: true,
+                title: true,
+                status: true,
+                jobCode: true,
+                locationCity: true,
+                locationState: true,
+                jobType: true,
+                workMode: true,
+                fieldVisibility: true,
+                category: { select: { name: true } }
+              }
             }
+          }
+        },
+      },
+    }) as any,
+    prisma.application.findMany({
+      where: { candidateId: userId },
+      include: {
+        job: {
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            jobCode: true,
+            locationCity: true,
+            locationState: true,
+            jobType: true,
+            workMode: true,
+            fieldVisibility: true,
+            category: { select: { name: true } }
           }
         }
       },
-    },
-  });
+      orderBy: { appliedAt: 'desc' }
+    })
+  ]);
 
   if (!user) {
     redirect('/login');
   }
-
-  const applications = await prisma.application.findMany({
-    where: { candidateId: userId },
-    include: {
-      job: {
-        include: {
-          employer: { include: { employerProfile: true } },
-          category: true
-        }
-      }
-    },
-    orderBy: { appliedAt: 'desc' }
-  });
 
   // Format data for client component
   const profileData = {

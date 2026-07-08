@@ -624,6 +624,7 @@ export default function AdminDashboard() {
   };
 
   const updateAppStatus = async (appId: string, status: string) => {
+    setApplications(apps => apps.map(a => a.id === appId ? { ...a, status } : a));
     try {
       const res = await fetch(`${API_URL}/applications/${appId}/status`, {
         method: 'PATCH',
@@ -675,11 +676,18 @@ export default function AdminDashboard() {
 
   const viewResume = async (appId: string, resumeUrl: string) => {
     const app = applications.find(a => a.id === appId);
+    setApplications(apps => apps.map(a => a.id === appId ? { ...a, isReviewed: true, status: a.status === 'APPLIED' ? 'UNDER_REVIEW' : a.status } : a));
+    
     if (app && app.status === 'APPLIED') {
-      await updateAppStatus(appId, 'UNDER_REVIEW');
+      await fetch(`${API_URL}/applications/${appId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
+        body: JSON.stringify({ status: 'UNDER_REVIEW' })
+      });
     }
     try {
       await fetch(`${API_URL}/applications/${appId}/review`, { method: 'PATCH', headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
+      fetchApplications();
     } catch (err) {
       console.error('Failed to mark as reviewed', err);
     }

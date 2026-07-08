@@ -14,14 +14,15 @@ export async function GET(req: NextRequest) {
 
     worksheet.columns = [
       { header: 'Company Name', key: 'companyName', width: 25 },
-      { header: 'Email', key: 'email', width: 30 },
+      { header: 'Primary Contact Number', key: 'primaryContactNumber', width: 25 },
+      { header: 'Secondary Contact Number', key: 'secondaryContactNumber', width: 25 },
+      { header: 'Industry Type', key: 'industry', width: 20 },
+      { header: 'Company Location', key: 'location', width: 20 },
       { header: 'HR Name', key: 'hrName', width: 20 },
       { header: 'HR Contact Number', key: 'hrContactNumber', width: 20 },
       { header: 'Official Mail ID', key: 'officialMailId', width: 25 },
-      { header: 'Secondary Contact Number', key: 'secondaryContactNumber', width: 25 },
-      { header: 'Industry', key: 'industry', width: 20 },
-      { header: 'Location', key: 'location', width: 20 },
-      { header: 'Website', key: 'website', width: 25 },
+      { header: 'Company Website', key: 'website', width: 25 },
+      { header: 'Email (Login ID)', key: 'email', width: 30 },
       { header: 'Registered At', key: 'createdAt', width: 20 },
     ];
 
@@ -29,14 +30,15 @@ export async function GET(req: NextRequest) {
       const profile = emp.employerProfile;
       worksheet.addRow({
         companyName: profile?.companyName || 'N/A',
-        email: emp.email,
-        hrName: profile?.hrName || 'N/A',
-        hrContactNumber: emp.phone || profile?.hrContactNumber || 'N/A',
-        officialMailId: profile?.officialMailId || 'N/A',
+        primaryContactNumber: emp.phone || 'N/A',
         secondaryContactNumber: profile?.secondaryContactNumber || 'N/A',
         industry: profile?.industry || 'N/A',
         location: profile?.companyLocation || 'N/A',
+        hrName: profile?.hrName || 'N/A',
+        hrContactNumber: profile?.hrContactNumber || 'N/A',
+        officialMailId: profile?.officialMailId || 'N/A',
         website: profile?.companyWebsite || 'N/A',
+        email: emp.email,
         createdAt: emp.createdAt.toLocaleDateString(),
       });
     });

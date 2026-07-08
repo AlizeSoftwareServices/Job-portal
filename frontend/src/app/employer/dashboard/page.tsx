@@ -258,6 +258,33 @@ export default function EmployerDashboard() {
     } catch (err) { console.error(err); }
   };
 
+  const handleUseTemplate = (job: any) => {
+    setNewJob({
+      title: job.title || '',
+      categoryId: job.categoryId || '',
+      newCategoryName: '',
+      locationCity: job.locationCity || '',
+      locationState: job.locationState || '',
+      experienceLevel: job.experienceLevel || 'Entry Level',
+      workMode: job.workMode || 'Remote',
+      jobType: job.jobType || 'Permanent',
+      description: job.description || '',
+      requirements: job.requirements || '',
+      salary: job.salary || '',
+      salaryType: job.salaryType || 'Month',
+      salaryVisible: job.salaryVisible ?? true,
+      vacancyCount: job.vacancyCount?.toString() || '1',
+      shiftTimings: job.shiftTimings || '',
+      benefits: job.benefits || '',
+      generalComments: job.generalComments || '',
+      facebookLink: job.facebookLink || '',
+      instagramLink: job.instagramLink || '',
+      linkedinLink: job.linkedinLink || '',
+    });
+    setIsCreatingJob(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const isProfileComplete = () => {
     return profile.companyName?.trim() && 
            profile.primaryContactNumber?.trim() && 
@@ -780,19 +807,25 @@ export default function EmployerDashboard() {
                             <span className="bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg border border-slate-100">{job.experienceLevel}</span>
                           </div>
 
-                          <div className="pt-4 border-t border-slate-100 ml-10 flex justify-between items-center">
+                          <div className="pt-4 border-t border-slate-100 ml-10 flex flex-wrap justify-between items-center gap-2">
                             <span className="text-xs font-bold text-slate-400 flex items-center gap-1.5"><Clock className="h-3.5 w-3.5"/> Posted on {new Date(job.createdAt).toLocaleDateString()}</span>
                             
-                            {jobSubTab === 'active' && job.approvalStatus === 'APPROVED' && !job.closureRequested && (
-                              <button onClick={() => handleRequestClosure(job.id)} className="text-xs font-bold bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1.5 rounded-lg border border-green-200 transition-colors">
-                                Mark as Hired
+                            <div className="flex flex-wrap gap-2">
+                              <button onClick={() => handleUseTemplate(job)} className="text-xs font-bold bg-amber-50 text-amber-700 hover:bg-amber-100 px-3 py-1.5 rounded-lg border border-amber-200 transition-colors">
+                                Use as Template
                               </button>
-                            )}
-                            {jobSubTab === 'completed' && job.status === 'COMPLETED' && (
-                              <button onClick={() => handleRepostJob(job.id)} className="text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1.5 rounded-lg border border-blue-200 transition-colors">
-                                Edit & Re-post
-                              </button>
-                            )}
+                              
+                              {jobSubTab === 'active' && job.approvalStatus === 'APPROVED' && !job.closureRequested && (
+                                <button onClick={() => handleRequestClosure(job.id)} className="text-xs font-bold bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1.5 rounded-lg border border-green-200 transition-colors">
+                                  Mark as Hired
+                                </button>
+                              )}
+                              {jobSubTab === 'completed' && job.status === 'COMPLETED' && (
+                                <button onClick={() => handleRepostJob(job.id)} className="text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1.5 rounded-lg border border-blue-200 transition-colors">
+                                  Edit & Re-post
+                                </button>
+                              )}
+                            </div>
                           </div>
                         </div>
                       ));

@@ -7,9 +7,10 @@ interface RelationalFlowChartProps {
   jobs?: any[];
   applications?: any[];
   categoryDetailedList?: any[];
+  onViewResume?: (appId: string, resumeUrl: string) => void;
 }
 
-export default function RelationalFlowChart({ categories = [], jobs = [], applications = [], categoryDetailedList = [] }: RelationalFlowChartProps) {
+export default function RelationalFlowChart({ categories = [], jobs = [], applications = [], categoryDetailedList = [], onViewResume }: RelationalFlowChartProps) {
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const [lazyApplications, setLazyApplications] = useState<any[]>([]);
@@ -202,9 +203,23 @@ export default function RelationalFlowChart({ categories = [], jobs = [], applic
                     <span className="text-xs text-slate-400 font-medium">{new Date(app.appliedAt || app.createdAt).toLocaleDateString()}</span>
                     <div className="flex items-center gap-2">
                       {resume && (
-                        <a href={resume} target="_blank" rel="noopener noreferrer" className="text-[9px] font-bold px-2 py-1 rounded border uppercase tracking-wider bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100">
-                          View Resume
-                        </a>
+                        onViewResume ? (
+                          <button
+                            onClick={() => {
+                              onViewResume(app.id, resume);
+                              if (app.status === 'APPLIED') {
+                                setLazyApplications(prev => prev.map(a => a.id === app.id ? { ...a, status: 'UNDER_REVIEW' } : a));
+                              }
+                            }}
+                            className="text-[9px] font-bold px-2 py-1 rounded border uppercase tracking-wider bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100"
+                          >
+                            View Resume
+                          </button>
+                        ) : (
+                          <a href={resume} target="_blank" rel="noopener noreferrer" className="text-[9px] font-bold px-2 py-1 rounded border uppercase tracking-wider bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100">
+                            View Resume
+                          </a>
+                        )
                       )}
                       <span className={`text-[9px] font-bold px-2 py-1 rounded border uppercase tracking-wider ${statusColors[app.status] || 'bg-slate-50 border-slate-200'}`}>
                         {app.status === 'SELECTED' ? 'APPOINTED' : app.status.replace('_', ' ')}

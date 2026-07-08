@@ -1553,9 +1553,9 @@ export default function AdminDashboard() {
                     <tbody className="divide-y divide-zinc-100">
                       {currentApps.map(app => (
                         <tr key={app.id} className="hover:bg-zinc-50">
-                          <td className="p-4 text-sm font-bold text-zinc-800">{app.referenceNumber || 'N/A'}</td>
+                          <td className="p-4 text-sm font-bold text-zinc-800">{app.referenceNumber || (app.id ? `REF-${app.id.substring(0, 8).toUpperCase()}` : 'N/A')}</td>
                           <td className="p-4">
-                            <p className="font-bold text-sm text-zinc-900">{app.firstName || 'Unknown'} {app.lastName || ''}</p>
+                            <p className="font-bold text-sm text-zinc-900">{app.candidate?.candidateProfile?.fullName || `${app.candidate?.firstName || app.firstName || 'Unknown'} ${app.candidate?.lastName || app.lastName || ''}`.trim()}</p>
                             <p className="text-xs text-zinc-500">{app.email || app.candidate?.email}</p>
                             <p className="text-xs text-zinc-500">{app.phone || ''}</p>
                             <button onClick={() => viewResume(app.id, app.resumeUrl)} className="text-xs font-bold text-blue-800 hover:underline mt-1">View Resume</button>

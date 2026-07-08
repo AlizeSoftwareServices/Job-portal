@@ -43,6 +43,13 @@ export async function POST(req: NextRequest) {
     if (candidate && job) {
       const refId = `REF-${application.id.substring(0, 8).toUpperCase()}`;
       
+      // Save refId to database
+      await prisma.application.update({
+        where: { id: application.id },
+        data: { referenceNumber: refId }
+      });
+      
+      
       const emailTasks: Promise<any>[] = [];
 
       // Email to Candidate

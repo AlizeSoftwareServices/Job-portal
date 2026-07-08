@@ -118,54 +118,51 @@ export default function TrackComponent() {
             
             <div className="space-y-10">
               {/* Step 1 */}
-              <div className="relative flex md:justify-center items-center">
-                <div className={`hidden md:block w-1/2 pr-10 text-right ${currentStep >= 1 ? 'text-zinc-900' : 'text-zinc-400'}`}>
+              <div className="relative flex md:justify-center items-center w-full">
+                <div className={`ml-16 md:ml-0 md:flex-1 md:pr-10 text-left md:text-right w-full md:w-auto ${currentStep >= 1 ? 'text-zinc-900' : 'text-zinc-400'}`}>
                   <h4 className="font-bold text-base mb-1">Application Submitted</h4>
                   <p className="text-sm">We received your application.</p>
                 </div>
-                <div className={`absolute left-0 md:relative md:left-auto flex items-center justify-center w-12 h-12 rounded-full border-4 ${currentStep >= 1 ? 'bg-blue-800 border-blue-100 text-white' : 'bg-white border-zinc-200 text-zinc-300'} z-10 shadow-sm transition-colors duration-500`}>
+                <div className={`absolute left-0 md:relative md:left-auto flex shrink-0 items-center justify-center w-12 h-12 rounded-full border-4 ${currentStep >= 1 ? 'bg-blue-800 border-blue-100 text-white' : 'bg-white border-zinc-200 text-zinc-300'} z-10 shadow-sm transition-colors duration-500`}>
                   <CheckCircle2 className="h-5 w-5" />
                 </div>
-                <div className={`ml-16 md:ml-0 md:w-1/2 md:pl-10 ${currentStep >= 1 ? 'text-zinc-900' : 'text-zinc-400'} md:hidden`}>
-                  <h4 className="font-bold text-base mb-1">Application Submitted</h4>
-                  <p className="text-sm">We received your application.</p>
-                </div>
+                <div className="hidden md:block md:flex-1 pl-10"></div>
               </div>
 
               {/* Step 2 */}
-              <div className="relative flex md:justify-center items-center">
-                <div className={`ml-16 md:ml-0 md:w-1/2 md:pr-10 text-left md:text-right ${currentStep >= 2 ? 'text-zinc-900' : 'text-zinc-400'}`}>
+              <div className="relative flex md:justify-center items-center w-full">
+                <div className="hidden md:block md:flex-1 pr-10"></div>
+                <div className={`absolute left-0 md:relative md:left-auto flex shrink-0 items-center justify-center w-12 h-12 rounded-full border-4 ${currentStep >= 2 ? 'bg-blue-800 border-blue-100 text-white' : 'bg-white border-zinc-200 text-zinc-300'} z-10 shadow-sm transition-colors duration-500`}>
+                  <Search className="h-5 w-5" />
+                </div>
+                <div className={`ml-16 md:ml-0 md:flex-1 md:pl-10 text-left w-full md:w-auto ${currentStep >= 2 ? 'text-zinc-900' : 'text-zinc-400'}`}>
                   <h4 className="font-bold text-base mb-1">Under Review</h4>
                   <p className="text-sm">Your resume is being reviewed by our team.</p>
                 </div>
-                <div className={`absolute left-0 md:relative md:left-auto flex items-center justify-center w-12 h-12 rounded-full border-4 ${currentStep >= 2 ? 'bg-blue-800 border-blue-100 text-white' : 'bg-white border-zinc-200 text-zinc-300'} z-10 shadow-sm transition-colors duration-500`}>
-                  <Search className="h-5 w-5" />
-                </div>
-                <div className="hidden md:block w-1/2 pl-10"></div>
               </div>
 
               {/* Step 3 */}
-              <div className="relative flex md:justify-center items-center">
-                <div className="hidden md:block w-1/2 pr-10 text-right"></div>
-                <div className={`absolute left-0 md:relative md:left-auto flex items-center justify-center w-12 h-12 rounded-full border-4 ${currentStep >= 3 ? 'bg-blue-800 border-blue-100 text-white' : 'bg-white border-zinc-200 text-zinc-300'} z-10 shadow-sm transition-colors duration-500`}>
-                  <Clock className="h-5 w-5" />
-                </div>
-                <div className={`ml-16 md:ml-0 md:w-1/2 md:pl-10 ${currentStep >= 3 ? 'text-zinc-900' : 'text-zinc-400'}`}>
+              <div className="relative flex md:justify-center items-center w-full">
+                <div className={`ml-16 md:ml-0 md:flex-1 md:pr-10 text-left md:text-right w-full md:w-auto ${currentStep >= 3 ? 'text-zinc-900' : 'text-zinc-400'}`}>
                   <h4 className="font-bold text-base mb-1">Interview Scheduled</h4>
                   <p className="text-sm">You have been selected for an interview.</p>
                 </div>
+                <div className={`absolute left-0 md:relative md:left-auto flex shrink-0 items-center justify-center w-12 h-12 rounded-full border-4 ${currentStep >= 3 ? 'bg-blue-800 border-blue-100 text-white' : 'bg-white border-zinc-200 text-zinc-300'} z-10 shadow-sm transition-colors duration-500`}>
+                  <Clock className="h-5 w-5" />
+                </div>
+                <div className="hidden md:block md:flex-1 pl-10"></div>
               </div>
 
               {/* Step 4 */}
-              <div className="relative flex md:justify-center items-center">
-                <div className={`ml-16 md:ml-0 md:w-1/2 md:pr-10 text-left md:text-right ${currentStep >= 4 ? (isRejected ? 'text-red-600' : 'text-green-600') : 'text-zinc-400'}`}>
+              <div className="relative flex md:justify-center items-center w-full">
+                <div className="hidden md:block md:flex-1 pr-10"></div>
+                <div className={`absolute left-0 md:relative md:left-auto flex shrink-0 items-center justify-center w-12 h-12 rounded-full border-4 ${currentStep >= 4 ? (isRejected ? 'bg-red-600 border-red-100 text-white' : 'bg-green-600 border-green-100 text-white') : 'bg-white border-zinc-200 text-zinc-300'} z-10 shadow-sm transition-colors duration-500`}>
+                  {currentStep >= 4 && isRejected ? <XCircle className="h-5 w-5" /> : <CheckCircle2 className="h-5 w-5" />}
+                </div>
+                <div className={`ml-16 md:ml-0 md:flex-1 md:pl-10 text-left w-full md:w-auto ${currentStep >= 4 ? (isRejected ? 'text-red-600' : 'text-green-600') : 'text-zinc-400'}`}>
                   <h4 className="font-bold text-base mb-1">{currentStep >= 4 ? (isRejected ? 'Application Closed' : 'Appointed') : 'Final Decision'}</h4>
                   <p className="text-sm">{currentStep >= 4 ? (isRejected ? 'Unfortunately, we are moving forward with other candidates.' : 'Congratulations! You are hired.') : 'Pending final outcome.'}</p>
                 </div>
-                <div className={`absolute left-0 md:relative md:left-auto flex items-center justify-center w-12 h-12 rounded-full border-4 ${currentStep >= 4 ? (isRejected ? 'bg-red-600 border-red-100 text-white' : 'bg-green-600 border-green-100 text-white') : 'bg-white border-zinc-200 text-zinc-300'} z-10 shadow-sm transition-colors duration-500`}>
-                  {currentStep >= 4 && isRejected ? <XCircle className="h-5 w-5" /> : <CheckCircle2 className="h-5 w-5" />}
-                </div>
-                <div className="hidden md:block w-1/2 pl-10"></div>
               </div>
             </div>
           </div>

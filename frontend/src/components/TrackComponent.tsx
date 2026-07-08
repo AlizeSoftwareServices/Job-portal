@@ -65,16 +65,16 @@ export default function TrackComponent() {
         <p className="text-zinc-600">Enter your 9-character reference number to see real-time updates.</p>
       </div>
 
-      <form onSubmit={handleSearch} className="flex gap-3 mb-10">
+      <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 mb-10">
         <input 
           type="text" 
           placeholder="e.g. NEX-7A2-K9Q" 
           value={refNumber}
           onChange={(e) => setRefNumber(e.target.value)}
-          className="flex-1 border border-zinc-300 rounded-xl px-5 py-3 focus:ring-2 focus:ring-blue-500 outline-none uppercase tracking-widest font-medium shadow-sm text-base"
+          className="flex-1 w-full border border-zinc-300 rounded-xl px-5 py-3 focus:ring-2 focus:ring-blue-500 outline-none uppercase tracking-widest font-medium shadow-sm text-base"
           required
         />
-        <button type="submit" className="bg-blue-800 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-sm flex items-center gap-2 text-base">
+        <button type="submit" className="bg-blue-800 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-sm flex items-center justify-center sm:justify-start gap-2 text-base shrink-0 w-full sm:w-auto">
           <Search className="h-5 w-5" /> Track
         </button>
       </form>

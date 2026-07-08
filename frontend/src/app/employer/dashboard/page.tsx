@@ -435,8 +435,10 @@ export default function EmployerDashboard() {
                       )}
                     </div>
                     {isEditingProfile && (
+                      <>
                         <p className="text-xs text-slate-500 text-center font-medium max-w-[200px]">Click to upload company logo</p>
                         <p className="text-[10px] text-slate-400 font-bold mt-1">(Max size 50KB, JPEG/PNG/JPG only)</p>
+                      </>
                     )}
                   </div>
 

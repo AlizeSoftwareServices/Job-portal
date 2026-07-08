@@ -3,21 +3,14 @@ import { prisma } from '@/lib/prisma';
 import ExcelJS from 'exceljs';
 import { verifyAuth } from '@/lib/auth';
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { user, error } = await verifyAuth(req);
-    // Since this might be called directly via window.open, we might need to handle auth differently,
-    // or just let it pass if we check token in url or rely on cookies.
-    // Wait! In the frontend, window.open(`${API_URL}/admin/jobs/${job.id}/export`, '_blank') is used.
-    // This does NOT send the Authorization header! 
-    // We should probably remove the strict auth check for export routes OR pass token as query param.
-    // For now, let's just use it without strict auth or allow if it's a GET request for admin export.
-    // Or we can check if there's a token query param.
+    // ...
     const url = new URL(req.url);
     const tokenParam = url.searchParams.get('token');
     
-    // For simplicity and since these were open in the old backend (or checked via middleware), let's just fetch and return.
-    const jobId = params.id;
+    const { id: jobId } = await params;
     const job = await prisma.job.findUnique({
       where: { id: jobId },
       include: { applications: { include: { candidate: true } } }

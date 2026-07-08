@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyAuth } from '@/lib/auth';
 import { MailService } from '@/lib/mail';
+import { WhatsappService } from '@/lib/whatsapp';
 
 function generateRoleCode(title: string): string {
   const cleanTitle = title.replace(/[^a-zA-Z ]/g, '').toUpperCase();
@@ -92,6 +93,24 @@ export async function POST(req: NextRequest) {
       );
     } catch (e) {
       console.error('Failed to send admin notification for new job post', e);
+    }
+
+    const employer = await prisma.user.findUnique({
+      where: { id: user.sub },
+      include: { employerProfile: true }
+    });
+
+    if (employer && employer.employerProfile) {
+      WhatsappService.sendJobRequestNotification({
+        companyName: employer.employerProfile.companyName || 'Not specified',
+        hrName: employer.employerProfile.hrName || 'Not specified',
+        phone: employer.employerProfile.hrContactNumber || 'N/A',
+        jobTitle: job.title,
+        jobCode: job.jobCode || '',
+        location: [job.locationCity, job.locationState].filter(Boolean).join(', ') || 'N/A',
+        vacancyCount: job.vacancyCount || 1,
+        requestTime: job.createdAt ? job.createdAt.toLocaleString() : new Date().toLocaleString()
+      }).catch(err => console.error('WhatsApp job request notification failed:', err));
     }
 
     return NextResponse.json(job, { status: 201 });

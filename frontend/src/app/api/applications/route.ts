@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyAuth } from '@/lib/auth';
 import { MailService } from '@/lib/mail';
+import { WhatsappService } from '@/lib/whatsapp';
 
 export async function POST(req: NextRequest) {
   try {
@@ -79,6 +80,16 @@ export async function POST(req: NextRequest) {
           }
         });
       });
+
+      // Send WhatsApp Notification to Admin
+      WhatsappService.sendApplicationNotification({
+        candidateName: `${candidate.firstName || ''} ${candidate.lastName || ''}`.trim(),
+        phone: candidate.phone || '',
+        jobTitle: job.title,
+        jobCode: job.jobCode || '',
+        referenceNumber: refId,
+        appliedTime: new Date().toLocaleString()
+      }).catch(err => console.error('WhatsApp application notification failed:', err));
     }
 
     return NextResponse.json(application, { status: 201 });

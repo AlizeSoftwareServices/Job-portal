@@ -12,22 +12,26 @@ export default function ApplyClient({ job, profileData, candidateProfile }: { jo
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  const derivedFirstName = profileData.firstName || (candidateProfile?.fullName ? candidateProfile.fullName.split(' ')[0] : '');
+  const derivedLastName = profileData.lastName || (candidateProfile?.fullName ? candidateProfile.fullName.substring(derivedFirstName.length).trim() : '');
+  const derivedPhone = profileData.phone || candidateProfile?.phone || '';
+
   useEffect(() => {
-    if (!candidateProfile || !candidateProfile.resumeUrl || !profileData.firstName || !profileData.lastName || !profileData.phone) {
-      alert('Please complete your candidate profile (including Resume) before applying for jobs.');
+    if (!candidateProfile || !candidateProfile.resumeUrl || !derivedFirstName || !derivedPhone) {
+      alert('Please complete your candidate profile (including Resume and Contact details) before applying for jobs.');
       router.push('/profile');
     }
-  }, [candidateProfile, profileData, router]);
+  }, [candidateProfile, derivedFirstName, derivedPhone, router]);
 
   // If incomplete, just show a blank or loading state while redirecting
-  if (!candidateProfile || !candidateProfile.resumeUrl || !profileData.firstName || !profileData.lastName || !profileData.phone) {
-    return <div className="min-h-screen bg-gray-50"></div>;
+  if (!candidateProfile || !candidateProfile.resumeUrl || !derivedFirstName || !derivedPhone) {
+    return <div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-800"></div></div>;
   }
 
   const formData = {
-    firstName: profileData.firstName || '',
-    lastName: profileData.lastName || '',
-    phone: profileData.phone || '',
+    firstName: derivedFirstName,
+    lastName: derivedLastName,
+    phone: derivedPhone,
     email: profileData.email || '',
     noticePeriod: candidateProfile.noticePeriod || '',
     street: candidateProfile.addressStreet || '',
@@ -35,9 +39,9 @@ export default function ApplyClient({ job, profileData, candidateProfile }: { jo
     state: candidateProfile.addressState || '',
     country: candidateProfile.addressCountry || '',
     zipCode: candidateProfile.addressZip || '',
-    qualification: candidateProfile.highestQualification || '',
-    experience: candidateProfile.totalExperienceYears?.toString() || '',
-    skills: candidateProfile.skills || '',
+    qualification: candidateProfile.highestQualification || candidateProfile.educationQualification || '',
+    experience: candidateProfile.totalExperienceYears?.toString() || candidateProfile.totalWorkExperienceYears?.toString() || '',
+    skills: Array.isArray(candidateProfile.skills) ? candidateProfile.skills.map((s: any) => s.name).join(', ') : (candidateProfile.skills || ''),
     resumeUrl: candidateProfile.resumeUrl || ''
   };
 

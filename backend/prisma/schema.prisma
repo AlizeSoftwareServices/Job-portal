@@ -218,6 +218,10 @@ model Job {
   
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
+
+  @@index([status, approvalStatus, createdAt])
+  @@index([categoryId, status, approvalStatus])
+  @@index([employerId, createdAt])
 }
 
 model Application {
@@ -264,6 +268,11 @@ model Application {
   // but if candidateId is present, we could. For now, removing the strict compound unique
   // to allow multiple guest applications or we can rely on application-level checks.
   // @@unique([candidateId, jobId])
+
+  @@index([candidateId, appliedAt])
+  @@index([jobId, appliedAt])
+  @@index([status, appliedAt])
+  @@index([assignedEmployerId, appliedAt])
 }
 
 model Interview {

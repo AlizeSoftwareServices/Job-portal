@@ -130,7 +130,40 @@ export async function PUT(req: NextRequest) {
       });
     }
 
-    return NextResponse.json({ message: 'Profile updated successfully', profile: updatedProfile }, { status: 200 });
+    const fullUpdatedUser = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        candidateProfile: {
+          include: {
+            skills: true,
+            experiences: true,
+            educations: true,
+            projects: true,
+            certifications: true
+          }
+        },
+        savedJobs: {
+          include: {
+            job: {
+              select: {
+                id: true,
+                title: true,
+                status: true,
+                jobCode: true,
+                locationCity: true,
+                locationState: true,
+                jobType: true,
+                workMode: true,
+                fieldVisibility: true,
+                category: { select: { name: true } }
+              }
+            }
+          }
+        },
+      },
+    });
+
+    return NextResponse.json({ message: 'Profile updated successfully', user: fullUpdatedUser }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }

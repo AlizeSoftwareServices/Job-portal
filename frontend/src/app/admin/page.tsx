@@ -44,11 +44,13 @@ export default function AdminDashboard() {
   };
 
   const [activeTab, setActiveTab] = useState<'dashboard' | 'jobs' | 'categories' | 'applications' | 'employers'>('dashboard');
+  const [loadedTabs, setLoadedTabs] = useState<Set<string>>(new Set());
   const [jobs, setJobs] = useState<any[]>([]);
   const [applications, setApplications] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [employersList, setEmployersList] = useState<any[]>([]);
   const [stats, setStats] = useState<any>({ totalJobs: 0, activeJobs: 0, completedJobs: 0 });
+  const [flowchartStats, setFlowchartStats] = useState<any[]>([]);
   const [jobToConfirmStatus, setJobToConfirmStatus] = useState<{id: string, currentStatus: string} | null>(null);
   const [loading, setLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -116,10 +118,18 @@ export default function AdminDashboard() {
   
   // Pagination for Applications
   const [appCurrentPage, setAppCurrentPage] = useState(1);
+  const [appTotalPages, setAppTotalPages] = useState(1);
+  const [appTotalItems, setAppTotalItems] = useState(0);
+  const [appSearchInput, setAppSearchInput] = useState('');
+  const [appDebouncedSearch, setAppDebouncedSearch] = useState('');
   const appsPerPage = 16;
 
   // Pagination for Jobs
   const [jobCurrentPage, setJobCurrentPage] = useState(1);
+  const [jobTotalPages, setJobTotalPages] = useState(1);
+  const [jobTotalItems, setJobTotalItems] = useState(0);
+  const [jobSearchInput, setJobSearchInput] = useState('');
+  const [jobDebouncedSearch, setJobDebouncedSearch] = useState('');
   const jobsPerPage = 16;
 
   // Derive filter options for Applications
@@ -155,72 +165,131 @@ export default function AdminDashboard() {
   };
 
   // Filter and paginate Applications
-  const filteredApplications = applications.filter((app: any) => {
-    const catName = app.job?.category?.name || 'General';
-    const categoryMatch = appCategoryFilter === 'All' || catName === appCategoryFilter;
-    
-    const jobMatch = appJobFilter === 'All' || app.job?.title === appJobFilter;
-    
-    const locationStr = app.job ? `${app.job.locationCity || ''}, ${app.job.locationState || ''}` : '';
-    const locationMatch = appLocationFilter === 'All' || locationStr === appLocationFilter;
-    
-    const statusMatch = appStatusFilter === 'All' || app.status === appStatusFilter;
-    
-    return categoryMatch && jobMatch && locationMatch && statusMatch;
-  });
+  const currentApps = applications; // Now handled by server
+  const indexOfFirstApp = (appCurrentPage - 1) * appsPerPage;
+  const indexOfLastApp = indexOfFirstApp + currentApps.length;
+  const filteredApplications = applications;
 
-  const indexOfLastApp = appCurrentPage * appsPerPage;
-  const indexOfFirstApp = indexOfLastApp - appsPerPage;
-  const currentApps = filteredApplications.slice(indexOfFirstApp, indexOfLastApp);
-  const totalAppPages = Math.ceil(filteredApplications.length / appsPerPage);
+  // Debounce logic for Jobs and Applications
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setJobDebouncedSearch(jobSearchInput);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [jobSearchInput]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setAppDebouncedSearch(appSearchInput);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [appSearchInput]);
+
+  // Fetch Applications when dependencies change
+  useEffect(() => {
+    if (!isAdminAuthenticated) return;
+    const controller = new AbortController();
+    if (activeTab === 'applications') fetchApplications(controller.signal);
+    return () => controller.abort();
+  }, [appCurrentPage, appDebouncedSearch, appStatusFilter, isAdminAuthenticated, activeTab]);
 
   // Reset pagination when application filters change
   useEffect(() => {
     setAppCurrentPage(1);
-  }, [appCategoryFilter, appJobFilter, appLocationFilter, appStatusFilter]);
+  }, [appDebouncedSearch, appStatusFilter]);
+
+  // Fetch Jobs when dependencies change
+  useEffect(() => {
+    if (!isAdminAuthenticated) return;
+    const controller = new AbortController();
+    if (activeTab === 'jobs') fetchJobs(controller.signal);
+    return () => controller.abort();
+  }, [jobCurrentPage, jobDebouncedSearch, jobStatusFilter, isAdminAuthenticated, activeTab]);
 
   // Reset pagination when job filters change
   useEffect(() => {
     setJobCurrentPage(1);
-  }, [jobCategoryFilter, jobLocationFilter, jobStatusFilter]);
+  }, [jobDebouncedSearch, jobStatusFilter]);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
      
     
 
-  const fetchJobs = async () => {
+  const fetchJobs = async (signal?: AbortSignal) => {
     try {
-      const res = await fetch(`${API_URL}/jobs/admin-all`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
+      const params = new URLSearchParams({
+        page: jobCurrentPage.toString(),
+        limit: jobsPerPage.toString(),
+        search: jobDebouncedSearch,
+        status: jobStatusFilter,
+      });
+      const res = await fetch(`${API_URL}/jobs/admin-all?${params.toString()}`, { 
+        headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
+        signal 
+      });
       const data = await res.json();
-      if(Array.isArray(data)) setJobs(data);
-    } catch (err) { console.error(err); }
+      if(data.items) {
+        setJobs(data.items);
+        setJobTotalPages(data.pagination.totalPages);
+        setJobTotalItems(data.pagination.totalItems);
+      }
+    } catch (err) { if ((err as any).name !== 'AbortError') console.error(err); }
   };
 
-  const fetchApplications = async () => {
+  const fetchApplications = async (signal?: AbortSignal) => {
     try {
-      const res = await fetch(`${API_URL}/applications`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
+      const params = new URLSearchParams({
+        page: appCurrentPage.toString(),
+        limit: appsPerPage.toString(),
+        search: appDebouncedSearch,
+        status: appStatusFilter,
+      });
+      const res = await fetch(`${API_URL}/applications?${params.toString()}`, { 
+        headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
+        signal 
+      });
       const data = await res.json();
-      if(Array.isArray(data)) setApplications(data);
-    } catch (err) { console.error(err); }
+      if(data.items) {
+        setApplications(data.items);
+        setAppTotalPages(data.pagination.totalPages);
+        setAppTotalItems(data.pagination.totalItems);
+      }
+    } catch (err) { if ((err as any).name !== 'AbortError') console.error(err); }
   };
 
   const fetchCategories = async () => {
+    if (loadedTabs.has('categories')) return;
     try {
       const res = await fetch(`${API_URL}/categories`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
       const data = await res.json();
       if(Array.isArray(data)) setCategories(data);
+      setLoadedTabs(prev => new Set(prev).add('categories'));
     } catch (err) { console.error(err); }
   };
 
   const fetchEmployersList = async () => {
+    if (loadedTabs.has('employers')) return;
     try {
       const res = await fetch(`${API_URL}/admin/employers`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
       const data = await res.json();
       if(Array.isArray(data)) setEmployersList(data);
+      setLoadedTabs(prev => new Set(prev).add('employers'));
     } catch (err) { console.error(err); }
   };
 
+  const fetchFlowchartStats = async () => {
+    if (loadedTabs.has('dashboard_stats')) return;
+    try {
+      const res = await fetch(`${API_URL}/admin/flowchart-stats`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
+      if(res.ok) {
+        const data = await res.json();
+        setFlowchartStats(data);
+        setLoadedTabs(prev => new Set(prev).add('dashboard_stats'));
+      }
+    } catch (err) { console.error(err); }
+  };
   const fetchStats = async () => {
+    if (loadedTabs.has('dashboard_stats')) return;
     try {
       const res = await fetch(`${API_URL}/admin/dashboard-data`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
       if (!res.ok) {
@@ -228,6 +297,7 @@ export default function AdminDashboard() {
       }
       const data = await res.json();
       setStats(data);
+      setLoadedTabs(prev => new Set(prev).add('dashboard_stats'));
     } catch (err) { 
       console.error(err); 
       setStats({ totalJobs: 0, activeJobs: 0, totalApplications: 0, categoryBreakdown: [] });
@@ -238,7 +308,7 @@ export default function AdminDashboard() {
     const token = localStorage.getItem('skyo_admin_token');
     if (localStorage.getItem('skyo_admin_auth') === 'true' && token) {
       setIsAdminAuthenticated(true);
-      Promise.all([fetchJobs(), fetchApplications(), fetchCategories(), fetchEmployersList(), fetchStats()]).then(() => setLoading(false));
+      Promise.all([fetchStats(), fetchFlowchartStats()]).then(() => setLoading(false));
     } else {
       localStorage.removeItem('skyo_admin_auth');
       localStorage.removeItem('skyo_admin_token');
@@ -247,6 +317,12 @@ export default function AdminDashboard() {
     }
     setAdminAuthChecked(true);
   }, []);
+
+  useEffect(() => {
+    if (!isAdminAuthenticated) return;
+    if (activeTab === 'categories') fetchCategories();
+    if (activeTab === 'employers') fetchEmployersList();
+  }, [activeTab, isAdminAuthenticated]);
 
   const handleSaveJob = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -610,18 +686,10 @@ export default function AdminDashboard() {
   };
   const uniqueLocations = Array.from(new Set(jobs.map(j => `${j.locationCity}, ${j.locationState}`))).filter(Boolean);
 
-  const filteredJobs = jobs.filter(job => {
-    const loc = `${job.locationCity}, ${job.locationState}`;
-    if (jobCategoryFilter !== 'All' && job.category?.name !== jobCategoryFilter) return false;
-    if (jobLocationFilter !== 'All' && loc !== jobLocationFilter) return false;
-    if (jobStatusFilter !== 'All' && job.status !== jobStatusFilter) return false;
-    return true;
-  });
-
-  const indexOfLastJob = jobCurrentPage * jobsPerPage;
-  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-  const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
-  const totalJobPages = Math.ceil(filteredJobs.length / jobsPerPage);
+  const currentJobs = jobs; // Now handled by server
+  const indexOfFirstJob = (jobCurrentPage - 1) * jobsPerPage;
+  const indexOfLastJob = indexOfFirstJob + currentJobs.length;
+  const filteredJobs = jobs;
 
   if (loading || !adminAuthChecked) return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-50">
@@ -674,50 +742,7 @@ export default function AdminDashboard() {
   const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#6366f1'];
 
   // Compute hierarchical data for Categories -> Jobs breakdown
-  const categoryDetailedList: { name: string; totalApps: number; jobs: { id: string; title: string; appsCount: number; status: string }[] }[] = [];
-  
-  if (stats) {
-    const catMap: Record<string, { totalApps: number, jobs: any[] }> = {};
-    
-    // Initialize all categories
-    if (categories && categories.length > 0) {
-      categories.forEach(cat => {
-        catMap[cat.name] = { totalApps: 0, jobs: [] };
-      });
-    } else if (stats.categoryBreakdown) {
-      stats.categoryBreakdown.forEach((cat: any) => {
-        catMap[cat.name] = { totalApps: 0, jobs: [] };
-      });
-    }
-
-    if (jobs && jobs.length > 0) {
-      jobs.forEach(job => {
-        const catName = job.category?.name || 'Uncategorized';
-        const appsForJob = applications.filter(app => app.job?.id === job.id).length;
-        
-        if (!catMap[catName]) catMap[catName] = { totalApps: 0, jobs: [] };
-        
-        catMap[catName].totalApps += appsForJob;
-        catMap[catName].jobs.push({
-          id: job.id,
-          title: job.title,
-          appsCount: appsForJob,
-          status: job.status
-        });
-      });
-    }
-
-    Object.keys(catMap).forEach(cat => {
-      categoryDetailedList.push({
-        name: cat,
-        totalApps: catMap[cat].totalApps,
-        jobs: catMap[cat].jobs
-      });
-    });
-    
-    // Sort categories by number of jobs (descending)
-    categoryDetailedList.sort((a, b) => b.jobs.length - a.jobs.length);
-  }
+  const categoryDetailedList = flowchartStats;
 
   const categoryInnerData: any[] = [];
   const jobsOuterData: any[] = [];
@@ -730,7 +755,7 @@ export default function AdminDashboard() {
       jobsCount: cat.jobs.length
     });
     
-    cat.jobs.forEach(job => {
+    cat.jobs.forEach((job: any) => {
       jobsOuterData.push({
         name: job.title,
         value: Math.max(job.appsCount, 1),
@@ -1240,6 +1265,11 @@ export default function AdminDashboard() {
 
               {/* Filter Bar */}
               <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 mb-6">
+                
+                <div className="flex-1">
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Search</label>
+                  <input type="text" value={jobSearchInput} onChange={e => setJobSearchInput(e.target.value)} placeholder="Search jobs..." className="w-full bg-slate-50 border border-slate-200 p-2 rounded-lg text-sm font-medium outline-none focus:border-amber-500" />
+                </div>
                 <div className="flex-1">
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Status</label>
                   <select value={jobStatusFilter} onChange={e => setJobStatusFilter(e.target.value)} className="w-full bg-slate-50 border border-slate-200 p-2 rounded-lg text-sm font-medium outline-none focus:border-amber-500">
@@ -1265,7 +1295,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Jobs Grid */}
-              {filteredJobs.length === 0 && !isCreatingJob && (
+              {jobTotalItems === 0 && !isCreatingJob && (
                 <div className="bg-white p-12 text-center rounded-2xl border border-dashed border-slate-300">
                   <Briefcase className="h-12 w-12 text-slate-300 mx-auto mb-3" />
                   <p className="text-slate-500 font-medium">No job postings found matching your filters.</p>
@@ -1371,10 +1401,10 @@ export default function AdminDashboard() {
               </div>
 
               {/* Jobs Pagination Controls */}
-              {totalJobPages > 1 && (
+              {jobTotalPages > 1 && (
                 <div className="mt-6 flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                   <span className="text-sm text-slate-500 font-medium">
-                    Showing {indexOfFirstJob + 1} to {Math.min(indexOfLastJob, filteredJobs.length)} of {filteredJobs.length}
+                    Showing {indexOfFirstJob + 1} to {Math.min(indexOfLastJob, jobTotalItems)} of {jobTotalItems}
                   </span>
                   <div className="flex items-center gap-2">
                     <button 
@@ -1385,7 +1415,7 @@ export default function AdminDashboard() {
                       Previous
                     </button>
                     <div className="flex gap-1">
-                      {Array.from({ length: totalJobPages }, (_, i) => i + 1).map(page => (
+                      {Array.from({ length: jobTotalPages }, (_, i) => i + 1).map(page => (
                         <button
                           key={page}
                           onClick={() => setJobCurrentPage(page)}
@@ -1400,8 +1430,8 @@ export default function AdminDashboard() {
                       ))}
                     </div>
                     <button 
-                      onClick={() => setJobCurrentPage(prev => Math.min(prev + 1, totalJobPages))}
-                      disabled={jobCurrentPage === totalJobPages}
+                      onClick={() => setJobCurrentPage(prev => Math.min(prev + 1, jobTotalPages))}
+                      disabled={jobCurrentPage === jobTotalPages}
                       className="px-3 py-1.5 rounded-md border border-slate-300 bg-white text-sm font-bold disabled:opacity-50 hover:bg-slate-50 text-slate-700"
                     >
                       Next
@@ -1456,6 +1486,11 @@ export default function AdminDashboard() {
                     {appUniqueLocations.map(l => <option key={l} value={l}>{l}</option>)}
                   </select>
                 </div>
+                
+                <div className="flex-1">
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Search</label>
+                  <input type="text" value={appSearchInput} onChange={e => setAppSearchInput(e.target.value)} placeholder="Search applicants..." className="w-full bg-slate-50 border border-slate-200 p-2 rounded-lg text-sm font-medium outline-none focus:border-amber-500" />
+                </div>
                 <div className="flex-1">
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Status</label>
                   <select value={appStatusFilter} onChange={e => setAppStatusFilter(e.target.value)} className="w-full p-2 border border-slate-200 rounded-lg text-sm bg-slate-50 outline-none focus:border-amber-500 font-medium">
@@ -1466,7 +1501,7 @@ export default function AdminDashboard() {
 
               {applications.length === 0 ? (
                 <p className="text-zinc-500 italic">No applications found.</p>
-              ) : filteredApplications.length === 0 ? (
+              ) : appTotalItems === 0 ? (
                 <p className="text-zinc-500 italic">No applications match your filters.</p>
               ) : (
                 <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden overflow-x-auto">
@@ -1591,10 +1626,10 @@ export default function AdminDashboard() {
                   </table>
                   
                   {/* Applications Pagination Controls */}
-                  {totalAppPages > 1 && (
+                  {appTotalPages > 1 && (
                     <div className="p-4 border-t border-zinc-200 flex justify-between items-center bg-zinc-50">
                       <span className="text-sm text-zinc-600 font-medium">
-                        Showing {indexOfFirstApp + 1} to {Math.min(indexOfLastApp, filteredApplications.length)} of {filteredApplications.length}
+                        Showing {indexOfFirstApp + 1} to {Math.min(indexOfLastApp, appTotalItems)} of {appTotalItems}
                       </span>
                       <div className="flex items-center gap-2">
                         <button 
@@ -1605,7 +1640,7 @@ export default function AdminDashboard() {
                           Previous
                         </button>
                         <div className="flex gap-1">
-                          {Array.from({ length: totalAppPages }, (_, i) => i + 1).map(page => (
+                          {Array.from({ length: appTotalPages }, (_, i) => i + 1).map(page => (
                             <button
                               key={page}
                               onClick={() => setAppCurrentPage(page)}
@@ -1620,8 +1655,8 @@ export default function AdminDashboard() {
                           ))}
                         </div>
                         <button 
-                          onClick={() => setAppCurrentPage(prev => Math.min(prev + 1, totalAppPages))}
-                          disabled={appCurrentPage === totalAppPages}
+                          onClick={() => setAppCurrentPage(prev => Math.min(prev + 1, appTotalPages))}
+                          disabled={appCurrentPage === appTotalPages}
                           className="px-3 py-1.5 rounded-md border border-zinc-300 bg-white text-sm font-bold disabled:opacity-50 hover:bg-zinc-100"
                         >
                           Next

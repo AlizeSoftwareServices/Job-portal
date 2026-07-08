@@ -8,7 +8,7 @@ import JobCard from './JobCard';
 import Link from 'next/link';
 import Select from 'react-select';
 import { JOB_ROLES } from '@/constants/jobRoles';
-export default function ProfileView({ profile, onSaved }: { profile: any, onSaved: () => void }) {
+export default function ProfileView({ profile, onSaved }: { profile: any, onSaved: (updatedProfile?: any) => void }) {
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
@@ -222,7 +222,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
       const data = await res.json();
       if (res.ok) {
         setIsEditing(false);
-        onSaved();
+        onSaved(data.user);
       } else {
         alert(data.message || 'Failed to update profile.');
       }

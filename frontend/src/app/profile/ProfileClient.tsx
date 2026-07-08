@@ -115,7 +115,13 @@ export default function ProfileClient({ initialProfile, initialApplications }: {
           {activeTab === 'profile' && (
             <ProfileView 
               profile={profile} 
-              onSaved={() => window.location.reload()} 
+              onSaved={(updatedProfile) => {
+                if (updatedProfile) {
+                  setProfile({ ...updatedProfile, savedJobs: updatedProfile.savedJobs || [] });
+                } else {
+                  window.location.reload();
+                }
+              }} 
             />
           )}
 

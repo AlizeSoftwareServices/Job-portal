@@ -333,7 +333,7 @@ export default function AdminDashboard() {
     const token = localStorage.getItem('skyo_admin_token');
     if (localStorage.getItem('skyo_admin_auth') === 'true' && token) {
       setIsAdminAuthenticated(true);
-      Promise.all([fetchStats(), fetchFlowchartStats()]).then(() => setLoading(false));
+      Promise.all([fetchStats(), fetchFlowchartStats(), fetchCategories(), fetchEmployers()]).then(() => setLoading(false));
     } else {
       localStorage.removeItem('skyo_admin_auth');
       localStorage.removeItem('skyo_admin_token');

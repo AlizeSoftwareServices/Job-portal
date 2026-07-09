@@ -99,7 +99,7 @@ export async function GET(req: NextRequest) {
         motherName: profile?.motherName || 'N/A',
         motherOccupation: profile?.motherOccupation || 'N/A',
         createdAt: cand.createdAt.toLocaleDateString(),
-        resumeUrl: profile?.resumeUrl ? { text: profile.resumeUrl, hyperlink: profile.resumeUrl } : 'Not Uploaded',
+        resumeUrl: profile?.resumeUrl ? { text: 'View Resume', hyperlink: profile.resumeUrl } : 'Not Uploaded',
       };
 
       for (let i = 0; i < maxEduCount; i++) {

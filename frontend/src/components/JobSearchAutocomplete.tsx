@@ -81,8 +81,8 @@ export default function JobSearchAutocomplete() {
 
   return (
     <div className="flex-1 relative" ref={dropdownRef}>
-      <div className="flex items-center bg-zinc-50 rounded-lg px-4 py-3 border border-zinc-200 focus-within:border-amber-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all h-full">
-        <Search className="text-zinc-400 h-5 w-5 mr-3 flex-shrink-0" />
+      <div className="flex items-center bg-zinc-50 rounded-lg px-4 py-3 border border-zinc-200 focus-within:border-amber-500 focus-within:ring-1 focus-within:ring-sky-500 transition-all h-full">
+        <Search className="text-sky-200 h-5 w-5 mr-3 flex-shrink-0" />
         <input 
           type="text" 
           placeholder="Job title, keywords, or role" 
@@ -100,10 +100,10 @@ export default function JobSearchAutocomplete() {
             {suggestions.map((title, idx) => (
               <li 
                 key={idx}
-                className="px-4 py-3 hover:bg-blue-50 cursor-pointer text-zinc-800 transition-colors border-b border-zinc-50 last:border-b-0 flex items-center"
+                className="px-4 py-3 hover:bg-sky-50 cursor-pointer text-zinc-800 transition-colors border-b border-zinc-50 last:border-b-0 flex items-center"
                 onClick={() => handleSelect(title)}
               >
-                <Search className="text-zinc-400 h-4 w-4 mr-3 flex-shrink-0" />
+                <Search className="text-sky-200 h-4 w-4 mr-3 flex-shrink-0" />
                 {title}
               </li>
             ))}

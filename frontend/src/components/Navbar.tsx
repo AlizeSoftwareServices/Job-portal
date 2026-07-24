@@ -28,10 +28,10 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-6 font-medium text-zinc-600">
-          <Link href="/" className="hover:text-blue-800 transition-colors">Home</Link>
-          <Link href="/jobs" className="hover:text-blue-800 transition-colors">Find Jobs</Link>
-          <Link href="/about" className="hover:text-blue-800 transition-colors">About Us</Link>
-          <Link href="/#footer" className="hover:text-blue-800 transition-colors">Contact</Link>
+          <Link href="/" className="hover:text-sky-800 transition-colors">Home</Link>
+          <Link href="/jobs" className="hover:text-sky-800 transition-colors">Find Jobs</Link>
+          <Link href="/about" className="hover:text-sky-800 transition-colors">About Us</Link>
+          <Link href="/#footer" className="hover:text-sky-800 transition-colors">Contact</Link>
           <ProfileLink />
         </div>
 
@@ -59,10 +59,10 @@ export default function Navbar() {
           </button>
         </div>
         <div className="flex flex-col py-4 px-4 gap-4 font-medium text-zinc-600 flex-1 overflow-y-auto">
-          <Link href="/" onClick={() => setIsOpen(false)} className="hover:text-blue-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">Home</Link>
-          <Link href="/jobs" onClick={() => setIsOpen(false)} className="hover:text-blue-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">Find Jobs</Link>
-          <Link href="/about" onClick={() => setIsOpen(false)} className="hover:text-blue-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">About Us</Link>
-          <Link href="/#footer" onClick={() => setIsOpen(false)} className="hover:text-blue-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">Contact</Link>
+          <Link href="/" onClick={() => setIsOpen(false)} className="hover:text-sky-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">Home</Link>
+          <Link href="/jobs" onClick={() => setIsOpen(false)} className="hover:text-sky-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">Find Jobs</Link>
+          <Link href="/about" onClick={() => setIsOpen(false)} className="hover:text-sky-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">About Us</Link>
+          <Link href="/#footer" onClick={() => setIsOpen(false)} className="hover:text-sky-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">Contact</Link>
           <div className="p-2" onClick={() => setIsOpen(false)}>
             <ProfileLink />
           </div>

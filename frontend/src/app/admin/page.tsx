@@ -729,7 +729,7 @@ export default function AdminDashboard() {
       <div className="animate-[pulse_1.5s_ease-in-out_infinite] flex flex-col items-center">
         <img src="/logo.png" alt="Skyo Logo" className="h-28 md:h-36 w-auto object-contain mix-blend-multiply" />
         <div className="mt-8 w-48 h-1.5 bg-zinc-200 rounded-full overflow-hidden">
-          <div className="h-full bg-blue-600 rounded-full w-1/2 animate-[slideRight_1s_ease-in-out_infinite]" style={{ animation: 'slideRight 1s ease-in-out infinite alternate' }}>
+          <div className="h-full bg-sky-600 rounded-full w-1/2 animate-[slideRight_1s_ease-in-out_infinite]" style={{ animation: 'slideRight 1s ease-in-out infinite alternate' }}>
             <style>{`
               @keyframes slideRight {
                 0% { transform: translateX(0%); }
@@ -744,7 +744,7 @@ export default function AdminDashboard() {
 
   if (!isAdminAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0B132B] font-sans">
+      <div className="min-h-screen flex items-center justify-center bg-sky-800 font-sans">
         <form onSubmit={handleAdminLogin} className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm">
           <div className="flex justify-center mb-6">
             <img src="/logo.png" alt="Skyo Consultancy" className="h-16 w-auto object-contain" />
@@ -753,18 +753,18 @@ export default function AdminDashboard() {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-1">Username</label>
-              <input type="text" required value={adminUsername} onChange={e => setAdminUsername(e.target.value)} className="w-full border border-slate-300 p-2.5 rounded-lg outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600" placeholder="Enter username" />
+              <input type="text" required value={adminUsername} onChange={e => setAdminUsername(e.target.value)} className="w-full border border-slate-300 p-2.5 rounded-lg outline-none focus:border-sky-600 focus:ring-1 focus:ring-sky-600" placeholder="Enter username" />
             </div>
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-1">Password</label>
               <div className="relative">
-                <input type={showAdminPassword ? "text" : "password"} required value={adminPassword} onChange={e => setAdminPassword(e.target.value)} className="w-full border border-slate-300 p-2.5 rounded-lg outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 pr-10" placeholder="Enter password" />
+                <input type={showAdminPassword ? "text" : "password"} required value={adminPassword} onChange={e => setAdminPassword(e.target.value)} className="w-full border border-slate-300 p-2.5 rounded-lg outline-none focus:border-sky-600 focus:ring-1 focus:ring-sky-600 pr-10" placeholder="Enter password" />
                 <button type="button" onClick={() => setShowAdminPassword(!showAdminPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
                   {showAdminPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
             </div>
-            <button type="submit" className="w-full bg-blue-800 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors mt-2 shadow-md">Login to Dashboard</button>
+            <button type="submit" className="w-full bg-sky-800 text-white font-bold py-3 rounded-lg hover:bg-sky-700 transition-colors mt-2 shadow-md">Login to Dashboard</button>
           </div>
         </form>
       </div>
@@ -806,11 +806,11 @@ export default function AdminDashboard() {
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#0B132B] text-slate-300 flex flex-col transform transition-transform duration-300 md:relative md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-sky-800 text-sky-100 flex flex-col transform transition-transform duration-300 md:relative md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-6 pt-8 pb-6 flex items-center justify-center relative">
           <a href="/" className="cursor-pointer hover:scale-105 transition-transform flex flex-col items-center">
             <img src="/logo.png" alt="Skyo Consultancy Logo" className="h-16 w-auto object-contain mb-2" />
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest text-center">Skyo Admin</span>
+            <span className="text-[10px] font-bold text-sky-200 uppercase tracking-widest text-center">Skyo Admin</span>
           </a>
           <button className="md:hidden text-white absolute right-6 top-8" onClick={() => setIsMobileMenuOpen(false)}>
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -820,28 +820,27 @@ export default function AdminDashboard() {
         <nav className="flex-1 px-2 py-6 space-y-2">
           <button 
             onClick={() => { setActiveTab('dashboard'); setIsMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${activeTab === 'dashboard' ? 'bg-blue-800 text-white shadow-lg shadow-blue-900/20' : 'hover:bg-white/10 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${activeTab === 'dashboard' ? 'bg-sky-800 text-white shadow-lg shadow-sky-900/20' : 'hover:bg-white/10 hover:text-white'}`}
           >
             <TrendingUp className="h-5 w-5" /> Dashboard
           </button>
           <button 
             onClick={() => { setActiveTab('jobs'); setIsMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${activeTab === 'jobs' ? 'bg-blue-800 text-white shadow-lg shadow-blue-900/20' : 'hover:bg-white/10 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${activeTab === 'jobs' ? 'bg-sky-800 text-white shadow-lg shadow-sky-900/20' : 'hover:bg-white/10 hover:text-white'}`}
           >
             <Briefcase className="h-5 w-5" /> Jobs
           </button>
           <button 
             onClick={() => { setActiveTab('applications'); setIsMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${activeTab === 'applications' ? 'bg-blue-800 text-white shadow-lg shadow-blue-900/20' : 'hover:bg-white/10 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${activeTab === 'applications' ? 'bg-sky-800 text-white shadow-lg shadow-sky-900/20' : 'hover:bg-white/10 hover:text-white'}`}
           >
             <Users className="h-5 w-5" /> Applications
           </button>
           <button 
             onClick={() => { setActiveTab('employers'); setIsMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${activeTab === 'employers' ? 'bg-blue-800 text-white shadow-lg shadow-blue-900/20' : 'hover:bg-white/10 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${activeTab === 'employers' ? 'bg-sky-800 text-white shadow-lg shadow-sky-900/20' : 'hover:bg-white/10 hover:text-white'}`}
           >
-            <Briefcase className="h-5 w-5" /> Employers
-          </button>
+            <Briefcase className="h-5 w-5" />Clients</button>
         </nav>
 
         <div className="p-4 border-t border-slate-800">
@@ -883,13 +882,13 @@ export default function AdminDashboard() {
               
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-full mix-blend-multiply opacity-50 -mr-8 -mt-8 group-hover:scale-150 transition-transform duration-700"></div>
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-sky-50 rounded-full mix-blend-multiply opacity-50 -mr-8 -mt-8 group-hover:scale-150 transition-transform duration-700"></div>
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="text-sm font-bold text-slate-500 mb-1">Total Jobs</p>
                       <p className="text-3xl font-black text-slate-800">{stats.totalJobs}</p>
                     </div>
-                    <div className="p-3 bg-amber-50 text-blue-800 rounded-xl"><Briefcase className="h-5 w-5" /></div>
+                    <div className="p-3 bg-amber-50 text-sky-800 rounded-xl"><Briefcase className="h-5 w-5" /></div>
                   </div>
                   <div className="mt-4 flex items-center text-sm font-medium text-emerald-600 bg-emerald-50 w-fit px-2 py-1 rounded-md">
                     <TrendingUp className="h-3 w-3 mr-1" /> {stats.activeJobs} Active
@@ -924,13 +923,13 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-full mix-blend-multiply opacity-50 -mr-8 -mt-8 group-hover:scale-150 transition-transform duration-700"></div>
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-sky-50 rounded-full mix-blend-multiply opacity-50 -mr-8 -mt-8 group-hover:scale-150 transition-transform duration-700"></div>
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="text-sm font-bold text-slate-500 mb-1">Total Employers</p>
+                      <p className="text-sm font-bold text-slate-500 mb-1">Total Clients</p>
                       <p className="text-3xl font-black text-slate-800">{stats.totalEmployers || 0}</p>
                     </div>
-                    <div className="p-3 bg-blue-100 text-blue-700 rounded-xl"><Building2 className="h-5 w-5" /></div>
+                    <div className="p-3 bg-sky-100 text-sky-700 rounded-xl"><Building2 className="h-5 w-5" /></div>
                   </div>
                   <div className="mt-4 flex items-center text-sm font-medium text-emerald-600 bg-emerald-50 w-fit px-2 py-1 rounded-md">
                     <TrendingUp className="h-3 w-3 mr-1" /> Registered
@@ -971,7 +970,7 @@ export default function AdminDashboard() {
                   </a>
                   <button 
                     onClick={() => setIsCreatingJob(!isCreatingJob)}
-                    className="bg-blue-800 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center gap-2"
+                    className="bg-sky-800 hover:bg-sky-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center gap-2"
                   >
                     {isCreatingJob ? 'Cancel' : <><Briefcase className="w-4 h-4" /> Create New Job</>}
                   </button>
@@ -985,7 +984,7 @@ export default function AdminDashboard() {
                     <p className="text-sm font-bold text-slate-500 mb-1">Total Jobs</p>
                     <p className="text-3xl font-black text-slate-800">{jobs.length}</p>
                   </div>
-                  <div className="h-12 w-12 bg-amber-50 rounded-full flex items-center justify-center text-blue-800">
+                  <div className="h-12 w-12 bg-amber-50 rounded-full flex items-center justify-center text-sky-800">
                     <Briefcase className="h-6 w-6" />
                   </div>
                 </div>
@@ -1072,7 +1071,7 @@ export default function AdminDashboard() {
                               </div>
                             </div>
                             <div className="flex items-center gap-1 shrink-0 ml-2">
-                              <button onClick={() => { setEditingCategoryId(cat.id); setEditingCategoryName(cat.name); setEditingCategoryImage(cat.imageUrl || ''); }} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-md transition-colors" title="Edit Category">
+                              <button onClick={() => { setEditingCategoryId(cat.id); setEditingCategoryName(cat.name); setEditingCategoryImage(cat.imageUrl || ''); }} className="p-1.5 text-sky-600 hover:bg-sky-50 rounded-md transition-colors" title="Edit Category">
                                 <Edit className="w-4 h-4" />
                               </button>
                               <button onClick={() => handleDeleteCategory(cat.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-md transition-colors" title="Delete Category">
@@ -1122,8 +1121,8 @@ export default function AdminDashboard() {
                       {newJob.categoryId === 'NEW' && (
                         <div className="md:col-span-2 flex gap-2 items-end">
                           <div className="flex-1">
-                            <label className="block text-sm font-bold text-blue-700 mb-1">New Category Name <span className="text-red-500">*</span></label>
-                            <input type="text" required value={newJob.newCategoryName} onChange={e => setNewJob({...newJob, newCategoryName: e.target.value})} className="w-full border border-blue-300 p-2 rounded outline-none focus:border-amber-500 bg-blue-50" placeholder="e.g. Data Science" />
+                            <label className="block text-sm font-bold text-sky-700 mb-1">New Category Name <span className="text-red-500">*</span></label>
+                            <input type="text" required value={newJob.newCategoryName} onChange={e => setNewJob({...newJob, newCategoryName: e.target.value})} className="w-full border border-sky-300 p-2 rounded outline-none focus:border-amber-500 bg-sky-50" placeholder="e.g. Data Science" />
                           </div>
                         </div>
                       )}
@@ -1288,7 +1287,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-slate-100">
                       <button type="button" onClick={() => { setEditingJobId(null); setNewJob(defaultJobState); setIsCreatingJob(false); }} className="px-6 py-2.5 rounded-lg font-bold text-slate-600 hover:bg-slate-100 transition-colors">Cancel</button>
-                      <button type="submit" formNoValidate className="bg-blue-800 text-white font-bold py-2.5 px-8 rounded-lg hover:bg-blue-700 shadow-sm transition-colors">{editingJobId ? 'Update & Save Job' : 'Publish Job'}</button>
+                      <button type="submit" formNoValidate className="bg-sky-800 text-white font-bold py-2.5 px-8 rounded-lg hover:bg-sky-700 shadow-sm transition-colors">{editingJobId ? 'Update & Save Job' : 'Publish Job'}</button>
                     </div>
                   </form>
                   </div>
@@ -1331,7 +1330,7 @@ export default function AdminDashboard() {
               {/* Jobs Grid */}
               {jobTotalItems === 0 && !isCreatingJob && (
                 <div className="bg-white p-12 text-center rounded-2xl border border-dashed border-slate-300">
-                  <Briefcase className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+                  <Briefcase className="h-12 w-12 text-sky-100 mx-auto mb-3" />
                   <p className="text-slate-500 font-medium">No job postings found matching your filters.</p>
                 </div>
               )}
@@ -1342,8 +1341,8 @@ export default function AdminDashboard() {
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-black text-lg text-slate-800 group-hover:text-blue-800 transition-colors">{job.title}</h3>
-                          <span className="bg-blue-50 text-blue-800 text-[10px] font-black px-2 py-0.5 rounded tracking-widest uppercase border border-blue-100">
+                          <h3 className="font-black text-lg text-slate-800 group-hover:text-sky-800 transition-colors">{job.title}</h3>
+                          <span className="bg-sky-50 text-sky-800 text-[10px] font-black px-2 py-0.5 rounded tracking-widest uppercase border border-sky-100">
                             {job.jobCode}
                           </span>
                         </div>
@@ -1353,7 +1352,7 @@ export default function AdminDashboard() {
                       </div>
                       <div className="flex flex-col items-end gap-1">
                         <span className={`px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-black ${
-                          job.status === 'COMPLETED' ? 'bg-indigo-100 text-indigo-700 border border-indigo-200' : 
+                          job.status === 'COMPLETED' ? 'bg-cyan-100 text-cyan-700 border border-cyan-200' : 
                           job.status === 'ACTIVE' ? 'bg-green-100 text-green-700 border border-green-200' : 
                           'bg-slate-100 text-slate-600 border border-slate-200'
                         }`}>
@@ -1384,8 +1383,8 @@ export default function AdminDashboard() {
                           value={jobRouteTypes[job.id] || 'SKYO'}
                           onChange={(e) => setJobRouteTypes({...jobRouteTypes, [job.id]: e.target.value})}
                         >
-                          <option value="SKYO">Through Skyo (Mask Employer)</option>
-                          <option value="DIRECT">Direct (Show Employer)</option>
+                          <option value="SKYO">Through Skyo (Mask Client)</option>
+                          <option value="DIRECT">Direct (Show Client)</option>
                         </select>
                         <div className="flex gap-2 mt-1">
                           <button onClick={() => handleUpdateJobApproval(job.id, 'APPROVED', jobRouteTypes[job.id] || 'SKYO')} className="flex-1 bg-emerald-500 text-white font-bold py-1.5 rounded hover:bg-emerald-600 text-xs shadow-sm">
@@ -1400,7 +1399,7 @@ export default function AdminDashboard() {
 
                     {job.closureRequested && job.status !== 'COMPLETED' && (
                       <div className="flex gap-2 mb-4 bg-purple-50 p-3 rounded-lg border border-purple-100 items-center justify-between">
-                        <div className="text-xs font-bold text-purple-800">Employer marked this job as Hired.</div>
+                        <div className="text-xs font-bold text-purple-800">Client marked this job as Hired.</div>
                         <button onClick={() => handleApproveClosure(job.id)} className="bg-purple-600 text-white font-bold py-1.5 px-4 rounded hover:bg-purple-700 text-xs shadow-sm whitespace-nowrap">
                           Approve Closure
                         </button>
@@ -1416,7 +1415,7 @@ export default function AdminDashboard() {
                           onClick={() => handleToggleJobStatus(job.id, job.status)}
                           className={`text-xs font-bold px-3 py-1.5 rounded border transition-colors ${
                             job.status === 'ACTIVE'
-                              ? 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100'
+                              ? 'bg-cyan-50 text-cyan-700 border-cyan-200 hover:bg-cyan-100'
                               : 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'
                           }`}
                         >
@@ -1425,7 +1424,7 @@ export default function AdminDashboard() {
                       </div>
                       <div className="flex gap-3">
                         <span className="text-xs font-bold text-slate-400 flex items-center gap-1"><Clock className="h-3 w-3"/> {new Date(job.createdAt).toLocaleDateString()}</span>
-                        <button onClick={() => handleEditClick(job)} className="text-sm font-bold text-blue-800 hover:text-blue-800 flex items-center gap-1">
+                        <button onClick={() => handleEditClick(job)} className="text-sm font-bold text-sky-800 hover:text-sky-800 flex items-center gap-1">
                           Edit <ChevronRight className="h-4 w-4" />
                         </button>
                       </div>
@@ -1455,7 +1454,7 @@ export default function AdminDashboard() {
                           onClick={() => setJobCurrentPage(page)}
                           className={`w-8 h-8 flex items-center justify-center rounded-md text-sm font-bold transition-colors ${
                             jobCurrentPage === page 
-                              ? 'bg-blue-800 text-white' 
+                              ? 'bg-sky-800 text-white' 
                               : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-50'
                           }`}
                         >
@@ -1489,9 +1488,9 @@ export default function AdminDashboard() {
                   >
                     <Download className="w-4 h-4" /> Export Candidates
                   </a>
-                  <div className="bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-lg text-blue-800 font-bold flex items-center gap-2 text-sm">
+                  <div className="bg-sky-50 border border-sky-100 px-3 py-1.5 rounded-lg text-sky-800 font-bold flex items-center gap-2 text-sm">
                     <span>New</span>
-                    <span className="bg-blue-800 text-white px-2 py-0.5 rounded-md text-xs">{applications.filter((a: any) => a.status === 'APPLIED').length}</span>
+                    <span className="bg-sky-800 text-white px-2 py-0.5 rounded-md text-xs">{applications.filter((a: any) => a.status === 'APPLIED').length}</span>
                   </div>
                   <div className="bg-zinc-50 border border-zinc-200 px-3 py-1.5 rounded-lg text-zinc-800 font-bold flex items-center gap-2 text-sm">
                     <span>Total</span>
@@ -1558,14 +1557,14 @@ export default function AdminDashboard() {
                             <p className="font-bold text-sm text-zinc-900">{app.candidate?.candidateProfile?.fullName || `${app.candidate?.firstName || app.firstName || 'Unknown'} ${app.candidate?.lastName || app.lastName || ''}`.trim()}</p>
                             <p className="text-xs text-zinc-500">{app.email || app.candidate?.email}</p>
                             <p className="text-xs text-zinc-500">{app.phone || ''}</p>
-                            <button onClick={() => viewResume(app.id, app.resumeUrl)} className="text-xs font-bold text-blue-800 hover:underline mt-1">View Resume</button>
+                            <button onClick={() => viewResume(app.id, app.resumeUrl)} className="text-xs font-bold text-sky-800 hover:underline mt-1">View Resume</button>
                           </td>
                           <td className="p-4 text-sm font-medium text-zinc-700">{app.job?.title || 'General'}</td>
                           <td className="p-4">
                             <span className={`px-2 py-1 text-xs font-bold rounded-full ${
                               app.status === 'SELECTED' ? 'bg-green-100 text-green-700' :
                               app.status === 'REJECTED' ? 'bg-red-100 text-red-700' :
-                              app.status === 'UNDER_REVIEW' ? 'bg-amber-50 text-blue-700' :
+                              app.status === 'UNDER_REVIEW' ? 'bg-amber-50 text-sky-700' :
                               app.status === 'INTERVIEW_SCHEDULED' ? 'bg-purple-100 text-purple-700' :
                               'bg-zinc-100 text-zinc-700'
                             }`}>
@@ -1626,11 +1625,11 @@ export default function AdminDashboard() {
                               {app.job?.routeType === 'SKYO' && !app.isPassedToEmployer && (
                                 <div className="mt-2 flex flex-col gap-1 items-center">
                                   <select 
-                                    className="w-full text-xs p-1 border border-blue-200 rounded text-blue-800 bg-blue-50 max-w-[150px]"
+                                    className="w-full text-xs p-1 border border-sky-200 rounded text-sky-800 bg-sky-50 max-w-[150px]"
                                     value={appEmployerSelections[app.id] || app.job?.employerId || ''}
                                     onChange={e => setAppEmployerSelections(prev => ({ ...prev, [app.id]: e.target.value }))}
                                   >
-                                    <option value="">Select Employer</option>
+                                    <option value="">Select Client</option>
                                     {employersList.map(emp => (
                                       <option key={emp.id} value={emp.id}>{emp.employerProfile?.companyName || emp.email}</option>
                                     ))}
@@ -1641,15 +1640,13 @@ export default function AdminDashboard() {
                                       if (!employerId) return alert('Please select an employer first.');
                                       handlePassToEmployer(app.id, employerId);
                                     }} 
-                                    className="text-[10px] px-3 py-1 bg-blue-50 text-blue-600 rounded border border-blue-200 font-bold hover:bg-blue-100 uppercase tracking-wider"
-                                  >
-                                    Pass to Employer
-                                  </button>
+                                    className="text-[10px] px-3 py-1 bg-sky-50 text-sky-600 rounded border border-sky-200 font-bold hover:bg-sky-100 uppercase tracking-wider"
+                                  >Pass to Client</button>
                                 </div>
                               )}
                               {app.job?.routeType === 'SKYO' && app.isPassedToEmployer && (
                                 <div className="mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center flex flex-col">
-                                  <span>Passed to Employer</span>
+                                  <span>Passed to Client</span>
                                   <span className="text-[9px] truncate max-w-[150px]">{employersList.find(e => e.id === (app.assignedEmployerId || app.job?.employerId))?.employerProfile?.companyName || ''}</span>
                                 </div>
                               )}
@@ -1680,7 +1677,7 @@ export default function AdminDashboard() {
                               onClick={() => setAppCurrentPage(page)}
                               className={`w-8 h-8 rounded-md text-sm font-bold flex items-center justify-center transition-colors ${
                                 appCurrentPage === page 
-                                  ? 'bg-blue-800 text-white' 
+                                  ? 'bg-sky-800 text-white' 
                                   : 'bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-100'
                               }`}
                             >
@@ -1875,8 +1872,8 @@ export default function AdminDashboard() {
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
                 <div>
-                  <h2 className="text-xl font-bold text-zinc-800">Employers Directory</h2>
-                  <p className="text-sm text-zinc-500 mt-1">Manage and view all registered employers</p>
+                  <h2 className="text-xl font-bold text-zinc-800">Clients Directory</h2>
+                  <p className="text-sm text-zinc-500 mt-1">Manage and view all registered clients</p>
                 </div>
                 <div className="flex gap-3">
                   <a 
@@ -1884,7 +1881,7 @@ export default function AdminDashboard() {
                     target="_blank"
                     className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center gap-2"
                   >
-                    <Download className="w-4 h-4" /> Export Employers to Excel
+                    <Download className="w-4 h-4" /> Export Clients to Excel
                   </a>
                 </div>
               </div>
@@ -1903,7 +1900,7 @@ export default function AdminDashboard() {
                   <tbody className="divide-y divide-zinc-100">
                     {employersList.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="p-6 text-center text-zinc-500 italic">No employers found.</td>
+                        <td colSpan={5} className="p-6 text-center text-zinc-500 italic">No clients found.</td>
                       </tr>
                     ) : (
                       employersList.map(emp => (
@@ -1916,7 +1913,7 @@ export default function AdminDashboard() {
                               <p className="font-bold text-sm text-zinc-900">{emp.employerProfile?.companyName || 'Not Set'}</p>
                               <p className="text-xs text-zinc-500">{emp.email}</p>
                               {emp.employerProfile?.companyWebsite && (
-                                <a href={emp.employerProfile.companyWebsite.startsWith('http') ? emp.employerProfile.companyWebsite : `https://${emp.employerProfile.companyWebsite}`} target="_blank" className="text-xs text-blue-600 hover:underline" onClick={e => e.stopPropagation()}>Website</a>
+                                <a href={emp.employerProfile.companyWebsite.startsWith('http') ? emp.employerProfile.companyWebsite : `https://${emp.employerProfile.companyWebsite}`} target="_blank" className="text-xs text-sky-600 hover:underline" onClick={e => e.stopPropagation()}>Website</a>
                               )}
                             </td>
                             <td className="p-4 text-sm text-zinc-700">
@@ -1928,9 +1925,9 @@ export default function AdminDashboard() {
                             <td className="p-4 text-sm text-zinc-700">{new Date(emp.createdAt).toLocaleDateString()}</td>
                           </tr>
                           {expandedEmployerId === emp.id && (
-                            <tr className="bg-blue-50/50">
+                            <tr className="bg-sky-50/50">
                               <td colSpan={5} className="p-0">
-                                <div className="p-6 border-t border-blue-100">
+                                <div className="p-6 border-t border-sky-100">
                                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {emp.employerProfile?.companyLogoUrl && (
                                       <div className="lg:col-span-3 mb-2">
@@ -1944,7 +1941,7 @@ export default function AdminDashboard() {
                                       <p className="text-sm text-zinc-800"><strong>Location:</strong> {emp.employerProfile?.companyLocation || 'N/A'}</p>
                                       <p className="text-sm text-zinc-800">
                                         <strong>Website:</strong> {emp.employerProfile?.companyWebsite ? (
-                                          <a href={emp.employerProfile.companyWebsite.startsWith('http') ? emp.employerProfile.companyWebsite : `https://${emp.employerProfile.companyWebsite}`} target="_blank" className="text-blue-600 hover:underline">{emp.employerProfile.companyWebsite}</a>
+                                          <a href={emp.employerProfile.companyWebsite.startsWith('http') ? emp.employerProfile.companyWebsite : `https://${emp.employerProfile.companyWebsite}`} target="_blank" className="text-sky-600 hover:underline">{emp.employerProfile.companyWebsite}</a>
                                         ) : 'N/A'}
                                       </p>
                                     </div>

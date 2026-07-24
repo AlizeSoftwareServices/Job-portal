@@ -79,16 +79,16 @@ export default function JobsClient({
   return (
     <>
       {/* Header Search */}
-      <div className="bg-[#0B132B] relative py-12 px-6">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/40 to-indigo-900/40"></div>
+      <div className="bg-sky-800 relative py-12 px-6">
+        <div className="absolute inset-0 bg-gradient-to-r from-sky-900/40 to-cyan-900/40"></div>
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
         <div className="max-w-5xl mx-auto flex flex-col gap-6 relative z-10">
           <div className="text-center">
             <h1 className="text-4xl font-black text-white tracking-tight">Explore Open Roles</h1>
-            <p className="text-blue-50 mt-3 font-medium text-lg">Find the perfect match for your skills and experience</p>
+            <p className="text-sky-50 mt-3 font-medium text-lg">Find the perfect match for your skills and experience</p>
           </div>
           <div className="max-w-4xl mx-auto w-full relative">
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl blur opacity-20"></div>
+            <div className="absolute -inset-1 bg-gradient-to-r from-sky-500 to-purple-600 rounded-2xl blur opacity-20"></div>
             <GlobalSearchBar initialQ={initialQuery} initialLoc={initialLoc} />
           </div>
         </div>
@@ -101,14 +101,14 @@ export default function JobsClient({
           <div className="flex flex-col xl:flex-row justify-between items-center gap-4 mb-8 bg-white/60 backdrop-blur-md p-4 rounded-2xl border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
             <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
               <div className="flex items-center gap-2 px-2 xl:border-r border-zinc-200">
-                <Filter className="h-4 w-4 text-blue-600" />
+                <Filter className="h-4 w-4 text-sky-600" />
                 <span className="font-black text-sm text-zinc-800">Filters:</span>
               </div>
               
               <select 
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="flex-1 min-w-[140px] bg-white border border-zinc-200 text-zinc-700 py-2 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors text-sm font-bold cursor-pointer"
+                className="flex-1 min-w-[140px] bg-white border border-zinc-200 text-zinc-700 py-2 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors text-sm font-bold cursor-pointer"
               >
                 <option value="All">All Categories</option>
                 {initialCategories && initialCategories.map((c: any) => (
@@ -119,7 +119,7 @@ export default function JobsClient({
               <select 
                 value={selectedJobType}
                 onChange={(e) => setSelectedJobType(e.target.value)}
-                className="flex-1 min-w-[140px] bg-white border border-zinc-200 text-zinc-700 py-2 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors text-sm font-bold cursor-pointer"
+                className="flex-1 min-w-[140px] bg-white border border-zinc-200 text-zinc-700 py-2 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors text-sm font-bold cursor-pointer"
               >
                 <option value="All">All Job Types</option>
                 <option value="Full Time">Full Time</option>
@@ -131,7 +131,7 @@ export default function JobsClient({
               <select 
                 value={selectedExperience}
                 onChange={(e) => setSelectedExperience(e.target.value)}
-                className="flex-1 min-w-[140px] bg-white border border-zinc-200 text-zinc-700 py-2 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors text-sm font-bold cursor-pointer"
+                className="flex-1 min-w-[140px] bg-white border border-zinc-200 text-zinc-700 py-2 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors text-sm font-bold cursor-pointer"
               >
                 <option value="All">All Experience</option>
                 <option value="Fresher">Fresher</option>
@@ -141,7 +141,7 @@ export default function JobsClient({
               {(selectedJobType !== 'All' || selectedExperience !== 'All' || selectedCategory !== 'All') && (
                 <button 
                   onClick={() => { setSelectedJobType('All'); setSelectedExperience('All'); setSelectedCategory('All'); }}
-                  className="text-sm text-blue-600 font-bold hover:underline px-2 transition-colors"
+                  className="text-sm text-sky-600 font-bold hover:underline px-2 transition-colors"
                 >
                   Clear All
                 </button>
@@ -189,7 +189,7 @@ export default function JobsClient({
                   onClick={() => paginate(i + 1)}
                   className={`w-10 h-10 rounded-lg font-bold text-sm transition-colors ${
                     currentPage === i + 1 
-                      ? 'bg-blue-800 text-white shadow-sm' 
+                      ? 'bg-sky-800 text-white shadow-sm' 
                       : 'border border-zinc-200 text-zinc-600 hover:bg-zinc-50'
                   }`}
                 >

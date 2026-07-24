@@ -73,13 +73,13 @@ export default function ProfileClient({ initialProfile, initialApplications }: {
       {/* Premium Hero Banner */}
       <div className="w-full bg-gradient-to-r from-[#002b52] via-[#003c71] to-[#0055a4] pt-16 pb-32 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-        <div className="absolute -top-24 -left-24 w-72 h-72 bg-indigo-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-sky-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+        <div className="absolute -top-24 -left-24 w-72 h-72 bg-cyan-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
         
         <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center justify-between">
           <div className="text-white text-center md:text-left mb-6 md:mb-0">
             <h1 className="text-4xl md:text-5xl font-black mb-2 tracking-tight">Your Dashboard</h1>
-            <p className="text-blue-100 font-medium text-lg">Manage your profile, track applications, and find your dream job.</p>
+            <p className="text-sky-100 font-medium text-lg">Manage your profile, track applications, and find your dream job.</p>
           </div>
         </div>
       </div>
@@ -91,28 +91,28 @@ export default function ProfileClient({ initialProfile, initialApplications }: {
           <div className="grid grid-cols-4 gap-1.5 md:gap-2 w-full">
             <button 
               onClick={() => setActiveTab('profile')}
-              className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 md:px-6 md:py-3.5 rounded-xl font-bold transition-all text-[10px] sm:text-xs md:text-sm text-center ${activeTab === 'profile' ? 'bg-[#003c71] text-white shadow-md transform md:scale-[1.02]' : 'text-zinc-600 hover:bg-white/60 hover:text-blue-800'}`}
+              className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 md:px-6 md:py-3.5 rounded-xl font-bold transition-all text-[10px] sm:text-xs md:text-sm text-center ${activeTab === 'profile' ? 'bg-[#003c71] text-white shadow-md transform md:scale-[1.02]' : 'text-zinc-600 hover:bg-white/60 hover:text-sky-800'}`}
             >
               <User className="h-4 w-4 shrink-0" /> 
               <span className="leading-tight">My Profile</span>
             </button>
             <button 
               onClick={() => setActiveTab('applied')}
-              className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 md:px-6 md:py-3.5 rounded-xl font-bold transition-all text-[10px] sm:text-xs md:text-sm text-center ${activeTab === 'applied' ? 'bg-[#003c71] text-white shadow-md transform md:scale-[1.02]' : 'text-zinc-600 hover:bg-white/60 hover:text-blue-800'}`}
+              className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 md:px-6 md:py-3.5 rounded-xl font-bold transition-all text-[10px] sm:text-xs md:text-sm text-center ${activeTab === 'applied' ? 'bg-[#003c71] text-white shadow-md transform md:scale-[1.02]' : 'text-zinc-600 hover:bg-white/60 hover:text-sky-800'}`}
             >
               <Briefcase className="h-4 w-4 shrink-0" /> 
               <span className="leading-tight">Applied Jobs</span>
             </button>
             <button 
               onClick={() => setActiveTab('saved')}
-              className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 md:px-6 md:py-3.5 rounded-xl font-bold transition-all text-[10px] sm:text-xs md:text-sm text-center ${activeTab === 'saved' ? 'bg-[#003c71] text-white shadow-md transform md:scale-[1.02]' : 'text-zinc-600 hover:bg-white/60 hover:text-blue-800'}`}
+              className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 md:px-6 md:py-3.5 rounded-xl font-bold transition-all text-[10px] sm:text-xs md:text-sm text-center ${activeTab === 'saved' ? 'bg-[#003c71] text-white shadow-md transform md:scale-[1.02]' : 'text-zinc-600 hover:bg-white/60 hover:text-sky-800'}`}
             >
               <Bookmark className="h-4 w-4 shrink-0" /> 
               <span className="leading-tight">Saved Jobs</span>
             </button>
             <button 
               onClick={() => setActiveTab('track')}
-              className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 md:px-6 md:py-3.5 rounded-xl font-bold transition-all text-[10px] sm:text-xs md:text-sm text-center ${activeTab === 'track' ? 'bg-[#003c71] text-white shadow-md transform md:scale-[1.02]' : 'text-zinc-600 hover:bg-white/60 hover:text-blue-800'}`}
+              className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 md:px-6 md:py-3.5 rounded-xl font-bold transition-all text-[10px] sm:text-xs md:text-sm text-center ${activeTab === 'track' ? 'bg-[#003c71] text-white shadow-md transform md:scale-[1.02]' : 'text-zinc-600 hover:bg-white/60 hover:text-sky-800'}`}
             >
               <Search className="h-4 w-4 shrink-0" /> 
               <span className="leading-tight">Track</span>
@@ -152,7 +152,7 @@ export default function ProfileClient({ initialProfile, initialApplications }: {
                 <div className="text-center py-16 bg-white rounded-2xl border border-zinc-200">
                   <Briefcase className="h-12 w-12 text-zinc-300 mx-auto mb-4" />
                   <h3 className="text-lg font-bold text-zinc-800">No applications yet</h3>
-                  <Link href="/jobs" className="mt-4 inline-block bg-blue-800 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors">Find Jobs</Link>
+                  <Link href="/jobs" className="mt-4 inline-block bg-sky-800 text-white px-6 py-3 rounded-lg font-bold hover:bg-sky-700 transition-colors">Find Jobs</Link>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
@@ -172,7 +172,7 @@ export default function ProfileClient({ initialProfile, initialApplications }: {
                    <Bookmark className="h-12 w-12 text-zinc-300 mx-auto mb-4" />
                    <h3 className="text-lg font-bold text-zinc-800">No saved jobs</h3>
                    <p className="text-zinc-500 mt-2 max-w-sm mx-auto">Jobs you save will appear here. Find jobs you are interested in and click the save button.</p>
-                   <Link href="/jobs" className="mt-4 inline-block bg-blue-800 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors">Find Jobs</Link>
+                   <Link href="/jobs" className="mt-4 inline-block bg-sky-800 text-white px-6 py-3 rounded-lg font-bold hover:bg-sky-700 transition-colors">Find Jobs</Link>
                  </div>
                ) : (
                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">

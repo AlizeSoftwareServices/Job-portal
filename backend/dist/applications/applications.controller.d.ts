@@ -318,8 +318,8 @@ export declare class ApplicationsController {
     }>;
     trackApplication(ref: string): Promise<{
         job: {
-            title: string;
             jobCode: string;
+            title: string;
         } | null;
     } & {
         id: string;

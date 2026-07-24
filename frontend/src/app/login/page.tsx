@@ -54,7 +54,7 @@ export default function Login() {
       
       if (decoded.role !== loginRole) {
         localStorage.removeItem('skyo_token');
-        throw new Error(`Please sign in as ${decoded.role === 'EMPLOYER' ? 'Employer' : 'Candidate'} with these credentials.`);
+        throw new Error(`Please sign in as ${decoded.role === 'EMPLOYER' ? 'Client' : 'Candidate'} with these credentials.`);
       }
 
       if (decoded.role === 'EMPLOYER') {
@@ -86,13 +86,13 @@ export default function Login() {
           </div>
         )}
       <div className="absolute top-6 left-6 md:top-10 md:left-10 z-10">
-        <Link href="/" className="flex items-center text-sm font-medium text-zinc-600 hover:text-blue-800 transition-colors bg-white px-4 py-2 rounded-full border border-zinc-200 shadow-sm">
+        <Link href="/" className="flex items-center text-sm font-medium text-zinc-600 hover:text-sky-800 transition-colors bg-white px-4 py-2 rounded-full border border-zinc-200 shadow-sm">
           <ArrowLeft className="h-4 w-4 mr-2" /> Back to Home
         </Link>
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center mb-8 mt-10 md:mt-0">
-        <Link href="/" className="text-3xl font-bold tracking-tight text-blue-900 inline-block">
+        <Link href="/" className="text-3xl font-bold tracking-tight text-sky-900 inline-block">
           <div className="flex items-center justify-center">
             <img src="/logo.png" alt="Skyo Consultancy Logo" className="h-24 md:h-32 w-auto object-contain mix-blend-multiply" />
           </div>
@@ -125,7 +125,7 @@ export default function Login() {
             <button
               onClick={() => setLoginRole('CANDIDATE')}
               className={`flex-1 py-2 text-sm font-bold rounded-lg transition-colors ${
-                loginRole === 'CANDIDATE' ? 'bg-white text-blue-800 shadow-sm' : 'text-zinc-500 hover:text-zinc-700'
+                loginRole === 'CANDIDATE' ? 'bg-white text-sky-800 shadow-sm' : 'text-zinc-500 hover:text-zinc-700'
               }`}
             >
               Candidate
@@ -133,18 +133,16 @@ export default function Login() {
             <button
               onClick={() => setLoginRole('EMPLOYER')}
               className={`flex-1 py-2 text-sm font-bold rounded-lg transition-colors ${
-                loginRole === 'EMPLOYER' ? 'bg-white text-blue-800 shadow-sm' : 'text-zinc-500 hover:text-zinc-700'
+                loginRole === 'EMPLOYER' ? 'bg-white text-sky-800 shadow-sm' : 'text-zinc-500 hover:text-zinc-700'
               }`}
-            >
-              Employer
-            </button>
+            >Client</button>
           </div>
 
 
           <form className="space-y-6" onSubmit={handleLogin}>
             <div>
               <label className="block text-sm font-medium text-zinc-700 mb-1">Email address</label>
-              <input required type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" placeholder="you@example.com" />
+              <input required type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" placeholder="you@example.com" />
             </div>
 
             <div>
@@ -152,26 +150,26 @@ export default function Login() {
                 <label className="block text-sm font-medium text-zinc-700">Password</label>
               </div>
               <div className="relative mb-2">
-                <input required type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 pr-10 focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" placeholder="Enter your password" />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-400">
+                <input required type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 pr-10 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" placeholder="Enter your password" />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-sky-200">
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
               <div className="flex justify-end">
-                <Link href="/forgot-password" className="text-sm font-medium text-blue-800 hover:text-amber-500">
+                <Link href="/forgot-password" className="text-sm font-medium text-sky-800 hover:text-amber-500">
                   Forgot password?
                 </Link>
               </div>
             </div>
 
-            <button type="submit" disabled={loading} className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-blue-800 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 text-zinc-900">
+            <button type="submit" disabled={loading} className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-sky-800 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50 text-zinc-900">
               {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Sign In'}
             </button>
           </form>
 
           <p className="mt-6 text-center text-sm text-zinc-600">
             Don't have an account?{' '}
-            <Link href="/signup" className="font-medium text-blue-800 hover:text-amber-500">
+            <Link href="/signup" className="font-medium text-sky-800 hover:text-amber-500">
               Sign up
             </Link>
           </p>

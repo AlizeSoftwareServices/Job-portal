@@ -116,7 +116,7 @@ export default function JobDetailsClient({ job }: { job: any }) {
                 <div>
                   <h1 className="text-3xl font-bold text-zinc-900 mb-2">{job.title}</h1>
                   <div className="flex flex-wrap items-center gap-2 mb-4">
-                    <span className="inline-block bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">{typeof job.category === 'object' ? job.category?.name : job.category}</span>
+                    <span className="inline-block bg-sky-50 text-sky-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">{typeof job.category === 'object' ? job.category?.name : job.category}</span>
                     <span className="inline-block bg-zinc-100 text-zinc-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">{job.jobCode}</span>
                   </div>
                 </div>
@@ -172,7 +172,7 @@ export default function JobDetailsClient({ job }: { job: any }) {
                 <button 
                   onClick={handleSaveClick}
                   disabled={savingJob}
-                  className={`bg-white border-none px-4 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${isSaved ? 'text-blue-500 hover:text-blue-600' : 'text-blue-800 hover:text-blue-800'}`}
+                  className={`bg-white border-none px-4 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${isSaved ? 'text-sky-500 hover:text-sky-600' : 'text-sky-800 hover:text-sky-800'}`}
                 >
                   <svg className="w-5 h-5" fill={isSaved ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                   {isSaved ? 'Saved' : 'Save Job'}
@@ -180,22 +180,22 @@ export default function JobDetailsClient({ job }: { job: any }) {
               </div>
 
               {job.routeType === 'DIRECT' && job.employer?.employerProfile && (
-                <div className="mb-6 p-6 bg-blue-50 border border-blue-100 rounded-xl">
-                  <h3 className="font-bold text-blue-900 mb-4 flex items-center gap-2">
+                <div className="mb-6 p-6 bg-sky-50 border border-sky-100 rounded-xl">
+                  <h3 className="font-bold text-sky-900 mb-4 flex items-center gap-2">
                     <Building className="w-5 h-5" /> Employer Contact Details
                   </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-blue-800">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-sky-800">
                     {job.employer.employerProfile.companyName && (
-                      <p><span className="font-semibold text-blue-900/60 uppercase text-[10px] tracking-wider block">Company Name</span> {job.employer.employerProfile.companyName}</p>
+                      <p><span className="font-semibold text-sky-900/60 uppercase text-[10px] tracking-wider block">Company Name</span> {job.employer.employerProfile.companyName}</p>
                     )}
                     {job.employer.employerProfile.hrName && (
-                      <p><span className="font-semibold text-blue-900/60 uppercase text-[10px] tracking-wider block">Contact Person</span> {job.employer.employerProfile.hrName}</p>
+                      <p><span className="font-semibold text-sky-900/60 uppercase text-[10px] tracking-wider block">Contact Person</span> {job.employer.employerProfile.hrName}</p>
                     )}
                     {job.employer.employerProfile.companyWebsite && (
-                      <p><span className="font-semibold text-blue-900/60 uppercase text-[10px] tracking-wider block">Website</span> <a href={job.employer.employerProfile.companyWebsite} target="_blank" className="underline">{job.employer.employerProfile.companyWebsite}</a></p>
+                      <p><span className="font-semibold text-sky-900/60 uppercase text-[10px] tracking-wider block">Website</span> <a href={job.employer.employerProfile.companyWebsite} target="_blank" className="underline">{job.employer.employerProfile.companyWebsite}</a></p>
                     )}
                     {job.employer.employerProfile.address && (
-                      <p className="sm:col-span-2"><span className="font-semibold text-blue-900/60 uppercase text-[10px] tracking-wider block">Address</span> {job.employer.employerProfile.address}</p>
+                      <p className="sm:col-span-2"><span className="font-semibold text-sky-900/60 uppercase text-[10px] tracking-wider block">Address</span> {job.employer.employerProfile.address}</p>
                     )}
                   </div>
                 </div>
@@ -204,12 +204,12 @@ export default function JobDetailsClient({ job }: { job: any }) {
               {/* Company Social Links */}
               <div className="flex items-center gap-4 pt-4 border-t border-zinc-100">
                 {job.linkedinLink?.length > 0 && (
-                  <a href={job.linkedinLink} target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-[#0a66c2] transition-colors p-2 rounded-full bg-zinc-100 hover:bg-blue-50">
+                  <a href={job.linkedinLink} target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-[#0a66c2] transition-colors p-2 rounded-full bg-zinc-100 hover:bg-sky-50">
                     <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
                   </a>
                 )}
                 {job.facebookLink?.length > 0 && (
-                  <a href={job.facebookLink} target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-[#1877f2] transition-colors p-2 rounded-full bg-zinc-100 hover:bg-blue-50">
+                  <a href={job.facebookLink} target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-[#1877f2] transition-colors p-2 rounded-full bg-zinc-100 hover:bg-sky-50">
                     <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                   </a>
                 )}

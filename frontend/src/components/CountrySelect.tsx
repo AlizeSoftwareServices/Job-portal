@@ -29,7 +29,7 @@ export default function CountrySelect({ value, onChange }: { value: string, onCh
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between border border-zinc-300 rounded-xl px-3 py-3 focus:ring-2 focus:ring-blue-500 outline-none bg-white text-sm transition-shadow"
+        className="w-full flex items-center justify-between border border-zinc-300 rounded-xl px-3 py-3 focus:ring-2 focus:ring-sky-500 outline-none bg-white text-sm transition-shadow"
       >
         <span className="flex items-center gap-2">
           {selectedCountry && (
@@ -41,7 +41,7 @@ export default function CountrySelect({ value, onChange }: { value: string, onCh
           )}
           <span>{selectedCountry?.dialCode}</span>
         </span>
-        <ChevronDown className="h-4 w-4 text-zinc-400" />
+        <ChevronDown className="h-4 w-4 text-sky-200" />
       </button>
 
       {isOpen && (
@@ -52,7 +52,7 @@ export default function CountrySelect({ value, onChange }: { value: string, onCh
               placeholder="Search country..." 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-1.5 text-sm outline-none focus:border-blue-400"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-1.5 text-sm outline-none focus:border-sky-400"
             />
           </div>
           <ul className="py-1">

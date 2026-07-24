@@ -183,9 +183,6 @@ export declare class JobsService {
     findJobById(id: string): Promise<{
         category: string;
         reviewedApplicationsCount: number;
-        _count: {
-            applications: number;
-        };
         employer: ({
             employerProfile: {
                 id: string;
@@ -214,6 +211,9 @@ export declare class JobsService {
             createdAt: Date;
             updatedAt: Date;
         }) | null;
+        _count: {
+            applications: number;
+        };
         id: string;
         jobCode: string;
         title: string;

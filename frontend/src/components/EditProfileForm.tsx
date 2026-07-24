@@ -261,7 +261,7 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
 
   const sectionClass = "bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm mb-6";
   const labelClass = "block text-sm font-bold text-zinc-700 mb-2";
-  const inputClass = "w-full border border-zinc-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow";
+  const inputClass = "w-full border border-zinc-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none transition-shadow";
 
   return (
     <form onSubmit={handleSave} className="space-y-6">
@@ -275,7 +275,7 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
               {form.avatarUrl ? (
                 <img src={form.avatarUrl.startsWith('http') ? form.avatarUrl : `/api${form.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
-                <User className="h-12 w-12 text-zinc-400" />
+                <User className="h-12 w-12 text-sky-200" />
               )}
               {uploadingAvatar && (
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -305,13 +305,13 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
                   key={i} 
                   src={url} 
                   onClick={() => setForm({...form, avatarUrl: url})}
-                  className={`w-12 h-12 rounded-full cursor-pointer object-cover border-2 transition-all hover:scale-110 shadow-sm ${form.avatarUrl === url ? 'border-blue-800 scale-110 ring-2 ring-blue-200' : 'border-transparent opacity-80 hover:opacity-100'}`}
+                  className={`w-12 h-12 rounded-full cursor-pointer object-cover border-2 transition-all hover:scale-110 shadow-sm ${form.avatarUrl === url ? 'border-sky-800 scale-110 ring-2 ring-sky-200' : 'border-transparent opacity-80 hover:opacity-100'}`}
                   alt="Preset" 
                 />
               ))}
             </div>
               <p className="text-zinc-500 text-sm mt-4">
-                Or <span className="text-blue-800 font-medium cursor-pointer hover:underline" onClick={() => avatarInputRef.current?.click()}>upload from your system</span> (Max 50KB, JPEG/PNG).
+                Or <span className="text-sky-800 font-medium cursor-pointer hover:underline" onClick={() => avatarInputRef.current?.click()}>upload from your system</span> (Max 50KB, JPEG/PNG).
               </p>
           </div>
         </div>
@@ -446,12 +446,12 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
               <input type="file" className="hidden" accept=".pdf,.doc,.docx" onChange={handleResumeUpload} disabled={uploadingResume} />
               {uploadingResume ? (
                 <div className="flex flex-col items-center">
-                  <Loader2 className="h-8 w-8 text-blue-800 animate-spin mb-3" />
+                  <Loader2 className="h-8 w-8 text-sky-800 animate-spin mb-3" />
                   <span className="font-bold text-zinc-600">Uploading...</span>
                 </div>
               ) : (
                 <div className="flex flex-col items-center">
-                  <Upload className="h-8 w-8 text-blue-800 mb-3" />
+                  <Upload className="h-8 w-8 text-sky-800 mb-3" />
                   <span className="font-bold text-zinc-900 block mb-1">Click to upload resume</span>
                   <span className="text-sm text-zinc-500">PDF, DOCX up to 100KB</span>
                 </div>
@@ -459,10 +459,10 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
             </label>
           </div>
           {form.resumeUrl && (
-            <div className="w-full md:w-1/3 bg-blue-50 border border-blue-100 rounded-2xl p-6 text-center flex flex-col items-center justify-center">
-              <FileText className="h-10 w-10 text-blue-800 mb-3" />
-              <h4 className="font-bold text-blue-900 mb-2">Resume Uploaded</h4>
-              <a href={form.resumeUrl} target="_blank" rel="noreferrer" className="text-sm text-blue-800 hover:underline font-medium">View Current Resume</a>
+            <div className="w-full md:w-1/3 bg-sky-50 border border-sky-100 rounded-2xl p-6 text-center flex flex-col items-center justify-center">
+              <FileText className="h-10 w-10 text-sky-800 mb-3" />
+              <h4 className="font-bold text-sky-900 mb-2">Resume Uploaded</h4>
+              <a href={form.resumeUrl} target="_blank" rel="noreferrer" className="text-sm text-sky-800 hover:underline font-medium">View Current Resume</a>
             </div>
           )}
         </div>
@@ -484,7 +484,7 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
       <div className={sectionClass}>
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xl font-bold text-zinc-900">Experience</h3>
-          <button type="button" onClick={handleAddExperience} className="text-blue-800 font-bold hover:bg-blue-50 px-4 py-2 rounded-lg transition-colors flex items-center gap-2 text-sm">
+          <button type="button" onClick={handleAddExperience} className="text-sky-800 font-bold hover:bg-sky-50 px-4 py-2 rounded-lg transition-colors flex items-center gap-2 text-sm">
             <Plus className="h-4 w-4" /> Add Experience
           </button>
         </div>
@@ -495,7 +495,7 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
           <div className="space-y-6">
             {form.experiences.map((exp: any, index: number) => (
               <div key={index} className="border border-zinc-200 rounded-xl p-6 relative group">
-                <button type="button" onClick={() => handleRemoveExperience(index)} className="absolute top-4 right-4 text-zinc-400 hover:text-red-600 transition-colors">
+                <button type="button" onClick={() => handleRemoveExperience(index)} className="absolute top-4 right-4 text-sky-200 hover:text-red-600 transition-colors">
                   <Trash2 className="h-5 w-5" />
                 </button>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -530,7 +530,7 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
       <div className={sectionClass}>
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xl font-bold text-zinc-900">Education</h3>
-          <button type="button" onClick={handleAddEducation} className="text-blue-800 font-bold hover:bg-blue-50 px-4 py-2 rounded-lg transition-colors flex items-center gap-2 text-sm">
+          <button type="button" onClick={handleAddEducation} className="text-sky-800 font-bold hover:bg-sky-50 px-4 py-2 rounded-lg transition-colors flex items-center gap-2 text-sm">
             <Plus className="h-4 w-4" /> Add Education
           </button>
         </div>
@@ -541,7 +541,7 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
           <div className="space-y-6">
             {form.educations.map((edu: any, index: number) => (
               <div key={index} className="border border-zinc-200 rounded-xl p-6 relative group">
-                <button type="button" onClick={() => handleRemoveEducation(index)} className="absolute top-4 right-4 text-zinc-400 hover:text-red-600 transition-colors">
+                <button type="button" onClick={() => handleRemoveEducation(index)} className="absolute top-4 right-4 text-sky-200 hover:text-red-600 transition-colors">
                   <Trash2 className="h-5 w-5" />
                 </button>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -573,7 +573,7 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
       </div>
 
       <div className="flex justify-end pt-4">
-        <button type="submit" disabled={saving || uploadingResume} className="bg-blue-800 hover:bg-blue-700 text-white px-10 py-4 rounded-xl font-bold shadow-md transition-all flex items-center justify-center min-w-[200px] text-lg disabled:opacity-70 disabled:cursor-not-allowed">
+        <button type="submit" disabled={saving || uploadingResume} className="bg-sky-800 hover:bg-sky-700 text-white px-10 py-4 rounded-xl font-bold shadow-md transition-all flex items-center justify-center min-w-[200px] text-lg disabled:opacity-70 disabled:cursor-not-allowed">
           {saving ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Save Profile Changes'}
         </button>
       </div>

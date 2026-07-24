@@ -161,8 +161,8 @@ export default function GlobalSearchBar({
     <div className="bg-white p-2 md:p-3 rounded-2xl w-full flex flex-col md:flex-row gap-2 shadow-lg border border-zinc-200 transition-all hover:shadow-xl">
       {/* Title Search */}
       <div className="flex-1 relative" ref={titleDropdownRef}>
-        <div className="flex items-center bg-zinc-50 rounded-lg px-4 py-3 border border-zinc-200 focus-within:border-amber-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all h-full">
-          <Search className="text-zinc-400 h-5 w-5 mr-3 flex-shrink-0" />
+        <div className="flex items-center bg-zinc-50 rounded-lg px-4 py-3 border border-zinc-200 focus-within:border-amber-500 focus-within:ring-1 focus-within:ring-sky-500 transition-all h-full">
+          <Search className="text-sky-200 h-5 w-5 mr-3 flex-shrink-0" />
           <input 
             type="text" 
             placeholder="Job title, keywords, or role" 
@@ -179,10 +179,10 @@ export default function GlobalSearchBar({
               {titleSuggestions.map((title, idx) => (
                 <li 
                   key={idx}
-                  className="px-4 py-3 hover:bg-blue-50 cursor-pointer text-zinc-800 transition-colors border-b border-zinc-50 last:border-b-0 flex items-center"
+                  className="px-4 py-3 hover:bg-sky-50 cursor-pointer text-zinc-800 transition-colors border-b border-zinc-50 last:border-b-0 flex items-center"
                   onClick={() => handleTitleSelect(title)}
                 >
-                  <Search className="text-zinc-400 h-4 w-4 mr-3 flex-shrink-0" />
+                  <Search className="text-sky-200 h-4 w-4 mr-3 flex-shrink-0" />
                   {title}
                 </li>
               ))}
@@ -193,8 +193,8 @@ export default function GlobalSearchBar({
 
       {/* Location Search */}
       <div className="flex-1 relative" ref={locDropdownRef}>
-        <div className="flex items-center bg-zinc-50 rounded-lg px-4 py-3 border border-zinc-200 focus-within:border-amber-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all h-full">
-          <MapPin className="text-zinc-400 h-5 w-5 mr-3 flex-shrink-0" />
+        <div className="flex items-center bg-zinc-50 rounded-lg px-4 py-3 border border-zinc-200 focus-within:border-amber-500 focus-within:ring-1 focus-within:ring-sky-500 transition-all h-full">
+          <MapPin className="text-sky-200 h-5 w-5 mr-3 flex-shrink-0" />
           <input 
             type="text" 
             placeholder="City or state" 
@@ -211,10 +211,10 @@ export default function GlobalSearchBar({
               {locSuggestions.map((loc, idx) => (
                 <li 
                   key={idx}
-                  className="px-4 py-3 hover:bg-blue-50 cursor-pointer text-zinc-800 transition-colors border-b border-zinc-50 last:border-b-0 flex items-center"
+                  className="px-4 py-3 hover:bg-sky-50 cursor-pointer text-zinc-800 transition-colors border-b border-zinc-50 last:border-b-0 flex items-center"
                   onClick={() => handleLocSelect(loc)}
                 >
-                  <MapPin className="text-zinc-400 h-4 w-4 mr-3 flex-shrink-0" />
+                  <MapPin className="text-sky-200 h-4 w-4 mr-3 flex-shrink-0" />
                   {loc}
                 </li>
               ))}
@@ -225,7 +225,7 @@ export default function GlobalSearchBar({
 
       <button 
         onClick={handleSearchClick}
-        className="bg-blue-800 hover:bg-blue-700 text-white px-8 md:px-10 py-3 md:py-4 rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] flex items-center justify-center"
+        className="bg-sky-800 hover:bg-sky-700 text-white px-8 md:px-10 py-3 md:py-4 rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] flex items-center justify-center"
       >
         <Search className="h-5 w-5 mr-2" />
         Search

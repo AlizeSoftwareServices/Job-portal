@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer id="footer" className="bg-[#0B132B] text-zinc-400 py-16 px-6 border-t border-blue-900/50">
+    <footer id="footer" className="bg-sky-800 text-sky-200 py-16 px-6 border-t border-sky-900/50">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12">
         
         {/* Branding & About */}
@@ -12,25 +12,25 @@ export default function Footer() {
               <img src="/logo.png" alt="Skyo Consultancy Logo" className="h-20 w-auto bg-white rounded-md p-2 object-contain" />
             </div>
           </div>
-          <p className="text-sm leading-relaxed mb-6 text-zinc-400">
-            Skyo consultancy is a leading professional recruitment consultancy Specialising in the recruitment of permanent, contract & temporary positions on behalf of the world's top employers.
+          <p className="text-sm leading-relaxed mb-6 text-sky-200">
+            Skyo consultancy is a leading professional recruitment consultancy Specialising in the recruitment of permanent, contract & temporary positions on behalf of the world's top clients.
           </p>
           <div className="flex items-center gap-4">
-            <Link href="#" className="w-10 h-10 rounded-full bg-zinc-800/50 flex items-center justify-center hover:bg-blue-800 hover:text-white transition-all text-zinc-400 group">
+            <Link href="#" className="w-10 h-10 rounded-full bg-zinc-800/50 flex items-center justify-center hover:bg-sky-800 hover:text-white transition-all text-sky-200 group">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:text-white">
                 <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
                 <rect x="2" y="9" width="4" height="12"></rect>
                 <circle cx="4" cy="4" r="2"></circle>
               </svg>
             </Link>
-            <Link href="#" className="w-10 h-10 rounded-full bg-zinc-800/50 flex items-center justify-center hover:bg-pink-600 hover:text-white transition-all text-zinc-400 group">
+            <Link href="#" className="w-10 h-10 rounded-full bg-zinc-800/50 flex items-center justify-center hover:bg-pink-600 hover:text-white transition-all text-sky-200 group">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:text-white">
                 <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                 <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                 <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
               </svg>
             </Link>
-            <Link href="#" className="w-10 h-10 rounded-full bg-zinc-800/50 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all text-zinc-400 group">
+            <Link href="#" className="w-10 h-10 rounded-full bg-zinc-800/50 flex items-center justify-center hover:bg-sky-600 hover:text-white transition-all text-sky-200 group">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:text-white">
                 <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
               </svg>
@@ -52,7 +52,7 @@ export default function Footer() {
         {/* Social Awareness */}
         <div className="lg:col-span-4 lg:pr-4">
           <h4 className="text-white font-semibold mb-4 text-lg">Social Awareness</h4>
-          <ul className="space-y-3 text-sm text-zinc-400">
+          <ul className="space-y-3 text-sm text-sky-200">
             <li className="flex items-start gap-2"><span className="text-green-500 font-bold">✓</span> Against child labour</li>
             <li className="flex items-start gap-2"><span className="text-green-500 font-bold">✓</span> Childhood’s for learning not for earning</li>
             <li className="flex items-start gap-2"><span className="text-green-500 font-bold">✓</span> Refer and earn</li>
@@ -64,7 +64,7 @@ export default function Footer() {
         {/* Contact Us */}
         <div className="lg:col-span-3">
           <h4 className="text-white font-semibold mb-4 text-lg">Contact Us</h4>
-          <ul className="space-y-4 text-sm text-zinc-400">
+          <ul className="space-y-4 text-sm text-sky-200">
             <li className="flex items-start gap-3">
               <div className="w-5 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>

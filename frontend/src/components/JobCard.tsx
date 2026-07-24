@@ -10,7 +10,7 @@ interface JobCardProps {
 export default function JobCard({ job, showAppliedBadge }: JobCardProps) {
   return (
     <div className="group bg-white p-5 md:p-8 rounded-2xl md:rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-zinc-100 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between h-full relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-gradient-to-br from-blue-50 to-purple-50 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+      <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-gradient-to-br from-sky-50 to-purple-50 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
       
       <div>
         <div className="flex justify-between items-start mb-3 md:mb-4">
@@ -30,15 +30,15 @@ export default function JobCard({ job, showAppliedBadge }: JobCardProps) {
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg> Hired
               </span>
             )}
-            <span className="text-[10px] md:text-xs font-bold text-blue-800 bg-blue-50 px-2 py-1 rounded-md inline-block uppercase tracking-wider">{job.jobCode}</span>
+            <span className="text-[10px] md:text-xs font-bold text-sky-800 bg-sky-50 px-2 py-1 rounded-md inline-block uppercase tracking-wider">{job.jobCode}</span>
           </div>
         </div>
         
-        <h3 className="text-lg md:text-xl font-bold text-zinc-900 mb-2 line-clamp-2 leading-tight group-hover:text-blue-700 transition-colors">{job.title}</h3>
+        <h3 className="text-lg md:text-xl font-bold text-zinc-900 mb-2 line-clamp-2 leading-tight group-hover:text-sky-700 transition-colors">{job.title}</h3>
         
         <div className="flex items-center gap-2 text-zinc-600 mb-3 md:mb-4 text-xs md:text-sm font-medium">
           {(job.fieldVisibility?.locationCity !== false && job.fieldVisibility?.locationState !== false) && (
-            <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5 md:h-4 md:w-4 text-zinc-400" /> {job.locationCity}, {job.locationState}</span>
+            <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5 md:h-4 md:w-4 text-sky-200" /> {job.locationCity}, {job.locationState}</span>
           )}
         </div>
         
@@ -61,7 +61,7 @@ export default function JobCard({ job, showAppliedBadge }: JobCardProps) {
         )}
       </div>
       
-      <Link href={`/jobs/${job.id}`} className="block w-full text-center py-2 md:py-3.5 border-2 border-zinc-100 text-zinc-900 font-bold rounded-xl text-sm md:text-base hover:bg-blue-800 hover:border-blue-800 hover:text-white transition-all mt-4 md:mt-6 group-hover:shadow-lg">
+      <Link href={`/jobs/${job.id}`} className="block w-full text-center py-2 md:py-3.5 border-2 border-zinc-100 text-zinc-900 font-bold rounded-xl text-sm md:text-base hover:bg-sky-800 hover:border-sky-800 hover:text-white transition-all mt-4 md:mt-6 group-hover:shadow-lg">
         View Details
       </Link>
     </div>

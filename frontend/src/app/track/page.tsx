@@ -82,17 +82,17 @@ function TrackContent() {
             placeholder="e.g. NEX-7A2-K9Q" 
             value={refNumber}
             onChange={(e) => setRefNumber(e.target.value)}
-            className="flex-1 border border-zinc-300 rounded-xl px-5 py-4 focus:ring-2 focus:ring-blue-500 outline-none uppercase tracking-widest font-medium shadow-sm text-lg"
+            className="flex-1 border border-zinc-300 rounded-xl px-5 py-4 focus:ring-2 focus:ring-sky-500 outline-none uppercase tracking-widest font-medium shadow-sm text-lg"
             required
           />
-          <button type="submit" className="bg-blue-800 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-bold transition-colors shadow-sm flex items-center gap-2 text-lg">
+          <button type="submit" className="bg-sky-800 hover:bg-sky-700 text-white px-8 py-4 rounded-xl font-bold transition-colors shadow-sm flex items-center gap-2 text-lg">
             <Search className="h-5 w-5" /> Track
           </button>
         </form>
 
         {loading && (
           <div className="text-center py-12 animate-pulse">
-            <div className="w-12 h-12 border-4 border-blue-800 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-12 h-12 border-4 border-sky-800 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-zinc-500 font-medium">Fetching application details...</p>
           </div>
         )}
@@ -118,7 +118,7 @@ function TrackContent() {
                   <span className="bg-zinc-100 px-3 py-1 rounded-full text-zinc-800 tracking-wider uppercase text-xs">{application.referenceNumber}</span>
                 </div>
               </div>
-              <div className="bg-blue-50 text-blue-800 px-4 py-2 rounded-lg font-bold text-sm text-center">
+              <div className="bg-sky-50 text-sky-800 px-4 py-2 rounded-lg font-bold text-sm text-center">
                 Current Status: <br/><span className="text-lg">{application.status.replace(/_/g, ' ')}</span>
               </div>
             </div>
@@ -130,14 +130,14 @@ function TrackContent() {
               <div className="space-y-12">
                 {/* Step 1 */}
                 <div className="relative flex md:justify-center items-center">
-                  <div className={`hidden md:block w-1/2 pr-12 text-right ${currentStep >= 1 ? 'text-zinc-900' : 'text-zinc-400'}`}>
+                  <div className={`hidden md:block w-1/2 pr-12 text-right ${currentStep >= 1 ? 'text-zinc-900' : 'text-sky-200'}`}>
                     <h4 className="font-bold text-lg mb-1">Application Submitted</h4>
                     <p className="text-sm">We received your application.</p>
                   </div>
-                  <div className={`absolute left-0 md:relative md:left-auto flex items-center justify-center w-14 h-14 rounded-full border-4 ${currentStep >= 1 ? 'bg-blue-800 border-blue-100 text-white' : 'bg-white border-zinc-200 text-zinc-300'} z-10 shadow-sm transition-colors duration-500`}>
+                  <div className={`absolute left-0 md:relative md:left-auto flex items-center justify-center w-14 h-14 rounded-full border-4 ${currentStep >= 1 ? 'bg-sky-800 border-sky-100 text-white' : 'bg-white border-zinc-200 text-zinc-300'} z-10 shadow-sm transition-colors duration-500`}>
                     <CheckCircle2 className="h-6 w-6" />
                   </div>
-                  <div className={`ml-20 md:ml-0 md:w-1/2 md:pl-12 ${currentStep >= 1 ? 'text-zinc-900' : 'text-zinc-400'} md:hidden`}>
+                  <div className={`ml-20 md:ml-0 md:w-1/2 md:pl-12 ${currentStep >= 1 ? 'text-zinc-900' : 'text-sky-200'} md:hidden`}>
                     <h4 className="font-bold text-lg mb-1">Application Submitted</h4>
                     <p className="text-sm">We received your application.</p>
                   </div>
@@ -145,11 +145,11 @@ function TrackContent() {
 
                 {/* Step 2 */}
                 <div className="relative flex md:justify-center items-center">
-                  <div className={`ml-20 md:ml-0 md:w-1/2 md:pr-12 text-left md:text-right ${currentStep >= 2 ? 'text-zinc-900' : 'text-zinc-400'}`}>
+                  <div className={`ml-20 md:ml-0 md:w-1/2 md:pr-12 text-left md:text-right ${currentStep >= 2 ? 'text-zinc-900' : 'text-sky-200'}`}>
                     <h4 className="font-bold text-lg mb-1">Under Review</h4>
                     <p className="text-sm">Your resume is being reviewed by our team.</p>
                   </div>
-                  <div className={`absolute left-0 md:relative md:left-auto flex items-center justify-center w-14 h-14 rounded-full border-4 ${currentStep >= 2 ? 'bg-blue-800 border-blue-100 text-white' : 'bg-white border-zinc-200 text-zinc-300'} z-10 shadow-sm transition-colors duration-500`}>
+                  <div className={`absolute left-0 md:relative md:left-auto flex items-center justify-center w-14 h-14 rounded-full border-4 ${currentStep >= 2 ? 'bg-sky-800 border-sky-100 text-white' : 'bg-white border-zinc-200 text-zinc-300'} z-10 shadow-sm transition-colors duration-500`}>
                     <Search className="h-6 w-6" />
                   </div>
                   <div className="hidden md:block w-1/2 pl-12"></div>
@@ -158,10 +158,10 @@ function TrackContent() {
                 {/* Step 3 */}
                 <div className="relative flex md:justify-center items-center">
                   <div className="hidden md:block w-1/2 pr-12 text-right"></div>
-                  <div className={`absolute left-0 md:relative md:left-auto flex items-center justify-center w-14 h-14 rounded-full border-4 ${currentStep >= 3 ? 'bg-blue-800 border-blue-100 text-white' : 'bg-white border-zinc-200 text-zinc-300'} z-10 shadow-sm transition-colors duration-500`}>
+                  <div className={`absolute left-0 md:relative md:left-auto flex items-center justify-center w-14 h-14 rounded-full border-4 ${currentStep >= 3 ? 'bg-sky-800 border-sky-100 text-white' : 'bg-white border-zinc-200 text-zinc-300'} z-10 shadow-sm transition-colors duration-500`}>
                     <Clock className="h-6 w-6" />
                   </div>
-                  <div className={`ml-20 md:ml-0 md:w-1/2 md:pl-12 ${currentStep >= 3 ? 'text-zinc-900' : 'text-zinc-400'}`}>
+                  <div className={`ml-20 md:ml-0 md:w-1/2 md:pl-12 ${currentStep >= 3 ? 'text-zinc-900' : 'text-sky-200'}`}>
                     <h4 className="font-bold text-lg mb-1">Interview Scheduled</h4>
                     <p className="text-sm">You have been selected for an interview.</p>
                   </div>
@@ -169,7 +169,7 @@ function TrackContent() {
 
                 {/* Step 4 */}
                 <div className="relative flex md:justify-center items-center">
-                  <div className={`ml-20 md:ml-0 md:w-1/2 md:pr-12 text-left md:text-right ${currentStep >= 4 ? (isRejected ? 'text-red-600' : 'text-green-600') : 'text-zinc-400'}`}>
+                  <div className={`ml-20 md:ml-0 md:w-1/2 md:pr-12 text-left md:text-right ${currentStep >= 4 ? (isRejected ? 'text-red-600' : 'text-green-600') : 'text-sky-200'}`}>
                     <h4 className="font-bold text-lg mb-1">{currentStep >= 4 ? (isRejected ? 'Application Closed' : 'Appointed') : 'Final Decision'}</h4>
                     <p className="text-sm">{currentStep >= 4 ? (isRejected ? 'Unfortunately, we are moving forward with other candidates.' : 'Congratulations! You are hired.') : 'Pending final outcome.'}</p>
                   </div>

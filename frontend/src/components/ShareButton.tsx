@@ -38,7 +38,7 @@ export default function ShareButton({ title, text, url }: { title: string, text:
   return (
     <button 
       onClick={handleShare}
-      className="p-2 rounded-full bg-blue-50 hover:bg-amber-50 text-blue-800 transition-colors flex items-center justify-center group relative z-10"
+      className="p-2 rounded-full bg-sky-50 hover:bg-amber-50 text-sky-800 transition-colors flex items-center justify-center group relative z-10"
       title="Share this job"
       aria-label="Share this job"
     >

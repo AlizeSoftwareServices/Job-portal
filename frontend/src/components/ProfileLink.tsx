@@ -39,6 +39,6 @@ export default function ProfileLink() {
   if (!profileUrl) return null;
 
   return (
-    <Link href={profileUrl} className="text-blue-800 font-bold hover:text-blue-800 transition-colors">Profile</Link>
+    <Link href={profileUrl} className="text-sky-800 font-bold hover:text-sky-800 transition-colors">Profile</Link>
   );
 }

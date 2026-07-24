@@ -38,8 +38,8 @@ export default function AuthButtons() {
 
   return (
     <div className="flex items-center gap-3 md:gap-4 order-2 md:order-3">
-      <Link href="/login" className="text-zinc-600 font-medium hover:text-blue-800 transition-colors text-sm md:text-base">Log In</Link>
-      <Link href="/signup" className="bg-blue-700 hover:bg-blue-800 text-white px-4 md:px-5 py-2 rounded-full text-sm md:text-base font-medium transition-colors shadow-sm whitespace-nowrap">
+      <Link href="/login" className="text-zinc-600 font-medium hover:text-sky-800 transition-colors text-sm md:text-base">Log In</Link>
+      <Link href="/signup" className="bg-sky-700 hover:bg-sky-800 text-white px-4 md:px-5 py-2 rounded-full text-sm md:text-base font-medium transition-colors shadow-sm whitespace-nowrap">
         Sign Up
       </Link>
     </div>

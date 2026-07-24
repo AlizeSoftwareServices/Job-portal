@@ -172,24 +172,24 @@ export default function SignUp() {
       )}
       <div className="absolute top-6 left-6 md:top-10 md:left-10 z-10">
         {step > 0 ? (
-          <button onClick={() => setStep(step - 1)} className="flex items-center text-sm font-medium text-zinc-600 hover:text-blue-800 transition-colors bg-white px-4 py-2 rounded-full border border-zinc-200 shadow-sm cursor-pointer">
+          <button onClick={() => setStep(step - 1)} className="flex items-center text-sm font-medium text-zinc-600 hover:text-sky-800 transition-colors bg-white px-4 py-2 rounded-full border border-zinc-200 shadow-sm cursor-pointer">
             <ArrowLeft className="h-4 w-4 mr-2" /> Back
           </button>
         ) : (
-          <Link href="/" className="flex items-center text-sm font-medium text-zinc-600 hover:text-blue-800 transition-colors bg-white px-4 py-2 rounded-full border border-zinc-200 shadow-sm">
+          <Link href="/" className="flex items-center text-sm font-medium text-zinc-600 hover:text-sky-800 transition-colors bg-white px-4 py-2 rounded-full border border-zinc-200 shadow-sm">
             <ArrowLeft className="h-4 w-4 mr-2" /> Back to Home
           </Link>
         )}
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center mb-8 mt-10 md:mt-0">
-        <Link href="/" className="text-3xl font-bold tracking-tight text-blue-900 inline-block">
+        <Link href="/" className="text-3xl font-bold tracking-tight text-sky-900 inline-block">
           <div className="flex items-center justify-center">
             <img src="/logo.png" alt="Skyo Consultancy Logo" className="h-24 md:h-32 w-auto object-contain mix-blend-multiply" />
           </div>
         </Link>
         <h2 className="mt-6 text-center text-2xl font-bold tracking-tight text-zinc-900">
-          {step === 0 ? 'Create your account' : `Create ${role === 'EMPLOYER' ? 'Employer' : 'Candidate'} account`}
+          {step === 0 ? 'Create your account' : `Create ${role === 'EMPLOYER' ? 'Client' : 'Candidate'} account`}
         </h2>
       </div>
 
@@ -206,12 +206,12 @@ export default function SignUp() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
               <button 
                 onClick={() => { setRole('EMPLOYER'); setStep(1); }}
-                className="p-6 border border-zinc-200 rounded-xl hover:border-blue-500 hover:shadow-md transition-all flex flex-col items-center justify-center gap-3 bg-white"
+                className="p-6 border border-zinc-200 rounded-xl hover:border-sky-500 hover:shadow-md transition-all flex flex-col items-center justify-center gap-3 bg-white"
               >
-                <div className="bg-blue-50 p-4 rounded-full">
-                  <Building2 className="h-8 w-8 text-blue-600" />
+                <div className="bg-sky-50 p-4 rounded-full">
+                  <Building2 className="h-8 w-8 text-sky-600" />
                 </div>
-                <h3 className="font-bold text-lg text-zinc-800">Employer</h3>
+                <h3 className="font-bold text-lg text-zinc-800">Client</h3>
                 <p className="text-sm text-zinc-500 text-center">I want to hire talent</p>
               </button>
 
@@ -232,29 +232,29 @@ export default function SignUp() {
                 <>
                   <div>
                     <label className="block text-sm font-medium text-zinc-700 mb-1">Full Name</label>
-                    <input required type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" />
+                    <input required type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-zinc-700 mb-1">Company Name</label>
-                    <input required type="text" value={formData.companyName} onChange={e => setFormData({...formData, companyName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" />
+                    <input required type="text" value={formData.companyName} onChange={e => setFormData({...formData, companyName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" />
                   </div>
                 </>
               ) : (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-zinc-700 mb-1">First name</label>
-                    <input required type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" />
+                    <input required type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-zinc-700 mb-1">Last name</label>
-                    <input required type="text" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" />
+                    <input required type="text" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" />
                   </div>
                 </div>
               )}
 
               <div>
                 <label className="block text-sm font-medium text-zinc-700 mb-1">E-mail id</label>
-                <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" />
+                <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" />
               </div>
 
               <div>
@@ -272,7 +272,7 @@ export default function SignUp() {
                     maxLength={getPhoneMaxLength(formData.countryCode)}
                     value={formData.phone} 
                     onChange={e => setFormData({...formData, phone: e.target.value.replace(/[^0-9]/g, '')})} 
-                    className="flex-1 border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none min-w-0 text-zinc-900" 
+                    className="flex-1 border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-sky-500 outline-none min-w-0 text-zinc-900" 
                     placeholder="Phone Number" 
                   />
                 </div>
@@ -294,7 +294,7 @@ export default function SignUp() {
                       maxLength={getPhoneMaxLength(formData.countryCode)}
                       value={formData.secondaryContactNumber} 
                       onChange={e => setFormData({...formData, secondaryContactNumber: e.target.value.replace(/[^0-9]/g, '')})} 
-                      className="flex-1 border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none min-w-0 text-zinc-900" 
+                      className="flex-1 border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-sky-500 outline-none min-w-0 text-zinc-900" 
                       placeholder="Phone Number" 
                     />
                   </div>
@@ -304,8 +304,8 @@ export default function SignUp() {
               <div>
                 <label className="block text-sm font-medium text-zinc-700 mb-1">Create Password</label>
                 <div className="relative">
-                  <input required type={showPassword ? 'text' : 'password'} value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 pr-10 focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-400">
+                  <input required type={showPassword ? 'text' : 'password'} value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 pr-10 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-sky-200">
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
@@ -315,14 +315,14 @@ export default function SignUp() {
               <div>
                 <label className="block text-sm font-medium text-zinc-700 mb-1">Confirm Password</label>
                 <div className="relative">
-                  <input required type={showConfirmPassword ? 'text' : 'password'} value={formData.confirmPassword} onChange={e => setFormData({...formData, confirmPassword: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 pr-10 focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" />
-                  <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-400">
+                  <input required type={showConfirmPassword ? 'text' : 'password'} value={formData.confirmPassword} onChange={e => setFormData({...formData, confirmPassword: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 pr-10 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" />
+                  <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-sky-200">
                     {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
 
-              <button type="submit" disabled={loading} className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-blue-800 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 text-zinc-900">
+              <button type="submit" disabled={loading} className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-sky-800 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50 text-zinc-900">
                 {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Send Verification OTP'}
               </button>
             </form>
@@ -335,15 +335,15 @@ export default function SignUp() {
 
               <div>
                 <label className="block text-sm font-medium text-zinc-700 mb-1">Enter OTP</label>
-                <input required type="text" maxLength={6} value={formData.otp} onChange={e => setFormData({...formData, otp: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-3 text-center tracking-[0.5em] text-xl font-bold focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" placeholder="------" />
+                <input required type="text" maxLength={6} value={formData.otp} onChange={e => setFormData({...formData, otp: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-3 text-center tracking-[0.5em] text-xl font-bold focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" placeholder="------" />
               </div>
 
-              <button type="submit" disabled={loading} className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-blue-800 hover:bg-blue-700 disabled:opacity-50">
+              <button type="submit" disabled={loading} className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-sky-800 hover:bg-sky-700 disabled:opacity-50">
                 {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Verify & Create Account'}
               </button>
               
               <div className="text-center mt-4">
-                <button type="button" onClick={() => setStep(1)} className="text-sm text-blue-800 hover:underline">Change Email</button>
+                <button type="button" onClick={() => setStep(1)} className="text-sm text-sky-800 hover:underline">Change Email</button>
               </div>
             </form>
           )}
@@ -351,7 +351,7 @@ export default function SignUp() {
           {step === 0 && (
             <p className="mt-6 text-center text-sm text-zinc-600">
               Already have an account?{' '}
-              <Link href="/login" className="font-medium text-blue-800 hover:text-amber-500">
+              <Link href="/login" className="font-medium text-sky-800 hover:text-amber-500">
                 Sign in
               </Link>
             </p>

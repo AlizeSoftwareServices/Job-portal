@@ -38,7 +38,7 @@ export default async function JobDetailsServerPage({ params }: { params: Promise
 
       <main className="max-w-4xl w-full mx-auto px-6 mb-16">
         <div className="pt-8 pb-4">
-          <Link href="/jobs" className="inline-flex items-center text-blue-800 hover:text-blue-800 font-bold transition-colors w-fit">
+          <Link href="/jobs" className="inline-flex items-center text-sky-800 hover:text-sky-800 font-bold transition-colors w-fit">
             <ArrowLeft className="h-4 w-4 mr-2" /> Back to Jobs
           </Link>
         </div>

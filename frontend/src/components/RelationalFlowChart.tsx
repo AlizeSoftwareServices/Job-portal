@@ -93,18 +93,18 @@ export default function RelationalFlowChart({ categories = [], jobs = [], applic
                 key={cat.id || cat.name} 
                 onClick={() => handleCategoryClick(cat)}
                 className={`p-4 rounded-xl border shadow-sm cursor-pointer transition-all flex items-center justify-between group
-                  ${isSelected ? 'bg-blue-50 border-blue-400 ring-1 ring-blue-400' : 'bg-white border-slate-200 hover:border-blue-300 hover:shadow-md'}`}
+                  ${isSelected ? 'bg-sky-50 border-sky-400 ring-1 ring-sky-400' : 'bg-white border-slate-200 hover:border-sky-300 hover:shadow-md'}`}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`h-10 w-10 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105 ${isSelected ? 'bg-blue-600 text-white' : 'bg-orange-100 text-orange-600'}`}>
+                  <div className={`h-10 w-10 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105 ${isSelected ? 'bg-sky-600 text-white' : 'bg-orange-100 text-orange-600'}`}>
                     <Layers className="h-5 w-5" />
                   </div>
                   <div>
-                    <h4 className={`font-bold text-lg line-clamp-1 ${isSelected ? 'text-blue-900' : 'text-slate-800'}`}>{cat.name}</h4>
-                    <p className={`text-xs ${isSelected ? 'text-blue-700' : 'text-slate-500'}`}>{activeJobsCount} Active Jobs</p>
+                    <h4 className={`font-bold text-lg line-clamp-1 ${isSelected ? 'text-sky-900' : 'text-slate-800'}`}>{cat.name}</h4>
+                    <p className={`text-xs ${isSelected ? 'text-sky-700' : 'text-slate-500'}`}>{activeJobsCount} Active Jobs</p>
                   </div>
                 </div>
-                {isSelected && <ChevronRight className="w-5 h-5 text-blue-500" />}
+                {isSelected && <ChevronRight className="w-5 h-5 text-sky-500" />}
               </div>
             );
           })}
@@ -179,7 +179,7 @@ export default function RelationalFlowChart({ categories = [], jobs = [], applic
               const statusColors: any = {
                 'APPLIED': 'bg-slate-100 text-slate-700',
                 'UNDER_REVIEW': 'bg-amber-100 text-amber-700',
-                'SHORTLISTED': 'bg-blue-100 text-blue-700',
+                'SHORTLISTED': 'bg-sky-100 text-sky-700',
                 'INTERVIEW_SCHEDULED': 'bg-purple-100 text-purple-700',
                 'SELECTED': 'bg-emerald-100 text-emerald-700',
                 'REJECTED': 'bg-red-100 text-red-700'
@@ -211,12 +211,12 @@ export default function RelationalFlowChart({ categories = [], jobs = [], applic
                                 setLazyApplications(prev => prev.map(a => a.id === app.id ? { ...a, status: 'UNDER_REVIEW' } : a));
                               }
                             }}
-                            className="text-[9px] font-bold px-2 py-1 rounded border uppercase tracking-wider bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100"
+                            className="text-[9px] font-bold px-2 py-1 rounded border uppercase tracking-wider bg-sky-50 text-sky-600 border-sky-200 hover:bg-sky-100"
                           >
                             View Resume
                           </button>
                         ) : (
-                          <a href={resume} target="_blank" rel="noopener noreferrer" className="text-[9px] font-bold px-2 py-1 rounded border uppercase tracking-wider bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100">
+                          <a href={resume} target="_blank" rel="noopener noreferrer" className="text-[9px] font-bold px-2 py-1 rounded border uppercase tracking-wider bg-sky-50 text-sky-600 border-sky-200 hover:bg-sky-100">
                             View Resume
                           </a>
                         )

@@ -349,7 +349,7 @@ export default function EmployerDashboard() {
       <div className="animate-[pulse_1.5s_ease-in-out_infinite] flex flex-col items-center">
         <img src="/logo.png" alt="Skyo Logo" className="h-28 md:h-36 w-auto object-contain mix-blend-multiply" />
         <div className="mt-8 w-48 h-1.5 bg-zinc-200 rounded-full overflow-hidden">
-          <div className="h-full bg-blue-600 rounded-full w-1/2 animate-[slideRight_1s_ease-in-out_infinite]" style={{ animation: 'slideRight 1s ease-in-out infinite alternate' }}>
+          <div className="h-full bg-sky-600 rounded-full w-1/2 animate-[slideRight_1s_ease-in-out_infinite]" style={{ animation: 'slideRight 1s ease-in-out infinite alternate' }}>
             <style>{`
               @keyframes slideRight {
                 0% { transform: translateX(0%); }
@@ -371,28 +371,28 @@ export default function EmployerDashboard() {
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed md:relative top-0 left-0 w-64 bg-[#0B132B] text-slate-300 flex flex-col h-full z-[70] transform transition-transform duration-300 ease-in-out md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <aside className={`fixed md:relative top-0 left-0 w-64 bg-sky-800 text-sky-100 flex flex-col h-full z-[70] transform transition-transform duration-300 ease-in-out md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-4 pt-6 pb-4 flex flex-col items-center justify-center relative">
-          <button className="md:hidden absolute top-4 right-4 text-zinc-400 p-1 bg-zinc-800 rounded-md" onClick={() => setIsMobileMenuOpen(false)}>
+          <button className="md:hidden absolute top-4 right-4 text-sky-200 p-1 bg-zinc-800 rounded-md" onClick={() => setIsMobileMenuOpen(false)}>
             <X className="w-5 h-5" />
           </button>
           <a href="/" className="cursor-pointer hover:scale-105 transition-transform flex flex-col items-center">
             <img src="/logo.png" alt="Skyo Logo" className="h-12 md:h-16 w-auto object-contain mb-2" />
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest text-center">Employer Portal</span>
+            <span className="text-[10px] font-bold text-sky-200 uppercase tracking-widest text-center">Client Portal</span>
           </a>
         </div>
 
         <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-          <button onClick={() => { setActiveTab('profile'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${activeTab === 'profile' ? 'bg-blue-800 text-white shadow-lg shadow-blue-900/20' : 'hover:bg-slate-800'}`}>
+          <button onClick={() => { setActiveTab('profile'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${activeTab === 'profile' ? 'bg-sky-800 text-white shadow-lg shadow-sky-900/20' : 'hover:bg-slate-800'}`}>
             <User className="h-5 w-5" /> Profile Settings
           </button>
-          <button onClick={() => { setActiveTab('jobs'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${activeTab === 'jobs' ? 'bg-blue-800 text-white shadow-lg shadow-blue-900/20' : 'hover:bg-slate-800'}`}>
+          <button onClick={() => { setActiveTab('jobs'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${activeTab === 'jobs' ? 'bg-sky-800 text-white shadow-lg shadow-sky-900/20' : 'hover:bg-slate-800'}`}>
             <Briefcase className="h-5 w-5" /> Manage Jobs
           </button>
-          <button onClick={() => { setActiveTab('direct_applicants'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${activeTab === 'direct_applicants' ? 'bg-blue-800 text-white shadow-lg shadow-blue-900/20' : 'hover:bg-slate-800'}`}>
+          <button onClick={() => { setActiveTab('direct_applicants'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${activeTab === 'direct_applicants' ? 'bg-sky-800 text-white shadow-lg shadow-sky-900/20' : 'hover:bg-slate-800'}`}>
             <Users className="h-5 w-5" /> Direct Applicants
           </button>
-          <button onClick={() => { setActiveTab('skyo_applicants'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${activeTab === 'skyo_applicants' ? 'bg-blue-800 text-white shadow-lg shadow-blue-900/20' : 'hover:bg-slate-800'}`}>
+          <button onClick={() => { setActiveTab('skyo_applicants'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${activeTab === 'skyo_applicants' ? 'bg-sky-800 text-white shadow-lg shadow-sky-900/20' : 'hover:bg-slate-800'}`}>
             <FileText className="h-5 w-5" /> Skyo Applicants
           </button>
         </nav>
@@ -424,7 +424,7 @@ export default function EmployerDashboard() {
                  }
                  setIsCreatingJob(true);
                }} 
-               className="bg-[#003c71] text-white font-bold py-2 md:py-2.5 px-3 md:px-6 rounded-xl text-xs md:text-base hover:bg-[#002b52] hover:shadow-lg hover:shadow-blue-900/20 transition-all flex items-center gap-1.5 md:gap-2 transform hover:scale-[1.02]"
+               className="bg-[#003c71] text-white font-bold py-2 md:py-2.5 px-3 md:px-6 rounded-xl text-xs md:text-base hover:bg-[#002b52] hover:shadow-lg hover:shadow-sky-900/20 transition-all flex items-center gap-1.5 md:gap-2 transform hover:scale-[1.02]"
              >
                <Briefcase className="w-3 h-3 md:w-4 md:h-4" /> Post New Job
              </button>
@@ -432,7 +432,7 @@ export default function EmployerDashboard() {
           {activeTab === 'profile' && (
             <div className="flex items-center gap-4">
               {!isEditingProfile ? (
-                <button onClick={() => setIsEditingProfile(true)} className="flex items-center gap-2 bg-blue-50 hover:bg-[#003c71] text-blue-800 hover:text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow-md">
+                <button onClick={() => setIsEditingProfile(true)} className="flex items-center gap-2 bg-sky-50 hover:bg-[#003c71] text-sky-800 hover:text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow-md">
                   <Pencil className="w-4 h-4" /> Edit Profile
                 </button>
               ) : null}
@@ -446,7 +446,7 @@ export default function EmployerDashboard() {
           {activeTab === 'profile' && (
             <div className="bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden mb-8 max-w-4xl mx-auto">
               <div className="bg-gradient-to-r from-slate-50 to-white px-8 py-6 border-b border-slate-100 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#003c71] flex items-center justify-center shadow-sm">
+                <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#003c71] flex items-center justify-center shadow-sm">
                   <Building className="w-5 h-5" />
                 </div>
                 <div>
@@ -464,7 +464,7 @@ export default function EmployerDashboard() {
                         {profile.companyLogoUrl ? (
                           <img src={`${API_URL}${profile.companyLogoUrl}`} alt="Company Logo" className="w-full h-full object-cover" />
                         ) : (
-                          <Building className="w-8 h-8 text-zinc-400" />
+                          <Building className="w-8 h-8 text-sky-200" />
                         )}
                       </div>
                       {isEditingProfile && (
@@ -554,7 +554,7 @@ export default function EmployerDashboard() {
                       ) : (
                         <p className="text-sm font-medium text-zinc-800 p-2.5 bg-zinc-50 rounded border border-transparent">
                           {profile.companyWebsite ? (
-                            <a href={profile.companyWebsite} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">{profile.companyWebsite}</a>
+                            <a href={profile.companyWebsite} target="_blank" rel="noreferrer" className="text-sky-600 hover:underline">{profile.companyWebsite}</a>
                           ) : '-'}
                         </p>
                       )}
@@ -580,8 +580,8 @@ export default function EmployerDashboard() {
             <>
               {isCreatingJob ? (
                 <div className="bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden mb-8">
-                  <div className="bg-gradient-to-r from-blue-50 to-white px-8 py-6 border-b border-slate-100 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-blue-100 text-[#003c71] flex items-center justify-center shadow-sm">
+                  <div className="bg-gradient-to-r from-sky-50 to-white px-8 py-6 border-b border-slate-100 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-sky-100 text-[#003c71] flex items-center justify-center shadow-sm">
                       <Briefcase className="w-5 h-5" />
                     </div>
                     <div>
@@ -607,8 +607,8 @@ export default function EmployerDashboard() {
                           
                           {newJob.categoryId === 'NEW' && (
                             <div className="md:col-span-2">
-                              <label className="block text-sm font-bold text-blue-700 mb-1">New Category Name <span className="text-red-500">*</span></label>
-                              <input type="text" required value={newJob.newCategoryName} onChange={e => setNewJob({...newJob, newCategoryName: e.target.value})} className="w-full border border-blue-300 p-2 rounded outline-none focus:border-amber-500 bg-blue-50" placeholder="e.g. Data Science" />
+                              <label className="block text-sm font-bold text-sky-700 mb-1">New Category Name <span className="text-red-500">*</span></label>
+                              <input type="text" required value={newJob.newCategoryName} onChange={e => setNewJob({...newJob, newCategoryName: e.target.value})} className="w-full border border-sky-300 p-2 rounded outline-none focus:border-amber-500 bg-sky-50" placeholder="e.g. Data Science" />
                             </div>
                           )}
 
@@ -755,7 +755,7 @@ export default function EmployerDashboard() {
                       if (displayJobs.length === 0) {
                         return (
                           <div className="col-span-full bg-white p-12 text-center rounded-2xl border border-dashed border-slate-300">
-                            <Briefcase className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+                            <Briefcase className="h-12 w-12 text-sky-100 mx-auto mb-3" />
                             <p className="text-slate-500 font-medium">No jobs found in this section.</p>
                           </div>
                         );
@@ -763,11 +763,11 @@ export default function EmployerDashboard() {
                       
                       return displayJobs.map(job => (
                         <div key={job.id} onClick={() => setSelectedJob(job)} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-4 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all relative cursor-pointer group">
-                          <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50/30 transition-colors rounded-3xl pointer-events-none"></div>
+                          <div className="absolute inset-0 bg-sky-50/0 group-hover:bg-sky-50/30 transition-colors rounded-3xl pointer-events-none"></div>
                           <div className="flex justify-between items-start mb-4">
                             <div>
                               <div className="flex items-center gap-2 mb-2">
-                                <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#003c71] flex items-center justify-center shrink-0">
+                                <div className="w-8 h-8 rounded-lg bg-sky-50 text-[#003c71] flex items-center justify-center shrink-0">
                                   <Briefcase className="w-4 h-4" />
                                 </div>
                                 <h3 className="font-black text-lg text-slate-800 leading-tight">{job.title}</h3>
@@ -777,7 +777,7 @@ export default function EmployerDashboard() {
                               </p>
                             </div>
                             <span className={`px-3 py-1.5 rounded-xl text-[10px] uppercase tracking-widest font-black shrink-0 ${
-                              job.status === 'COMPLETED' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' :
+                              job.status === 'COMPLETED' ? 'bg-cyan-50 text-cyan-600 border border-cyan-100' :
                               job.closureRequested ? 'bg-purple-50 text-purple-600 border border-purple-100' :
                               job.approvalStatus === 'APPROVED' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 
                               job.approvalStatus === 'PENDING_APPROVAL' ? 'bg-amber-50 text-amber-600 border border-amber-100' : 
@@ -806,7 +806,7 @@ export default function EmployerDashboard() {
                                 </button>
                               )}
                               {jobSubTab === 'completed' && job.status === 'COMPLETED' && (
-                                <button onClick={() => handleRepostJob(job.id)} className="text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1.5 rounded-lg border border-blue-200 transition-colors">
+                                <button onClick={() => handleRepostJob(job.id)} className="text-xs font-bold bg-sky-50 text-sky-700 hover:bg-sky-100 px-3 py-1.5 rounded-lg border border-sky-200 transition-colors">
                                   Edit & Re-post
                                 </button>
                               )}
@@ -904,7 +904,7 @@ export default function EmployerDashboard() {
                   {directApps.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="p-10 text-center">
-                        <Users className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+                        <Users className="w-10 h-10 text-sky-100 mx-auto mb-3" />
                         <span className="text-slate-500 font-bold">No direct applications found.</span>
                       </td>
                     </tr>
@@ -913,7 +913,7 @@ export default function EmployerDashboard() {
                       <tr key={app.id} className="hover:bg-slate-50/50 transition-colors">
                         <td className="p-5">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold text-sm shrink-0">
+                            <div className="w-10 h-10 rounded-full bg-cyan-50 text-cyan-700 flex items-center justify-center font-bold text-sm shrink-0">
                               {(app.firstName || app.candidate?.firstName || 'U').charAt(0)}{(app.lastName || app.candidate?.lastName || 'U').charAt(0)}
                             </div>
                             <span className="font-bold text-sm text-slate-800">{(app.firstName || app.candidate?.firstName || 'Unknown')} {(app.lastName || app.candidate?.lastName || '')}</span>
@@ -924,12 +924,12 @@ export default function EmployerDashboard() {
                           <p className="text-xs font-medium text-slate-500 mt-0.5">{app.phone || app.candidate?.phone || 'N/A'}</p>
                         </td>
                         <td className="p-5">
-                          <span className="inline-flex px-3 py-1 rounded-lg bg-blue-50 text-blue-700 text-xs font-bold border border-blue-100">{app.job?.title}</span>
+                          <span className="inline-flex px-3 py-1 rounded-lg bg-sky-50 text-sky-700 text-xs font-bold border border-sky-100">{app.job?.title}</span>
                         </td>
                         <td className="p-5 text-sm font-medium text-slate-600">{new Date(app.appliedAt).toLocaleDateString()}</td>
                         <td className="p-5">
                           {app.resumeUrl ? (
-                            <button onClick={() => window.open(app.resumeUrl.startsWith('http') ? app.resumeUrl : `${API_URL}${app.resumeUrl.replace('./uploads', '/uploads')}`, '_blank')} className="text-xs font-bold text-[#003c71] bg-blue-50 border border-blue-100 px-4 py-2 rounded-xl hover:bg-blue-100 hover:shadow-sm transition-all">
+                            <button onClick={() => window.open(app.resumeUrl.startsWith('http') ? app.resumeUrl : `${API_URL}${app.resumeUrl.replace('./uploads', '/uploads')}`, '_blank')} className="text-xs font-bold text-[#003c71] bg-sky-50 border border-sky-100 px-4 py-2 rounded-xl hover:bg-sky-100 hover:shadow-sm transition-all">
                               View Resume
                             </button>
                           ) : (
@@ -961,7 +961,7 @@ export default function EmployerDashboard() {
                   {skyoApps.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="p-10 text-center">
-                        <FileText className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+                        <FileText className="w-10 h-10 text-sky-100 mx-auto mb-3" />
                         <span className="text-slate-500 font-bold">No candidates passed by Admin yet.</span>
                       </td>
                     </tr>

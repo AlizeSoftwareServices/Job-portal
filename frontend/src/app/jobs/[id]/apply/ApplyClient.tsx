@@ -25,7 +25,7 @@ export default function ApplyClient({ job, profileData, candidateProfile }: { jo
 
   // If incomplete, just show a blank or loading state while redirecting
   if (!candidateProfile || !candidateProfile.resumeUrl || !derivedFirstName || !derivedPhone) {
-    return <div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-800"></div></div>;
+    return <div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-800"></div></div>;
   }
 
   const formData = {
@@ -87,7 +87,7 @@ export default function ApplyClient({ job, profileData, candidateProfile }: { jo
           <p className="text-gray-600 mb-6">
             Thank you for applying to <strong>{job.title}</strong>. We have sent a confirmation email to your inbox.
           </p>
-          <Link href="/jobs" className="inline-block bg-blue-800 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition">
+          <Link href="/jobs" className="inline-block bg-sky-800 text-white px-6 py-3 rounded-lg font-medium hover:bg-sky-700 transition">
             Explore More Jobs
           </Link>
         </div>
@@ -100,12 +100,12 @@ export default function ApplyClient({ job, profileData, candidateProfile }: { jo
       {/* Header matching Open CV Blue Theme */}
       <div className="bg-[#003c71] text-white pt-20 pb-24 px-4 sm:px-6 lg:px-8 relative">
         <div className="max-w-4xl mx-auto relative z-10">
-          <Link href={`/jobs/${job.id}`} className="inline-flex items-center text-blue-200 hover:text-white transition-colors mb-6 text-sm font-medium">
+          <Link href={`/jobs/${job.id}`} className="inline-flex items-center text-sky-200 hover:text-white transition-colors mb-6 text-sm font-medium">
             <ArrowLeft className="w-4 h-4 mr-1" />
             Back to Job Details
           </Link>
           <h1 className="text-4xl font-bold mb-4">Confirm Application</h1>
-          <p className="text-xl opacity-90 text-blue-100">Review your profile details before submitting.</p>
+          <p className="text-xl opacity-90 text-sky-100">Review your profile details before submitting.</p>
         </div>
       </div>
 
@@ -115,10 +115,10 @@ export default function ApplyClient({ job, profileData, candidateProfile }: { jo
             <div className="mb-8">
               <h2 className="text-xl font-bold text-gray-800 mb-1">Applying for:</h2>
               
-              <div className="mt-4 p-5 bg-blue-50/50 rounded-lg border border-blue-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="mt-4 p-5 bg-sky-50/50 rounded-lg border border-sky-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-xl font-bold text-blue-900">{job.title}</h3>
-                  <span className="inline-block px-2.5 py-1 bg-white border border-blue-200 text-blue-800 text-xs font-bold rounded mt-2">{job.jobCode}</span>
+                  <h3 className="text-xl font-bold text-sky-900">{job.title}</h3>
+                  <span className="inline-block px-2.5 py-1 bg-white border border-sky-200 text-sky-800 text-xs font-bold rounded mt-2">{job.jobCode}</span>
                 </div>
                 <div className="sm:text-right">
                    <p className="text-sm font-medium text-gray-700">{job.locationCity}, {job.locationState}</p>
@@ -131,7 +131,7 @@ export default function ApplyClient({ job, profileData, candidateProfile }: { jo
               <div>
                 <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4 border-b pb-2 flex justify-between items-center">
                   Personal Details
-                  <Link href="/profile" className="text-blue-600 hover:text-blue-800 text-xs normal-case">Edit in Profile</Link>
+                  <Link href="/profile" className="text-sky-600 hover:text-sky-800 text-xs normal-case">Edit in Profile</Link>
                 </h3>
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                   <div>
@@ -178,7 +178,7 @@ export default function ApplyClient({ job, profileData, candidateProfile }: { jo
               <div className="pt-2">
                 <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4 border-b pb-2 flex justify-between items-center">
                   Resume
-                  <Link href="/profile" className="text-blue-600 hover:text-blue-800 text-xs normal-case">Update Resume</Link>
+                  <Link href="/profile" className="text-sky-600 hover:text-sky-800 text-xs normal-case">Update Resume</Link>
                 </h3>
                 <div className="mt-1 flex items-center p-4 border border-green-200 bg-green-50 rounded-md">
                   <svg className="w-6 h-6 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -192,7 +192,7 @@ export default function ApplyClient({ job, profileData, candidateProfile }: { jo
               <div className="pt-4">
                 <div className="flex items-start">
                   <div className="flex items-center h-5">
-                    <input id="terms" name="terms" type="checkbox" required className="focus:ring-blue-500 h-4 w-4 text-blue-800 border-gray-300 rounded" />
+                    <input id="terms" name="terms" type="checkbox" required className="focus:ring-sky-500 h-4 w-4 text-sky-800 border-gray-300 rounded" />
                   </div>
                   <div className="ml-3 text-sm">
                     <label htmlFor="terms" className="font-medium text-gray-700">Privacy Policy & Terms</label>
@@ -205,7 +205,7 @@ export default function ApplyClient({ job, profileData, candidateProfile }: { jo
                 <button
                   type="submit"
                   disabled={submitting}
-                  className={`w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-blue-800 hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors ${submitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+                  className={`w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-sky-800 hover:bg-sky-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-colors ${submitting ? 'opacity-70 cursor-not-allowed' : ''}`}
                 >
                   {submitting ? 'Submitting Application...' : 'Submit Application'}
                 </button>

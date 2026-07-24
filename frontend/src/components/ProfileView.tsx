@@ -297,7 +297,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
     return `${years} years`;
   };
 
-  const inputClass = "w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-shadow";
+  const inputClass = "w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sky-500 outline-none transition-shadow";
 
   return (
     <div className="font-sans">
@@ -307,7 +307,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
         {!isEditing && (
           <button 
             onClick={() => setIsEditing(true)} 
-            className="flex items-center gap-2 bg-blue-50 hover:bg-[#003c71] text-blue-800 hover:text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow-md"
+            className="flex items-center gap-2 bg-sky-50 hover:bg-[#003c71] text-sky-800 hover:text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow-md"
           >
             <Pencil className="w-4 h-4" /> Edit Profile
           </button>
@@ -358,7 +358,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                     key={i} 
                     src={url} 
                     onClick={() => setForm({...form, avatarUrl: url})}
-                    className={`w-8 h-8 rounded-full cursor-pointer object-cover border-2 transition-all hover:scale-110 shadow-sm ${form.avatarUrl === url ? 'border-blue-800 scale-110' : 'border-transparent opacity-80'}`}
+                    className={`w-8 h-8 rounded-full cursor-pointer object-cover border-2 transition-all hover:scale-110 shadow-sm ${form.avatarUrl === url ? 'border-sky-800 scale-110' : 'border-transparent opacity-80'}`}
                     alt="Preset" 
                   />
                 ))}
@@ -403,7 +403,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                     {skill.trim()}
                   </span>
                 )) : (
-                  <span className="text-xs text-zinc-400 italic">No skills added</span>
+                  <span className="text-xs text-sky-200 italic">No skills added</span>
                 )}
               </div>
             )}
@@ -418,7 +418,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
           {/* Basic Info Card */}
           <div className="bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-zinc-100 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all">
             <h3 className="text-xl font-black text-zinc-900 mb-6 flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#003c71] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-sky-50 text-[#003c71] flex items-center justify-center">
                 <User className="w-4 h-4" />
               </div>
               Basic Details
@@ -426,7 +426,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">First Name</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">First Name</span>
                 {isEditing ? (
                   <input type="text" name="firstName" value={form.firstName} onChange={handleChange} className={inputClass} />
                 ) : (
@@ -435,7 +435,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
               </div>
               
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Last Name</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Last Name</span>
                 {isEditing ? (
                   <input type="text" name="lastName" value={form.lastName} onChange={handleChange} className={inputClass} />
                 ) : (
@@ -444,7 +444,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Gender *</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Gender *</span>
                 {isEditing ? (
                   <select name="gender" value={form.gender} onChange={handleChange} className={inputClass} required>
                     <option value="">Select</option>
@@ -458,7 +458,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Date of Birth *</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Date of Birth *</span>
                 {isEditing ? (
                   <input type="date" name="dateOfBirth" value={form.dateOfBirth} onChange={handleChange} className={inputClass} required />
                 ) : (
@@ -467,7 +467,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Marital status *</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Marital status *</span>
                 {isEditing ? (
                   <select name="maritalStatus" value={form.maritalStatus} onChange={handleChange} className={inputClass} required>
                     <option value="">Select</option>
@@ -491,7 +491,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Primary contact *</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Primary contact *</span>
                 {isEditing ? (
                   <div className="flex gap-1 mt-1">
                      <div className="w-28 flex-shrink-0">
@@ -505,7 +505,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Secondary contact *</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Secondary contact *</span>
                 {isEditing ? (
                   <input type="tel" name="secondaryContactNumber" value={form.secondaryContactNumber} onChange={handleChange} className={inputClass} required />
                 ) : (
@@ -514,12 +514,12 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Email *</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Email *</span>
                 <p className="text-sm font-medium text-zinc-800 break-all">{form.email}</p>
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Current stay *</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Current stay *</span>
                 {isEditing ? (
                    <input type="text" name="currentStay" value={form.currentStay} onChange={handleChange} className={inputClass} required />
                 ) : (
@@ -528,7 +528,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Native place *</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Native place *</span>
                 {isEditing ? (
                    <input type="text" name="nativePlace" value={form.nativePlace} onChange={handleChange} className={inputClass} required />
                 ) : (
@@ -548,7 +548,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Father Name</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Father Name</span>
                 {isEditing ? (
                   <input type="text" name="fatherName" value={form.fatherName} onChange={handleChange} className={inputClass} />
                 ) : (
@@ -556,7 +556,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 )}
               </div>
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Father occupation</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Father occupation</span>
                 {isEditing ? (
                   <input type="text" name="fatherOccupation" value={form.fatherOccupation} onChange={handleChange} className={inputClass} />
                 ) : (
@@ -564,7 +564,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 )}
               </div>
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Mother Name</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Mother Name</span>
                 {isEditing ? (
                   <input type="text" name="motherName" value={form.motherName} onChange={handleChange} className={inputClass} />
                 ) : (
@@ -572,7 +572,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 )}
               </div>
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Mother occupation</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Mother occupation</span>
                 {isEditing ? (
                   <input type="text" name="motherOccupation" value={form.motherOccupation} onChange={handleChange} className={inputClass} />
                 ) : (
@@ -592,7 +592,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Education qualification</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Education qualification</span>
                 {isEditing ? (
                   <input type="text" name="educationQualification" value={form.educationQualification} onChange={handleChange} className={inputClass} />
                 ) : (
@@ -600,7 +600,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 )}
               </div>
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Total work experience years</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Total work experience years</span>
                 {isEditing ? (
                   <input type="text" name="totalWorkExperienceYears" value={form.totalWorkExperienceYears} onChange={handleChange} className={inputClass} />
                 ) : (
@@ -608,7 +608,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 )}
               </div>
               <div className="sm:col-span-2">
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Current working details</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Current working details</span>
                 {isEditing ? (
                   <textarea name="currentWorkingDetails" value={form.currentWorkingDetails} onChange={handleChange} className={inputClass} />
                 ) : (
@@ -616,7 +616,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 )}
               </div>
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Current Salary(Rs)/Month *</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Current Salary(Rs)/Month *</span>
                 {isEditing ? (
                   <>
                     <input type="text" name="currentSalary" value={form.currentSalary} onChange={handleChange} className={inputClass} required />
@@ -627,7 +627,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 )}
               </div>
               <div>
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Expected Salary(Rs) /Month *</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Expected Salary(Rs) /Month *</span>
                 {isEditing ? (
                   <input type="text" name="expectedSalary" value={form.expectedSalary} onChange={handleChange} className={inputClass} required />
                 ) : (
@@ -636,7 +636,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
               </div>
               
               <div className="sm:col-span-2">
-                <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Interest field to work</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Interest field to work</span>
                 {isEditing ? (
                   <div className="mt-2 text-sm text-zinc-900">
                     <Select 
@@ -652,7 +652,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 ) : (
                   <div className="flex flex-wrap gap-2 mt-1">
                     {form.interestFieldToWork && form.interestFieldToWork.length > 0 ? form.interestFieldToWork.map((opt: string) => (
-                      <span key={opt} className="px-3 py-1 bg-blue-50 border border-blue-100 text-blue-800 rounded-full text-xs font-medium capitalize">{opt}</span>
+                      <span key={opt} className="px-3 py-1 bg-sky-50 border border-sky-100 text-sky-800 rounded-full text-xs font-medium capitalize">{opt}</span>
                     )) : <p className="text-sm font-medium text-zinc-800">Not specified</p>}
                   </div>
                 )}
@@ -664,7 +664,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
           {/* Resume Upload Card */}
           <div className="bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-zinc-100 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all">
             <h3 className="text-xl font-black text-zinc-900 mb-6 flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-cyan-50 text-cyan-600 flex items-center justify-center">
                 <BookOpen className="w-4 h-4" />
               </div>
               Resume <span className="text-red-500">*</span>
@@ -676,12 +676,12 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                     <input type="file" className="hidden" accept=".pdf,.doc,.docx" onChange={handleResumeUpload} disabled={uploadingResume} />
                     {uploadingResume ? (
                       <div className="flex flex-col items-center">
-                        <Loader2 className="h-6 w-6 text-blue-800 animate-spin mb-2" />
+                        <Loader2 className="h-6 w-6 text-sky-800 animate-spin mb-2" />
                         <span className="font-bold text-sm text-zinc-600">Uploading...</span>
                       </div>
                     ) : (
                       <div className="flex flex-col items-center">
-                        <Upload className="h-6 w-6 text-blue-800 mb-2" />
+                        <Upload className="h-6 w-6 text-sky-800 mb-2" />
                         <span className="font-bold text-sm text-zinc-900 block mb-1">Click to upload resume</span>
                         <span className="text-xs text-zinc-500">PDF, DOCX up to 100KB</span>
                       </div>
@@ -690,10 +690,10 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 </div>
               ) : null}
               {form.resumeUrl ? (
-                <div className={`w-full ${isEditing ? 'md:w-1/3' : 'md:w-1/2'} bg-blue-50 border border-blue-100 rounded-2xl p-6 text-center flex flex-col items-center justify-center`}>
-                  <BookOpen className="h-8 w-8 text-blue-800 mb-2" />
-                  <h4 className="font-bold text-sm text-blue-900 mb-2">Resume Uploaded</h4>
-                  <a href={form.resumeUrl} target="_blank" rel="noreferrer" className="text-sm text-blue-800 hover:underline font-medium">View Current Resume</a>
+                <div className={`w-full ${isEditing ? 'md:w-1/3' : 'md:w-1/2'} bg-sky-50 border border-sky-100 rounded-2xl p-6 text-center flex flex-col items-center justify-center`}>
+                  <BookOpen className="h-8 w-8 text-sky-800 mb-2" />
+                  <h4 className="font-bold text-sm text-sky-900 mb-2">Resume Uploaded</h4>
+                  <a href={form.resumeUrl} target="_blank" rel="noreferrer" className="text-sm text-sky-800 hover:underline font-medium">View Current Resume</a>
                 </div>
               ) : (
                 !isEditing && <p className="text-sm font-medium text-zinc-800">No resume uploaded</p>
@@ -712,7 +712,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 Experience
               </h3>
               {isEditing && (
-                <button onClick={() => setForm({...form, experiences: [...form.experiences, { title: '', company: '', startDate: '', endDate: '', description: '' }]})} className="text-blue-800 hover:text-blue-700 text-sm font-bold flex items-center gap-1">
+                <button onClick={() => setForm({...form, experiences: [...form.experiences, { title: '', company: '', startDate: '', endDate: '', description: '' }]})} className="text-sky-800 hover:text-sky-700 text-sm font-bold flex items-center gap-1">
                   <Plus className="w-4 h-4" /> Add
                 </button>
               )}
@@ -729,7 +729,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 
                 return isEditing ? (
                   <div key={i} className="bg-zinc-50 p-4 rounded-xl relative border border-zinc-200">
-                    <button onClick={() => setForm({...form, experiences: form.experiences.filter((_: any, idx: number) => idx !== i)})} className="absolute top-4 right-4 text-zinc-400 hover:text-red-500">
+                    <button onClick={() => setForm({...form, experiences: form.experiences.filter((_: any, idx: number) => idx !== i)})} className="absolute top-4 right-4 text-sky-200 hover:text-red-500">
                       <Trash2 className="w-4 h-4" />
                     </button>
                     <div className="grid grid-cols-2 gap-3 mb-3 pr-8">
@@ -742,7 +742,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                   </div>
                 ) : (
                   <div key={i} className="flex gap-4 group">
-                    <div className="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center flex-shrink-0 text-blue-800 font-bold text-lg shadow-sm border border-amber-200">
+                    <div className="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center flex-shrink-0 text-sky-800 font-bold text-lg shadow-sm border border-amber-200">
                       {exp.company.substring(0, 2).toUpperCase()}
                     </div>
                     <div>
@@ -767,7 +767,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 Education
               </h3>
               {isEditing && (
-                <button onClick={() => setForm({...form, educations: [...form.educations, { institution: '', degree: '', fieldOfStudy: '', startDate: '', endDate: '' }]})} className="text-blue-800 hover:text-blue-700 text-sm font-bold flex items-center gap-1">
+                <button onClick={() => setForm({...form, educations: [...form.educations, { institution: '', degree: '', fieldOfStudy: '', startDate: '', endDate: '' }]})} className="text-sky-800 hover:text-sky-700 text-sm font-bold flex items-center gap-1">
                   <Plus className="w-4 h-4" /> Add
                 </button>
               )}
@@ -784,7 +784,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 
                 return isEditing ? (
                   <div key={i} className="bg-zinc-50 p-4 rounded-xl relative border border-zinc-200">
-                    <button onClick={() => setForm({...form, educations: form.educations.filter((_: any, idx: number) => idx !== i)})} className="absolute top-4 right-4 text-zinc-400 hover:text-red-500">
+                    <button onClick={() => setForm({...form, educations: form.educations.filter((_: any, idx: number) => idx !== i)})} className="absolute top-4 right-4 text-sky-200 hover:text-red-500">
                       <Trash2 className="w-4 h-4" />
                     </button>
                     <div className="grid grid-cols-2 gap-3 pr-8">
@@ -801,7 +801,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                       <h4 className="font-bold text-zinc-900 text-sm">{edu.institution}</h4>
                       <p className="text-sm text-zinc-600">{edu.degree} {edu.fieldOfStudy ? `in ${edu.fieldOfStudy}` : ''}</p>
                     </div>
-                    <div className="text-xs font-bold text-zinc-400 bg-white px-3 py-1 border border-zinc-200 rounded-full">
+                    <div className="text-xs font-bold text-sky-200 bg-white px-3 py-1 border border-zinc-200 rounded-full">
                       {sDate} - {eDate}
                     </div>
                   </div>

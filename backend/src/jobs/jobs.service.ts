@@ -102,8 +102,20 @@ export class JobsService {
   }
 
   async findAllJobs() {
+    const twoDaysAgo = new Date();
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+
     const jobs = await this.prisma.job.findMany({
-      where: { approvalStatus: 'APPROVED' },
+      where: { 
+        approvalStatus: 'APPROVED',
+        OR: [
+          { status: 'ACTIVE' },
+          { 
+            status: 'COMPLETED',
+            updatedAt: { gte: twoDaysAgo }
+          }
+        ]
+      },
       orderBy: { createdAt: 'desc' },
       include: { 
         category: true,

@@ -91,7 +91,7 @@ export default function ForgotPassword() {
   return (
     <div className="min-h-screen bg-zinc-50 font-sans flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
       <div className="absolute top-6 left-6 md:top-10 md:left-10">
-        <Link href="/login" className="flex items-center text-sm font-medium text-zinc-600 hover:text-blue-800 transition-colors bg-white px-4 py-2 rounded-full border border-zinc-200 shadow-sm">
+        <Link href="/login" className="flex items-center text-sm font-medium text-zinc-600 hover:text-sky-800 transition-colors bg-white px-4 py-2 rounded-full border border-zinc-200 shadow-sm">
           <ArrowLeft className="h-4 w-4 mr-2" /> Back to Login
         </Link>
       </div>
@@ -115,10 +115,10 @@ export default function ForgotPassword() {
             <form onSubmit={handleSendOtp} className="space-y-5">
               <div>
                 <label className="block text-sm font-medium text-zinc-700 mb-1">Email address</label>
-                <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" placeholder="you@example.com" />
+                <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" placeholder="you@example.com" />
               </div>
 
-              <button type="submit" disabled={loading} className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-blue-800 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 text-zinc-900">
+              <button type="submit" disabled={loading} className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-sky-800 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50 text-zinc-900">
                 {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Send Reset OTP'}
               </button>
             </form>
@@ -126,14 +126,14 @@ export default function ForgotPassword() {
             <form onSubmit={handleResetPassword} className="space-y-5">
               <div>
                 <label className="block text-sm font-medium text-zinc-700 mb-1">Enter OTP</label>
-                <input required type="text" maxLength={6} value={formData.otp} onChange={e => setFormData({...formData, otp: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-3 text-center tracking-[0.5em] text-xl font-bold focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" placeholder="------" />
+                <input required type="text" maxLength={6} value={formData.otp} onChange={e => setFormData({...formData, otp: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-3 text-center tracking-[0.5em] text-xl font-bold focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" placeholder="------" />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-zinc-700 mb-1">New Password</label>
                 <div className="relative">
-                  <input required type={showPassword ? 'text' : 'password'} value={formData.newPassword} onChange={e => setFormData({...formData, newPassword: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 pr-10 focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-400">
+                  <input required type={showPassword ? 'text' : 'password'} value={formData.newPassword} onChange={e => setFormData({...formData, newPassword: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 pr-10 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-sky-200">
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
@@ -142,19 +142,19 @@ export default function ForgotPassword() {
               <div>
                 <label className="block text-sm font-medium text-zinc-700 mb-1">Confirm New Password</label>
                 <div className="relative">
-                  <input required type={showConfirmPassword ? 'text' : 'password'} value={formData.confirmPassword} onChange={e => setFormData({...formData, confirmPassword: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 pr-10 focus:ring-2 focus:ring-blue-500 outline-none text-zinc-900" />
-                  <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-400">
+                  <input required type={showConfirmPassword ? 'text' : 'password'} value={formData.confirmPassword} onChange={e => setFormData({...formData, confirmPassword: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 pr-10 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" />
+                  <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-sky-200">
                     {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
 
-              <button type="submit" disabled={loading} className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-blue-800 hover:bg-blue-700 disabled:opacity-50">
+              <button type="submit" disabled={loading} className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-sky-800 hover:bg-sky-700 disabled:opacity-50">
                 {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Reset Password'}
               </button>
               
               <div className="text-center mt-4">
-                <button type="button" onClick={() => setStep(1)} className="text-sm text-blue-800 hover:underline">Change Email</button>
+                <button type="button" onClick={() => setStep(1)} className="text-sm text-sky-800 hover:underline">Change Email</button>
               </div>
             </form>
           )}

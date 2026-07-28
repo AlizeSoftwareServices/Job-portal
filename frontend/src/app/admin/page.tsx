@@ -66,6 +66,7 @@ export default function AdminDashboard() {
   const [reInviteJobId, setReInviteJobId] = useState('');
   const [sendingEmail, setSendingEmail] = useState(false);
   const [appEmployerSelections, setAppEmployerSelections] = useState<Record<string, string>>({});
+  const [bulkEmployerSelection, setBulkEmployerSelection] = useState('');
 
   // New Job Form State
   const [isCreatingJob, setIsCreatingJob] = useState(false);
@@ -649,6 +650,32 @@ export default function AdminDashboard() {
       if (res.ok) {
         alert('Applicant passed to employer successfully!');
         fetchApplications();
+      }
+    } catch (err) { console.error(err); }
+  };
+
+  const handleBulkPassToClient = async () => {
+    if (!bulkEmployerSelection) return alert('Please select a client for bulk forwarding.');
+    if(!window.confirm(`Are you sure you want to pass all currently filtered applicants (${appTotalItems}) to the selected employer?`)) return;
+    try {
+      const filters = {
+        category: appCategoryFilter,
+        job: appJobFilter,
+        location: appLocationFilter,
+        search: appDebouncedSearch,
+        status: appStatusFilter
+      };
+      const res = await fetch(`${API_URL}/admin/applications/bulk-assign-employer`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
+        body: JSON.stringify({ employerId: bulkEmployerSelection, filters })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        alert(`Successfully passed ${data.count} applicants to the employer!`);
+        fetchApplications();
+      } else {
+        alert('Failed to pass applicants.');
       }
     } catch (err) { console.error(err); }
   };
@@ -1481,8 +1508,26 @@ export default function AdminDashboard() {
               <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
                 <h2 className="text-xl font-bold text-zinc-800">Candidate Applications</h2>
                 <div className="flex flex-wrap gap-3">
+                  <div className="flex items-center gap-2 bg-sky-50 p-1 rounded-lg border border-sky-100">
+                    <select 
+                      className="text-xs p-1.5 border border-sky-200 rounded text-sky-800 bg-white"
+                      value={bulkEmployerSelection}
+                      onChange={e => setBulkEmployerSelection(e.target.value)}
+                    >
+                      <option value="">Select Client for Bulk Forward</option>
+                      {employersList.map(emp => (
+                        <option key={emp.id} value={emp.id}>{emp.employerProfile?.companyName || emp.email}</option>
+                      ))}
+                    </select>
+                    <button 
+                      onClick={handleBulkPassToClient}
+                      className="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded text-xs font-bold transition-colors"
+                    >
+                      Bulk Forward
+                    </button>
+                  </div>
                   <a 
-                    href={`${API_URL}/admin/candidates/export`}
+                    href={`${API_URL}/admin/candidates/export?category=${encodeURIComponent(appCategoryFilter)}&job=${encodeURIComponent(appJobFilter)}&location=${encodeURIComponent(appLocationFilter)}&search=${encodeURIComponent(appDebouncedSearch)}&status=${encodeURIComponent(appStatusFilter)}`}
                     target="_blank"
                     className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center gap-2"
                   >

@@ -10,7 +10,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ app
 
     const application = await prisma.application.update({
       where: { id: resolvedParams.appId },
-      data: { assignedEmployerId: resolvedParams.employerId }
+      data: { 
+        assignedEmployerId: resolvedParams.employerId,
+        isPassedToEmployer: true
+      }
     });
     
     return NextResponse.json(application, { status: 200 });

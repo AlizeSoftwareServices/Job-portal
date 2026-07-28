@@ -4,8 +4,50 @@ import ExcelJS from 'exceljs';
 
 export async function GET(req: NextRequest) {
   try {
+    const searchParams = req.nextUrl.searchParams;
+    const category = searchParams.get('category') || 'All';
+    const job = searchParams.get('job') || 'All';
+    const location = searchParams.get('location') || 'All';
+    const status = searchParams.get('status') || 'All';
+    const search = searchParams.get('search') || '';
+
+    let applicationWhere: any = {};
+    let hasAppFilter = false;
+
+    if (category && category !== 'All') {
+      applicationWhere.job = { ...applicationWhere.job, category: { name: category } };
+      hasAppFilter = true;
+    }
+    if (job && job !== 'All') {
+      applicationWhere.job = { ...applicationWhere.job, title: job };
+      hasAppFilter = true;
+    }
+    if (location && location !== 'All') {
+      const [city, state] = location.split(', ');
+      applicationWhere.job = { ...applicationWhere.job, locationCity: city, locationState: state };
+      hasAppFilter = true;
+    }
+    if (status && status !== 'All') {
+      applicationWhere.status = status as any;
+      hasAppFilter = true;
+    }
+
+    const where: any = { role: 'CANDIDATE' };
+    
+    if (hasAppFilter) {
+      where.applications = { some: applicationWhere };
+    }
+
+    if (search) {
+      where.OR = [
+        { firstName: { contains: search, mode: 'insensitive' } },
+        { lastName: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
     const candidates = await prisma.user.findMany({
-      where: { role: 'CANDIDATE' },
+      where,
       include: { 
         candidateProfile: {
           include: {

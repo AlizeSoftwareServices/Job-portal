@@ -494,7 +494,7 @@ export default function EmployerDashboard() {
                     <div>
                       <label className="block text-sm font-bold text-zinc-700 mb-1">Primary Contact Number</label>
                       {isEditingProfile ? (
-                        <input type="text" value={profile.primaryContactNumber || ''} onChange={e => setProfile({...profile, primaryContactNumber: e.target.value})} className="w-full border p-2.5 rounded outline-none focus:border-amber-500 bg-zinc-100" placeholder="e.g. +91 9876543210" disabled title="Primary contact number is managed from Account Settings" />
+                        <input type="text" value={profile.primaryContactNumber || ''} onChange={e => setProfile({...profile, primaryContactNumber: e.target.value})} className="w-full border p-2.5 rounded outline-none focus:border-amber-500" placeholder="e.g. +91 9876543210" />
                       ) : (
                         <p className="text-sm font-medium text-zinc-800 p-2.5 bg-zinc-50 rounded border border-transparent">{profile.primaryContactNumber || '-'}</p>
                       )}

@@ -592,11 +592,20 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Education qualification</span>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Education qualification *</span>
                 {isEditing ? (
                   <input type="text" name="educationQualification" value={form.educationQualification} onChange={handleChange} className={inputClass} />
                 ) : (
                   <p className="text-sm font-medium text-zinc-800">{form.educationQualification || 'Not specified'}</p>
+                )}
+              </div>
+
+              <div>
+                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Preferred Location *</span>
+                {isEditing ? (
+                  <input type="text" name="preferredLocation" value={form.preferredLocation} onChange={handleChange} className={inputClass} required />
+                ) : (
+                  <p className="text-sm font-medium text-zinc-800">{form.preferredLocation || 'Not specified'}</p>
                 )}
               </div>
               <div>

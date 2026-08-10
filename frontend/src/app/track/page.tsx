@@ -26,7 +26,7 @@ function TrackContent() {
     setError('');
     setApplication(null);
     try {
-      const res = await fetch(`${API_URL}/applications/track/${ref}`);
+      const res = await fetch(`${API_URL}/applications/track/${ref}?_t=${Date.now()}`);
       if (!res.ok) {
         throw new Error('Application not found. Please check your reference number.');
       }

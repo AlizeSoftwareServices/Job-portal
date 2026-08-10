@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import imageCompression from 'browser-image-compression';
-import { Briefcase, LogOut, MapPin, Clock, ChevronRight, User, Users, FileText, Building, Save, Pencil, Upload, X } from 'lucide-react';
+import { Briefcase, LogOut, MapPin, Clock, ChevronRight, User, Users, FileText, Building, Save, Pencil, Upload, X, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { jwtDecode } from 'jwt-decode';
 
 export default function EmployerDashboard() {
@@ -91,7 +91,7 @@ export default function EmployerDashboard() {
 
   const fetchJobs = async (empId: string) => {
     try {
-      const res = await fetch(`${API_URL}/jobs?employerId=${empId}`);
+      const res = await fetch(`${API_URL}/jobs?employerId=${empId}&_t=${Date.now()}`);
       const data = await res.json();
       setJobs(data);
     } catch (err) { console.error(err); }
@@ -99,7 +99,7 @@ export default function EmployerDashboard() {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch(`${API_URL}/categories`);
+      const res = await fetch(`${API_URL}/categories?_t=${Date.now()}`);
       const data = await res.json();
       setCategories(data);
     } catch (err) { console.error(err); }
@@ -108,7 +108,7 @@ export default function EmployerDashboard() {
   const fetchProfile = async (empId: string) => {
     try {
       const token = localStorage.getItem('skyo_token');
-      const res = await fetch(`${API_URL}/users/profile`, {
+      const res = await fetch(`${API_URL}/users/profile?_t=${Date.now()}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -124,7 +124,7 @@ export default function EmployerDashboard() {
   const fetchDirectApps = async (empId: string) => {
     try {
       const token = localStorage.getItem('skyo_token');
-      const res = await fetch(`${API_URL}/applications`, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch(`${API_URL}/applications?_t=${Date.now()}`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       const appsArray = data?.items ? data.items : (Array.isArray(data) ? data : []);
       setDirectApps(appsArray.filter((a: any) => a.job?.employerId === empId && a.assignedEmployerId !== empId));
@@ -134,7 +134,7 @@ export default function EmployerDashboard() {
   const fetchSkyoApps = async (empId: string) => {
     try {
       const token = localStorage.getItem('skyo_token');
-      const res = await fetch(`${API_URL}/applications`, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch(`${API_URL}/applications?_t=${Date.now()}`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       const appsArray = data?.items ? data.items : (Array.isArray(data) ? data : []);
       setSkyoApps(appsArray.filter((a: any) => a.assignedEmployerId === empId));
@@ -325,6 +325,23 @@ export default function EmployerDashboard() {
     }
   };
 
+  const handleSubmitForApproval = async () => {
+    try {
+      const token = localStorage.getItem('skyo_token');
+      const res = await fetch(`${API_URL}/users/profile/submit-approval`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        alert('Profile submitted for admin approval!');
+        const empId = JSON.parse(atob(token!.split('.')[1])).sub;
+        fetchProfile(empId);
+      } else {
+        alert('Failed to submit profile for approval.');
+      }
+    } catch(err) { console.error(err); }
+  };
+
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -424,6 +441,10 @@ export default function EmployerDashboard() {
                    setIsEditingProfile(true);
                    return;
                  }
+                 if (profile.approvalStatus !== 'APPROVED') {
+                   alert('Your profile is not approved yet. Please wait for the Skyo admin to onboard you.');
+                   return;
+                 }
                  setIsCreatingJob(true);
                }} 
                className="bg-[#003c71] text-white font-bold py-2 md:py-2.5 px-3 md:px-6 rounded-xl text-xs md:text-base hover:bg-[#002b52] hover:shadow-lg hover:shadow-sky-900/20 transition-all flex items-center gap-1.5 md:gap-2 transform hover:scale-[1.02]"
@@ -446,7 +467,57 @@ export default function EmployerDashboard() {
           
           {/* PROFILE TAB */}
           {activeTab === 'profile' && (
-            <div className="bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden mb-8 max-w-4xl mx-auto">
+            <div className="w-full max-w-4xl mx-auto">
+              {!isEditingProfile && profile.approvalStatus === 'APPROVED' && (
+                <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-6 py-4 rounded-3xl w-full mb-6 flex items-center gap-3">
+                  <CheckCircle className="w-6 h-6 text-emerald-600" />
+                  <div>
+                    <h4 className="font-bold">Successfully Onboarded</h4>
+                    <p className="text-sm">Skyo admin successfully onboarded. Now you are able to post a job.</p>
+                  </div>
+                </div>
+              )}
+              {!isEditingProfile && profile.approvalStatus === 'PENDING_APPROVAL' && (
+                <div className="bg-sky-50 border border-sky-200 text-sky-800 px-6 py-4 rounded-3xl w-full mb-6 flex items-center gap-3">
+                  <Clock className="w-6 h-6 text-sky-600" />
+                  <div>
+                    <h4 className="font-bold">Pending Admin Approval</h4>
+                    <p className="text-sm">Your profile is currently under review by the Skyo Admin. You will be able to post jobs once approved.</p>
+                  </div>
+                </div>
+              )}
+              {!isEditingProfile && profile.approvalStatus === 'REJECTED' && (
+                <div className="bg-red-50 border border-red-200 text-red-800 px-6 py-4 rounded-3xl w-full mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <XCircle className="w-6 h-6 text-red-600 shrink-0" />
+                    <div>
+                      <h4 className="font-bold">Application Rejected</h4>
+                      <p className="text-sm">Your onboarding request was rejected by the admin. Please update your profile and try again.</p>
+                    </div>
+                  </div>
+                  {isProfileComplete() && (
+                    <button onClick={handleSubmitForApproval} className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-xl font-bold shadow-sm transition-colors text-sm whitespace-nowrap">
+                      Resubmit for Approval
+                    </button>
+                  )}
+                </div>
+              )}
+              {!isEditingProfile && profile.approvalStatus === 'DRAFT' && isProfileComplete() && (
+                <div className="bg-amber-50 border border-amber-200 text-amber-800 px-6 py-4 rounded-3xl w-full mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <AlertCircle className="w-6 h-6 text-amber-600 shrink-0" />
+                    <div>
+                      <h4 className="font-bold">Ready for Review</h4>
+                      <p className="text-sm">Your profile is complete. Submit it to the Skyo Admin to get onboarded and start posting jobs.</p>
+                    </div>
+                  </div>
+                  <button onClick={handleSubmitForApproval} className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded-xl font-bold shadow-sm transition-colors text-sm whitespace-nowrap">
+                    Submit for Approval
+                  </button>
+                </div>
+              )}
+
+              <div className="bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden mb-8 w-full">
               <div className="bg-gradient-to-r from-slate-50 to-white px-8 py-6 border-b border-slate-100 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#003c71] flex items-center justify-center shadow-sm">
                   <Building className="w-5 h-5" />
@@ -499,14 +570,6 @@ export default function EmployerDashboard() {
                         <input type="text" value={profile.primaryContactNumber || ''} onChange={e => setProfile({...profile, primaryContactNumber: e.target.value})} className="w-full border p-2.5 rounded outline-none focus:border-amber-500" placeholder="e.g. +91 9876543210" />
                       ) : (
                         <p className="text-sm font-medium text-zinc-800 p-2.5 bg-zinc-50 rounded border border-transparent">{profile.primaryContactNumber || '-'}</p>
-                      )}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-bold text-zinc-700 mb-1">Secondary Contact Number</label>
-                      {isEditingProfile ? (
-                        <input type="text" value={profile.secondaryContactNumber || ''} onChange={e => setProfile({...profile, secondaryContactNumber: e.target.value})} className="w-full border p-2.5 rounded outline-none focus:border-amber-500" placeholder="e.g. +91 9876543210" />
-                      ) : (
-                        <p className="text-sm font-medium text-zinc-800 p-2.5 bg-zinc-50 rounded border border-transparent">{profile.secondaryContactNumber || '-'}</p>
                       )}
                     </div>
                     <div>
@@ -574,6 +637,7 @@ export default function EmployerDashboard() {
                   )}
                 </form>
               </div>
+            </div>
             </div>
           )}
 

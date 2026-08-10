@@ -49,6 +49,7 @@ export default function AdminDashboard() {
   const [applications, setApplications] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [employersList, setEmployersList] = useState<any[]>([]);
+  const [clientSortOrder, setClientSortOrder] = useState<'latest' | 'earliest'>('latest');
   const [stats, setStats] = useState<any>({ totalJobs: 0, activeJobs: 0, completedJobs: 0 });
   const [flowchartStats, setFlowchartStats] = useState<any[]>([]);
   const [jobToConfirmStatus, setJobToConfirmStatus] = useState<{id: string, currentStatus: string} | null>(null);
@@ -249,7 +250,7 @@ export default function AdminDashboard() {
       } else if (jobStatusFilter !== 'All') {
         params.append('status', jobStatusFilter);
       }
-      const res = await fetch(`${API_URL}/jobs/admin-all?${params.toString()}`, { 
+      const res = await fetch(`${API_URL}/jobs/admin-all?${params.toString()}&_t=${Date.now()}`, { 
         headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         signal 
       });
@@ -270,7 +271,7 @@ export default function AdminDashboard() {
         search: appDebouncedSearch,
         status: appStatusFilter,
       });
-      const res = await fetch(`${API_URL}/applications?${params.toString()}`, { 
+      const res = await fetch(`${API_URL}/applications?${params.toString()}&_t=${Date.now()}`, { 
         headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         signal 
       });
@@ -286,7 +287,7 @@ export default function AdminDashboard() {
   const fetchCategories = async (force = false) => {
     if (!force && loadedTabs.has('categories')) return;
     try {
-      const res = await fetch(`${API_URL}/categories`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
+      const res = await fetch(`${API_URL}/categories?_t=${Date.now()}`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
       const data = await res.json();
       if(Array.isArray(data)) setCategories(data);
       setLoadedTabs(prev => new Set(prev).add('categories'));
@@ -296,17 +297,34 @@ export default function AdminDashboard() {
   const fetchEmployers = async (force = false) => {
     if (!force && loadedTabs.has('employers')) return;
     try {
-      const res = await fetch(`${API_URL}/admin/employers`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
+      const res = await fetch(`${API_URL}/admin/employers?_t=${Date.now()}`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
       const data = await res.json();
       if(Array.isArray(data)) setEmployersList(data);
       setLoadedTabs(prev => new Set(prev).add('employers'));
     } catch (err) { console.error(err); }
   };
 
+  const handleEmployerApproval = async (employerId: string, action: 'ONBOARD' | 'REJECT') => {
+    if (!window.confirm(`Are you sure you want to ${action === 'ONBOARD' ? 'approve' : 'reject'} this client?`)) return;
+    try {
+      const res = await fetch(`/api/admin/employers/${employerId}/approval`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
+        body: JSON.stringify({ action })
+      });
+      if (res.ok) {
+        alert(`Client ${action === 'ONBOARD' ? 'approved' : 'rejected'} successfully.`);
+        fetchEmployers(true);
+      } else {
+        alert('Failed to update client status.');
+      }
+    } catch (err) { console.error(err); }
+  };
+
   const fetchFlowchartStats = async (force = false) => {
     if (!force && loadedTabs.has('dashboard_stats')) return;
     try {
-      const res = await fetch(`${API_URL}/admin/flowchart-stats`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
+      const res = await fetch(`${API_URL}/admin/flowchart-stats?_t=${Date.now()}`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
       if(res.ok) {
         const data = await res.json();
         setFlowchartStats(data);
@@ -317,7 +335,7 @@ export default function AdminDashboard() {
   const fetchStats = async (force = false) => {
     if (!force && loadedTabs.has('dashboard_stats')) return;
     try {
-      const res = await fetch(`${API_URL}/admin/dashboard-data`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
+      const res = await fetch(`${API_URL}/admin/dashboard-data?_t=${Date.now()}`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
       if (!res.ok) {
         throw new Error('Stats fetch failed');
       }
@@ -847,27 +865,28 @@ export default function AdminDashboard() {
         <nav className="flex-1 px-2 py-6 space-y-2">
           <button 
             onClick={() => { setActiveTab('dashboard'); setIsMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${activeTab === 'dashboard' ? 'bg-sky-800 text-white shadow-lg shadow-sky-900/20' : 'hover:bg-white/10 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 transition-all font-medium ${activeTab === 'dashboard' ? 'bg-sky-900 border-l-4 border-white text-white shadow-lg' : 'border-l-4 border-transparent hover:bg-white/10 hover:text-white'}`}
           >
             <TrendingUp className="h-5 w-5" /> Dashboard
           </button>
           <button 
             onClick={() => { setActiveTab('jobs'); setIsMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${activeTab === 'jobs' ? 'bg-sky-800 text-white shadow-lg shadow-sky-900/20' : 'hover:bg-white/10 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 transition-all font-medium ${activeTab === 'jobs' ? 'bg-sky-900 border-l-4 border-white text-white shadow-lg' : 'border-l-4 border-transparent hover:bg-white/10 hover:text-white'}`}
           >
             <Briefcase className="h-5 w-5" /> Jobs
           </button>
           <button 
             onClick={() => { setActiveTab('applications'); setIsMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${activeTab === 'applications' ? 'bg-sky-800 text-white shadow-lg shadow-sky-900/20' : 'hover:bg-white/10 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 transition-all font-medium ${activeTab === 'applications' ? 'bg-sky-900 border-l-4 border-white text-white shadow-lg' : 'border-l-4 border-transparent hover:bg-white/10 hover:text-white'}`}
           >
             <Users className="h-5 w-5" /> Applications
           </button>
           <button 
             onClick={() => { setActiveTab('employers'); setIsMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${activeTab === 'employers' ? 'bg-sky-800 text-white shadow-lg shadow-sky-900/20' : 'hover:bg-white/10 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 transition-all font-medium ${activeTab === 'employers' ? 'bg-sky-900 border-l-4 border-white text-white shadow-lg' : 'border-l-4 border-transparent hover:bg-white/10 hover:text-white'}`}
           >
-            <Briefcase className="h-5 w-5" />Clients</button>
+            <Briefcase className="h-5 w-5" /> Client Management
+          </button>
         </nav>
 
         <div className="p-4 border-t border-slate-800">
@@ -1920,7 +1939,15 @@ export default function AdminDashboard() {
                   <h2 className="text-xl font-bold text-zinc-800">Clients Directory</h2>
                   <p className="text-sm text-zinc-500 mt-1">Manage and view all registered clients</p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-3 items-center">
+                  <select 
+                    value={clientSortOrder}
+                    onChange={(e) => setClientSortOrder(e.target.value as 'latest' | 'earliest')}
+                    className="border border-zinc-300 rounded-lg text-sm font-bold px-3 py-2 bg-white text-zinc-700 outline-none focus:border-sky-500 cursor-pointer shadow-sm"
+                  >
+                    <option value="latest">Latest First</option>
+                    <option value="earliest">Earliest First</option>
+                  </select>
                   <a 
                     href={`${API_URL}/admin/employers/export`}
                     target="_blank"
@@ -1940,15 +1967,21 @@ export default function AdminDashboard() {
                       <th className="p-4 font-bold text-sm text-zinc-600">Industry</th>
                       <th className="p-4 font-bold text-sm text-zinc-600">Location</th>
                       <th className="p-4 font-bold text-sm text-zinc-600">Joined</th>
+                      <th className="p-4 font-bold text-sm text-zinc-600">Status</th>
+                      <th className="p-4 font-bold text-sm text-zinc-600 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-100">
                     {employersList.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="p-6 text-center text-zinc-500 italic">No clients found.</td>
+                        <td colSpan={7} className="p-6 text-center text-zinc-500 italic">No clients found.</td>
                       </tr>
                     ) : (
-                      employersList.map(emp => (
+                      [...employersList].sort((a, b) => {
+                        const dateA = new Date(a.createdAt).getTime();
+                        const dateB = new Date(b.createdAt).getTime();
+                        return clientSortOrder === 'earliest' ? dateA - dateB : dateB - dateA;
+                      }).map(emp => (
                         <React.Fragment key={emp.id}>
                           <tr 
                             className="hover:bg-zinc-50 cursor-pointer transition-colors"
@@ -1968,10 +2001,28 @@ export default function AdminDashboard() {
                             <td className="p-4 text-sm text-zinc-700">{emp.employerProfile?.industry || 'Not Set'}</td>
                             <td className="p-4 text-sm text-zinc-700">{emp.employerProfile?.companyLocation || 'Not Set'}</td>
                             <td className="p-4 text-sm text-zinc-700">{new Date(emp.createdAt).toLocaleDateString()}</td>
+                            <td className="p-4">
+                              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-bold ${
+                                emp.employerProfile?.approvalStatus === 'APPROVED' ? 'bg-emerald-100 text-emerald-700' :
+                                emp.employerProfile?.approvalStatus === 'PENDING_APPROVAL' ? 'bg-sky-100 text-sky-700' :
+                                emp.employerProfile?.approvalStatus === 'REJECTED' ? 'bg-red-100 text-red-700' :
+                                'bg-amber-100 text-amber-700'
+                              }`}>
+                                {emp.employerProfile?.approvalStatus?.replace('_', ' ') || 'DRAFT'}
+                              </span>
+                            </td>
+                            <td className="p-4 text-right">
+                              {emp.employerProfile?.approvalStatus === 'PENDING_APPROVAL' && (
+                                <div className="flex justify-end gap-2" onClick={e => e.stopPropagation()}>
+                                  <button onClick={() => handleEmployerApproval(emp.id, 'ONBOARD')} className="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded text-xs font-bold transition-colors shadow-sm hover:shadow-md">Onboard</button>
+                                  <button onClick={() => handleEmployerApproval(emp.id, 'REJECT')} className="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded text-xs font-bold transition-colors shadow-sm hover:shadow-md">Reject</button>
+                                </div>
+                              )}
+                            </td>
                           </tr>
                           {expandedEmployerId === emp.id && (
                             <tr className="bg-sky-50/50">
-                              <td colSpan={5} className="p-0">
+                              <td colSpan={7} className="p-0">
                                 <div className="p-6 border-t border-sky-100">
                                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {emp.employerProfile?.companyLogoUrl && (
@@ -1999,7 +2050,6 @@ export default function AdminDashboard() {
                                     <div>
                                       <p className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1">Additional Contact</p>
                                       <p className="text-sm text-zinc-800"><strong>Official Mail ID:</strong> {emp.employerProfile?.officialMailId || 'N/A'}</p>
-                                      <p className="text-sm text-zinc-800"><strong>Secondary Number:</strong> {emp.employerProfile?.secondaryContactNumber || 'N/A'}</p>
                                       <p className="text-sm text-zinc-800"><strong>Registered On:</strong> {new Date(emp.createdAt).toLocaleDateString()}</p>
                                     </div>
                                   </div>

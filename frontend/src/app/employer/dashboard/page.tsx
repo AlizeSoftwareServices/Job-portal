@@ -100,108 +100,6 @@ export default function EmployerDashboard() {
   const fetchCategories = async () => {
     try {
       const res = await fetch(`${API_URL}/categories?_t=${Date.now()}`);
-'use client';
-
-import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import imageCompression from 'browser-image-compression';
-import { Briefcase, LogOut, MapPin, Clock, ChevronRight, User, Users, FileText, Building, Save, Pencil, Upload, X, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
-import { jwtDecode } from 'jwt-decode';
-
-export default function EmployerDashboard() {
-  const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [employerId, setEmployerId] = useState('');
-  const [jobs, setJobs] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [directApps, setDirectApps] = useState<any[]>([]);
-  const [skyoApps, setSkyoApps] = useState<any[]>([]);
-  const [profile, setProfile] = useState<any>({});
-  const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [uploadingAvatar, setUploadingAvatar] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
-  const [activeTab, setActiveTab] = useState('profile'); // profile, jobs, direct, skyo
-  const [jobSubTab, setJobSubTab] = useState<'active'|'completed'>('active');
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
-     
-    
-
-  // New Job Form State
-  const [isCreatingJob, setIsCreatingJob] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedJob, setSelectedJob] = useState<any>(null);
-  const defaultJobState = {
-    title: '',
-    categoryId: '',
-    newCategoryName: '',
-    locationCity: '',
-    locationState: '',
-    experienceLevel: 'Entry Level',
-    workMode: 'Remote',
-    jobType: 'Permanent',
-    description: '',
-    requirements: '',
-    salary: '',
-    salaryType: 'Month',
-    salaryVisible: true,
-    vacancyCount: '1',
-    shiftTimings: '',
-    benefits: '',
-    generalComments: '',
-    facebookLink: '',
-    instagramLink: '',
-    linkedinLink: '',
-  };
-  const [newJob, setNewJob] = useState(defaultJobState);
-
-  const checkAuth = () => {
-    const token = localStorage.getItem('skyo_token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-    try {
-      const decoded: any = jwtDecode(token);
-      if (decoded.role !== 'EMPLOYER') {
-        router.push('/');
-        return;
-      }
-      setEmployerId(decoded.sub);
-      setIsAuthenticated(true);
-      fetchData(decoded.sub);
-    } catch (error) {
-      localStorage.removeItem('skyo_token');
-      router.push('/login');
-    }
-  };
-
-  const fetchData = async (empId: string) => {
-    setLoading(true);
-    await Promise.all([
-      fetchJobs(empId),
-      fetchCategories(),
-      fetchProfile(empId),
-      fetchDirectApps(empId),
-      fetchSkyoApps(empId)
-    ]);
-    sessionStorage.setItem('active_portal', 'EMPLOYER');
-      setLoading(false);
-  }
-
-  const fetchJobs = async (empId: string) => {
-    try {
-      const res = await fetch(`${API_URL}/jobs?employerId=${empId}&_t=${Date.now()}`);
-      const data = await res.json();
-      setJobs(data);
-    } catch (err) { console.error(err); }
-  };
-
-  const fetchCategories = async () => {
-    try {
-      const res = await fetch(`${API_URL}/categories?_t=${Date.now()}`);
       const data = await res.json();
       setCategories(data);
     } catch (err) { console.error(err); }
@@ -345,6 +243,290 @@ export default function EmployerDashboard() {
     try {
       const token = localStorage.getItem('skyo_token');
       const res = await fetch(`${API_URL}/jobs/${jobId}/repost`, { method: 'PUT', headers: { Authorization: `Bearer ${token}` } });
+      if (res.status === 401) { localStorage.removeItem('skyo_auth'); localStorage.removeItem('skyo_token'); window.location.reload(); return; }
+      if (res.ok) {
+        alert('Job re-posted successfully!');
+        fetchJobs(employerId);
+      }
+    } catch (err) { console.error(err); }
+  };
+
+  const handleUseTemplate = (job: any) => {
+    setNewJob({
+      title: job.title || '',
+      categoryId: job.categoryId || '',
+      newCategoryName: '',
+      locationCity: job.locationCity || '',
+      locationState: job.locationState || '',
+      experienceLevel: job.experienceLevel || 'Entry Level',
+      workMode: job.workMode || 'Remote',
+      jobType: job.jobType || 'Permanent',
+      description: job.description || '',
+      requirements: job.requirements || '',
+      salary: job.salary || '',
+      salaryType: job.salaryType || 'Month',
+      salaryVisible: job.salaryVisible ?? true,
+      vacancyCount: job.vacancyCount?.toString() || '1',
+      shiftTimings: job.shiftTimings || '',
+      benefits: job.benefits || '',
+      generalComments: job.generalComments || '',
+      facebookLink: job.facebookLink || '',
+      instagramLink: job.instagramLink || '',
+      linkedinLink: job.linkedinLink || '',
+    });
+    setIsCreatingJob(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const isProfileComplete = () => {
+    return profile.companyName?.trim() && 
+           profile.primaryContactNumber?.trim() && 
+           profile.industry?.trim() && 
+           profile.companyLocation?.trim() && 
+           profile.hrName?.trim() && 
+           profile.officialMailId?.trim();
+  };
+
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (file.size > 50 * 1024) {
+      alert('Image size exceeds 50KB limit. Please upload a smaller image.');
+      e.target.value = '';
+      return;
+    }
+    const allowed = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (!allowed.includes(file.type)) {
+      alert('Only JPEG, JPG, and PNG files are allowed.');
+      e.target.value = '';
+      return;
+    }
+
+    setUploadingAvatar(true);
+    
+    try {
+      const data = new FormData();
+      data.append('file', file); // Use original file since it's already under 50KB
+      const token = localStorage.getItem('skyo_token');
+      const res = await fetch(`${API_URL}/users/profile/avatar`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: data,
+      });
+      if (res.status === 401) { localStorage.removeItem('skyo_auth'); localStorage.removeItem('skyo_token'); window.location.reload(); return; }
+      if (res.ok) {
+        const body = await res.json();
+        setProfile({ ...profile, companyLogoUrl: body.avatarUrl });
+      } else {
+        alert('Failed to upload avatar');
+      }
+    } catch(err) {
+      console.error(err);
+      alert('Error uploading avatar');
+    } finally {
+      setUploadingAvatar(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleSubmitForApproval = async () => {
+    try {
+      const token = localStorage.getItem('skyo_token');
+      const res = await fetch(`${API_URL}/users/profile/submit-approval`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.status === 401) { localStorage.removeItem('skyo_auth'); localStorage.removeItem('skyo_token'); window.location.reload(); return; }
+      if (res.ok) {
+        alert('Profile submitted for admin approval!');
+        const empId = JSON.parse(atob(token!.split('.')[1])).sub;
+        fetchProfile(empId);
+      } else {
+        alert('Failed to submit profile for approval.');
+      }
+    } catch(err) { console.error(err); }
+  };
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem('skyo_token');
+      const res = await fetch(`${API_URL}/users/profile`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ employerProfile: profile })
+      });
+      if (res.status === 401) { localStorage.removeItem('skyo_auth'); localStorage.removeItem('skyo_token'); window.location.reload(); return; }
+      if (res.ok) {
+        alert('Profile updated successfully!');
+        setIsEditingProfile(false);
+      } else {
+        alert('Failed to update profile');
+      }
+    } catch(err) { console.error(err); }
+  };
+
+  if (loading || !isAuthenticated) return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-50">
+      <div className="animate-[pulse_1.5s_ease-in-out_infinite] flex flex-col items-center">
+        <img src="/logo.png" alt="Skyo Logo" className="h-28 md:h-36 w-auto object-contain mix-blend-multiply" />
+        <div className="mt-8 w-48 h-1.5 bg-zinc-200 rounded-full overflow-hidden">
+          <div className="h-full bg-sky-600 rounded-full w-1/2 animate-[slideRight_1s_ease-in-out_infinite]" style={{ animation: 'slideRight 1s ease-in-out infinite alternate' }}>
+            <style>{`
+              @keyframes slideRight {
+                0% { transform: translateX(0%); }
+                100% { transform: translateX(100%); }
+              }
+            `}</style>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="flex h-screen bg-slate-50 font-sans text-slate-900 overflow-hidden">
+      
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 bg-black/50 z-[60] md:hidden" onClick={() => setIsMobileMenuOpen(false)} />
+      )}
+
+      {/* Sidebar */}
+      <aside className={`fixed md:relative top-0 left-0 w-64 bg-sky-800 text-sky-100 flex flex-col h-full z-[70] transform transition-transform duration-300 ease-in-out md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="p-4 pt-6 pb-4 flex flex-col items-center justify-center relative">
+          <button className="md:hidden absolute top-4 right-4 text-sky-200 p-1 bg-zinc-800 rounded-md" onClick={() => setIsMobileMenuOpen(false)}>
+            <X className="w-5 h-5" />
+          </button>
+          <a href="/" className="cursor-pointer hover:scale-105 transition-transform flex flex-col items-center">
+            <img src="/logo.png" alt="Skyo Logo" className="h-12 md:h-16 w-auto object-contain mb-2" />
+            <span className="text-[10px] font-bold text-sky-200 uppercase tracking-widest text-center">Client Portal</span>
+          </a>
+        </div>
+
+        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+          <button onClick={() => { setActiveTab('profile'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${activeTab === 'profile' ? 'bg-sky-800 text-white shadow-lg shadow-sky-900/20' : 'hover:bg-slate-800'}`}>
+            <User className="h-5 w-5" /> Profile Settings
+          </button>
+          <button onClick={() => { setActiveTab('jobs'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${activeTab === 'jobs' ? 'bg-sky-800 text-white shadow-lg shadow-sky-900/20' : 'hover:bg-slate-800'}`}>
+            <Briefcase className="h-5 w-5" /> Manage Jobs
+          </button>
+          <button onClick={() => { setActiveTab('direct_applicants'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${activeTab === 'direct_applicants' ? 'bg-sky-800 text-white shadow-lg shadow-sky-900/20' : 'hover:bg-slate-800'}`}>
+            <Users className="h-5 w-5" /> Direct Applicants
+          </button>
+          <button onClick={() => { setActiveTab('skyo_applicants'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${activeTab === 'skyo_applicants' ? 'bg-sky-800 text-white shadow-lg shadow-sky-900/20' : 'hover:bg-slate-800'}`}>
+            <FileText className="h-5 w-5" /> Skyo Applicants
+          </button>
+        </nav>
+
+        <div className="p-4 border-t border-slate-800">
+          <button onClick={handleLogout} className="w-full flex items-center justify-center gap-3 px-3 py-3 text-sm font-bold text-red-400 hover:bg-red-500/10 rounded-xl transition-colors">
+            <LogOut className="h-5 w-5" /> Logout
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50/50 w-full">
+        <header className="bg-white/80 backdrop-blur-md h-20 px-4 md:px-8 flex items-center justify-between border-b border-slate-200 shrink-0 sticky top-0 z-10 shadow-[0_4px_20px_rgb(0,0,0,0.02)]">
+          <div className="flex items-center gap-3">
+            <button className="md:hidden p-2 -ml-2 text-zinc-600" onClick={() => setIsMobileMenuOpen(true)}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            <h1 className="text-xl md:text-2xl font-black text-slate-800 capitalize tracking-tight">{activeTab.replace('_', ' ')}</h1>
+          </div>
+          {activeTab === 'jobs' && !isCreatingJob && (
+             <button 
+               onClick={() => {
+                 if (!isProfileComplete()) {
+                   alert('Please complete your Company Profile Information (including Company Name, Contact, Industry, Location, HR Name, and Official Mail ID) before posting a new job.');
+                   setActiveTab('profile');
+                   setIsEditingProfile(true);
+                   return;
+                 }
+                 
+                 setIsCreatingJob(true);
+               }} 
+               className="bg-[#003c71] text-white font-bold py-2 md:py-2.5 px-3 md:px-6 rounded-xl text-xs md:text-base hover:bg-[#002b52] hover:shadow-lg hover:shadow-sky-900/20 transition-all flex items-center gap-1.5 md:gap-2 transform hover:scale-[1.02]"
+             >
+               <Briefcase className="w-3 h-3 md:w-4 md:h-4" /> Post New Job
+             </button>
+          )}
+          {activeTab === 'profile' && (
+            <div className="flex items-center gap-4">
+              {!isEditingProfile ? (
+                <button onClick={() => setIsEditingProfile(true)} className="flex items-center gap-2 bg-sky-50 hover:bg-[#003c71] text-sky-800 hover:text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow-md">
+                  <Pencil className="w-4 h-4" /> Edit Profile
+                </button>
+              ) : null}
+            </div>
+          )}
+        </header>
+
+        <main className="flex-1 overflow-y-auto p-8 relative">
+          
+          {/* PROFILE TAB */}
+          {activeTab === 'profile' && (
+            <div className="w-full max-w-4xl mx-auto">
+              {!isEditingProfile && profile.approvalStatus === 'APPROVED' && (
+                <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-6 py-4 rounded-3xl w-full mb-6 flex items-center gap-3">
+                  <CheckCircle className="w-6 h-6 text-emerald-600" />
+                  <div>
+                    <h4 className="font-bold">Successfully Onboarded</h4>
+                    <p className="text-sm">Skyo admin successfully onboarded. Now you are able to post a job.</p>
+                  </div>
+                </div>
+              )}
+              {!isEditingProfile && profile.approvalStatus === 'PENDING_APPROVAL' && (
+                <div className="bg-sky-50 border border-sky-200 text-sky-800 px-6 py-4 rounded-3xl w-full mb-6 flex items-center gap-3">
+                  <Clock className="w-6 h-6 text-sky-600" />
+                  <div>
+                    <h4 className="font-bold">Pending Admin Approval</h4>
+                    <p className="text-sm">Your profile is currently under review by the Skyo Admin. You will be able to post jobs once approved.</p>
+                  </div>
+                </div>
+              )}
+              {!isEditingProfile && profile.approvalStatus === 'REJECTED' && (
+                <div className="bg-red-50 border border-red-200 text-red-800 px-6 py-4 rounded-3xl w-full mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <XCircle className="w-6 h-6 text-red-600 shrink-0" />
+                    <div>
+                      <h4 className="font-bold">Application Rejected</h4>
+                      <p className="text-sm">Your onboarding request was rejected by the admin. Please update your profile and try again.</p>
+                    </div>
+                  </div>
+                  {isProfileComplete() && (
+                    <button onClick={handleSubmitForApproval} className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-xl font-bold shadow-sm transition-colors text-sm whitespace-nowrap">
+                      Resubmit for Approval
+                    </button>
+                  )}
+                </div>
+              )}
+              {!isEditingProfile && profile.approvalStatus === 'DRAFT' && isProfileComplete() && (
+                <div className="bg-amber-50 border border-amber-200 text-amber-800 px-6 py-4 rounded-3xl w-full mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <AlertCircle className="w-6 h-6 text-amber-600 shrink-0" />
+                    <div>
+                      <h4 className="font-bold">Ready for Review</h4>
+                      <p className="text-sm">Your profile is complete. Submit it to the Skyo Admin to get onboarded and start posting jobs.</p>
+                    </div>
+                  </div>
+                  <button onClick={handleSubmitForApproval} className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded-xl font-bold shadow-sm transition-colors text-sm whitespace-nowrap">
+                    Submit for Approval
+                  </button>
+                </div>
+              )}
+
+              <div className="bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden mb-8 w-full">
+              <div className="bg-gradient-to-r from-slate-50 to-white px-8 py-6 border-b border-slate-100 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#003c71] flex items-center justify-center shadow-sm">
+                  <Building className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="text-xl font-black text-slate-800">Company Profile Information</h3>

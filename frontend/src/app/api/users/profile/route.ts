@@ -117,6 +117,7 @@ export async function PUT(req: NextRequest) {
       updatedProfile = await prisma.employerProfile.update({
         where: { userId },
         data: {
+          approvalStatus: 'APPROVED',
           ...(data.employerProfile.companyName && { companyName: data.employerProfile.companyName }),
           ...(data.employerProfile.companyWebsite && { companyWebsite: data.employerProfile.companyWebsite }),
           ...(data.employerProfile.industry && { industry: data.employerProfile.industry }),

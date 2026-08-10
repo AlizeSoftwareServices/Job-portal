@@ -1988,14 +1988,12 @@ export default function AdminDashboard() {
                       <th className="p-4 font-bold text-sm text-zinc-600">Industry</th>
                       <th className="p-4 font-bold text-sm text-zinc-600">Location</th>
                       <th className="p-4 font-bold text-sm text-zinc-600">Joined</th>
-                      <th className="p-4 font-bold text-sm text-zinc-600">Status</th>
-                      <th className="p-4 font-bold text-sm text-zinc-600 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-100">
                     {employersList.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="p-6 text-center text-zinc-500 italic">No clients found.</td>
+                        <td colSpan={5} className="p-6 text-center text-zinc-500 italic">No clients found.</td>
                       </tr>
                     ) : (
                       [...employersList].sort((a, b) => {
@@ -2022,28 +2020,10 @@ export default function AdminDashboard() {
                             <td className="p-4 text-sm text-zinc-700">{emp.employerProfile?.industry || 'Not Set'}</td>
                             <td className="p-4 text-sm text-zinc-700">{emp.employerProfile?.companyLocation || 'Not Set'}</td>
                             <td className="p-4 text-sm text-zinc-700">{new Date(emp.createdAt).toLocaleDateString()}</td>
-                            <td className="p-4">
-                              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-bold ${
-                                emp.employerProfile?.approvalStatus === 'APPROVED' ? 'bg-emerald-100 text-emerald-700' :
-                                emp.employerProfile?.approvalStatus === 'PENDING_APPROVAL' ? 'bg-sky-100 text-sky-700' :
-                                emp.employerProfile?.approvalStatus === 'REJECTED' ? 'bg-red-100 text-red-700' :
-                                'bg-amber-100 text-amber-700'
-                              }`}>
-                                {emp.employerProfile?.approvalStatus?.replace('_', ' ') || 'DRAFT'}
-                              </span>
-                            </td>
-                            <td className="p-4 text-right">
-                              {emp.employerProfile?.approvalStatus === 'PENDING_APPROVAL' && (
-                                <div className="flex justify-end gap-2" onClick={e => e.stopPropagation()}>
-                                  <button onClick={() => handleEmployerApproval(emp.id, 'ONBOARD')} className="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded text-xs font-bold transition-colors shadow-sm hover:shadow-md">Onboard</button>
-                                  <button onClick={() => handleEmployerApproval(emp.id, 'REJECT')} className="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded text-xs font-bold transition-colors shadow-sm hover:shadow-md">Reject</button>
-                                </div>
-                              )}
-                            </td>
                           </tr>
                           {expandedEmployerId === emp.id && (
                             <tr className="bg-sky-50/50">
-                              <td colSpan={7} className="p-0">
+                              <td colSpan={5} className="p-0">
                                 <div className="p-6 border-t border-sky-100">
                                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {emp.employerProfile?.companyLogoUrl && (

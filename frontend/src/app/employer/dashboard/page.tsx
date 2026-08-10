@@ -111,6 +111,7 @@ export default function EmployerDashboard() {
       const res = await fetch(`${API_URL}/users/profile?_t=${Date.now()}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_auth'); localStorage.removeItem('skyo_token'); window.location.reload(); return; }
       const data = await res.json();
       if (data.employerProfile) {
         setProfile({
@@ -125,6 +126,7 @@ export default function EmployerDashboard() {
     try {
       const token = localStorage.getItem('skyo_token');
       const res = await fetch(`${API_URL}/applications?_t=${Date.now()}`, { headers: { Authorization: `Bearer ${token}` } });
+      if (res.status === 401) { localStorage.removeItem('skyo_auth'); localStorage.removeItem('skyo_token'); window.location.reload(); return; }
       const data = await res.json();
       const appsArray = data?.items ? data.items : (Array.isArray(data) ? data : []);
       setDirectApps(appsArray.filter((a: any) => a.job?.employerId === empId && a.assignedEmployerId !== empId));
@@ -135,6 +137,7 @@ export default function EmployerDashboard() {
     try {
       const token = localStorage.getItem('skyo_token');
       const res = await fetch(`${API_URL}/applications?_t=${Date.now()}`, { headers: { Authorization: `Bearer ${token}` } });
+      if (res.status === 401) { localStorage.removeItem('skyo_auth'); localStorage.removeItem('skyo_token'); window.location.reload(); return; }
       const data = await res.json();
       const appsArray = data?.items ? data.items : (Array.isArray(data) ? data : []);
       setSkyoApps(appsArray.filter((a: any) => a.assignedEmployerId === empId));
@@ -205,6 +208,7 @@ export default function EmployerDashboard() {
         },
         body: JSON.stringify(jobData) 
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_auth'); localStorage.removeItem('skyo_token'); window.location.reload(); return; }
       if (res.ok) {
         alert('Job Posted successfully! It is now pending admin approval.');
         setIsCreatingJob(false);
@@ -226,6 +230,7 @@ export default function EmployerDashboard() {
     try {
       const token = localStorage.getItem('skyo_token');
       const res = await fetch(`${API_URL}/jobs/${jobId}/request-closure`, { method: 'PUT', headers: { Authorization: `Bearer ${token}` } });
+      if (res.status === 401) { localStorage.removeItem('skyo_auth'); localStorage.removeItem('skyo_token'); window.location.reload(); return; }
       if (res.ok) {
         alert('Closure requested! The job is now marked as Completed for you, pending Admin finalization.');
         fetchJobs(employerId);
@@ -238,6 +243,7 @@ export default function EmployerDashboard() {
     try {
       const token = localStorage.getItem('skyo_token');
       const res = await fetch(`${API_URL}/jobs/${jobId}/repost`, { method: 'PUT', headers: { Authorization: `Bearer ${token}` } });
+      if (res.status === 401) { localStorage.removeItem('skyo_auth'); localStorage.removeItem('skyo_token'); window.location.reload(); return; }
       if (res.ok) {
         alert('Job re-posted successfully!');
         fetchJobs(employerId);
@@ -310,6 +316,7 @@ export default function EmployerDashboard() {
         headers: { 'Authorization': `Bearer ${token}` },
         body: data,
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_auth'); localStorage.removeItem('skyo_token'); window.location.reload(); return; }
       if (res.ok) {
         const body = await res.json();
         setProfile({ ...profile, companyLogoUrl: body.avatarUrl });
@@ -332,6 +339,7 @@ export default function EmployerDashboard() {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_auth'); localStorage.removeItem('skyo_token'); window.location.reload(); return; }
       if (res.ok) {
         alert('Profile submitted for admin approval!');
         const empId = JSON.parse(atob(token!.split('.')[1])).sub;
@@ -354,6 +362,7 @@ export default function EmployerDashboard() {
         },
         body: JSON.stringify({ employerProfile: profile })
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_auth'); localStorage.removeItem('skyo_token'); window.location.reload(); return; }
       if (res.ok) {
         alert('Profile updated successfully!');
         setIsEditingProfile(false);

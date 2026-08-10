@@ -21,6 +21,7 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: JSON.stringify({ username: adminUsername, password: adminPassword })
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       if (res.ok) {
         const data = await res.json();
         localStorage.setItem('skyo_admin_token', data.token);
@@ -254,6 +255,7 @@ export default function AdminDashboard() {
         headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         signal 
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       const data = await res.json();
       if(data.items) {
         setJobs(data.items);
@@ -275,6 +277,7 @@ export default function AdminDashboard() {
         headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         signal 
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       const data = await res.json();
       if(data.items) {
         setApplications(data.items);
@@ -288,6 +291,7 @@ export default function AdminDashboard() {
     if (!force && loadedTabs.has('categories')) return;
     try {
       const res = await fetch(`${API_URL}/categories?_t=${Date.now()}`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       const data = await res.json();
       if(Array.isArray(data)) setCategories(data);
       setLoadedTabs(prev => new Set(prev).add('categories'));
@@ -298,6 +302,7 @@ export default function AdminDashboard() {
     if (!force && loadedTabs.has('employers')) return;
     try {
       const res = await fetch(`${API_URL}/admin/employers?_t=${Date.now()}`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       const data = await res.json();
       if(Array.isArray(data)) setEmployersList(data);
       setLoadedTabs(prev => new Set(prev).add('employers'));
@@ -312,6 +317,7 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: JSON.stringify({ action })
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       if (res.ok) {
         alert(`Client ${action === 'ONBOARD' ? 'approved' : 'rejected'} successfully.`);
         fetchEmployers(true);
@@ -325,6 +331,7 @@ export default function AdminDashboard() {
     if (!force && loadedTabs.has('dashboard_stats')) return;
     try {
       const res = await fetch(`${API_URL}/admin/flowchart-stats?_t=${Date.now()}`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       if(res.ok) {
         const data = await res.json();
         setFlowchartStats(data);
@@ -336,6 +343,7 @@ export default function AdminDashboard() {
     if (!force && loadedTabs.has('dashboard_stats')) return;
     try {
       const res = await fetch(`${API_URL}/admin/dashboard-data?_t=${Date.now()}`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       if (!res.ok) {
         throw new Error('Stats fetch failed');
       }
@@ -402,6 +410,7 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: JSON.stringify({ ...newJob, categoryId: finalCategoryId, vacancyCount: Number(newJob.vacancyCount) || 1 }) 
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       if (res.ok) {
         alert(editingJobId ? 'Job Updated successfully!' : 'Job Created successfully!');
         setIsCreatingJob(false);
@@ -473,6 +482,7 @@ export default function AdminDashboard() {
         headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: formData
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       
       if (res.ok) {
         const data = await res.json();
@@ -511,6 +521,7 @@ export default function AdminDashboard() {
         headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: formData
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       
       if (res.ok) {
         const data = await res.json();
@@ -533,6 +544,7 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: JSON.stringify(newCategory)
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       if (res.ok) {
         alert('Category Created successfully!');
         setNewCategory({ name: '', imageUrl: '' });
@@ -555,6 +567,7 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: JSON.stringify({ name: editingCategoryName, imageUrl: editingCategoryImage })
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       if (res.ok) {
         alert('Category Updated successfully!');
         setEditingCategoryId(null);
@@ -577,6 +590,7 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: JSON.stringify({ approvalStatus: status, routeType })
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       if (res.ok) {
         alert(`Job ${status.toLowerCase()} successfully!`);
         fetchJobs();
@@ -591,6 +605,7 @@ export default function AdminDashboard() {
   const handleApproveClosure = async (id: string) => {
     try {
       const res = await fetch(`${API_URL}/jobs/${id}/approve-closure`, { method: 'PUT', headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       if (res.ok) {
         alert('Job closure approved and marked as COMPLETED.');
         fetchJobs();
@@ -617,6 +632,7 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: JSON.stringify({ status: newStatus })
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       if (res.ok) { fetchJobs(); fetchStats(); }
       else alert('Failed to update job status.');
     } catch (err) { console.error(err); }
@@ -630,6 +646,7 @@ export default function AdminDashboard() {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` }
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       if (res.ok) {
         alert('Category and associated jobs deleted successfully!');
         fetchCategories();
@@ -652,6 +669,7 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: JSON.stringify({ status })
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       if (res.ok) {
         fetchApplications();
       }
@@ -665,6 +683,7 @@ export default function AdminDashboard() {
         method: 'POST',
         headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` }
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       if (res.ok) {
         alert('Applicant passed to employer successfully!');
         fetchApplications();
@@ -688,6 +707,7 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: JSON.stringify({ employerId: bulkEmployerSelection, filters })
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       if (res.ok) {
         const data = await res.json();
         alert(`Successfully passed ${data.count} applicants to the employer!`);
@@ -750,6 +770,7 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: JSON.stringify({ subject: emailSubject, message: emailMessage })
       });
+      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       if (res.ok) {
         alert('Email sent successfully!');
         setSelectedApp(null);

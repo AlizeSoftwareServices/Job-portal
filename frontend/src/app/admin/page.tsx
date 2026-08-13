@@ -45,6 +45,16 @@ export default function AdminDashboard() {
   };
 
   const [activeTab, setActiveTab] = useState<'dashboard' | 'jobs' | 'categories' | 'applications' | 'employers'>('dashboard');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get('tab');
+      if (tab && ['dashboard', 'jobs', 'categories', 'applications', 'employers'].includes(tab)) {
+        setActiveTab(tab as any);
+      }
+    }
+  }, []);
   const [loadedTabs, setLoadedTabs] = useState<Set<string>>(new Set());
   const [jobs, setJobs] = useState<any[]>([]);
   const [applications, setApplications] = useState<any[]>([]);
@@ -1022,12 +1032,12 @@ export default function AdminDashboard() {
                   <p className="text-slate-500 text-sm mt-1">Manage jobs and job categories in one place.</p>
                 </div>
                 <div className="flex flex-wrap gap-2 md:gap-3 w-full md:w-auto">
-                  <button 
-                    onClick={() => setShowCategoryForm(!showCategoryForm)}
+                  <Link 
+                    href="/admin/categories"
                     className="bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2.5 rounded-lg text-sm font-bold transition-colors flex items-center gap-2"
                   >
-                    <Layers className="w-4 h-4" /> {showCategoryForm ? 'Close Category' : 'Manage Categories'}
-                  </button>
+                    <Layers className="w-4 h-4" /> Manage Categories
+                  </Link>
                   <a 
                     href={`${API_URL}/admin/jobs/export`}
                     target="_blank"
@@ -1076,82 +1086,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Manage Category Section */}
-              {showCategoryForm && (
-                <div className="bg-gradient-to-r from-purple-50 to-white p-6 rounded-2xl border border-purple-100 mb-8 shadow-sm">
-                  <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2"><Layers className="h-5 w-5 text-purple-500" /> Add New Category</h3>
-                  <form onSubmit={handleCreateCategory} className="flex flex-col md:flex-row gap-4 items-stretch md:items-end mb-8">
-                    <div className="flex-1">
-                      <label className="block text-sm font-bold text-slate-700 mb-1">Category Name</label>
-                      <input type="text" required value={newCategory.name} onChange={e => setNewCategory({...newCategory, name: e.target.value})} className="w-full border border-purple-200 p-2.5 rounded-lg outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 bg-white" placeholder="e.g. Sales" />
-                    </div>
-                    <div className="flex-1">
-                      <label className="block text-sm font-bold text-slate-700 mb-1">Upload Image (Max 50KB, JPG/PNG)</label>
-                      <input 
-                        type="file" 
-                        accept=".jpg,.jpeg,.png"
-                        required={!newCategory.imageUrl}
-                        onChange={handleImageUpload} 
-                        className="w-full border border-purple-200 p-1.5 rounded-lg outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 bg-white file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-bold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 cursor-pointer" 
-                      />
-                    </div>
-                    <button type="submit" className="bg-purple-600 text-white font-bold py-2.5 px-6 rounded-lg hover:bg-purple-700 h-[46px] shadow-sm w-full md:w-auto">Add Category</button>
-                  </form>
-                  
-                  <h3 className="font-bold text-slate-800 mb-4 border-t border-purple-100 pt-6 flex items-center gap-2"><Settings className="h-5 w-5 text-purple-500" /> Existing Categories</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {categories.map((cat: any) => (
-                      <div key={cat.id} className="bg-white border border-slate-200 p-4 rounded-xl flex items-center justify-between shadow-sm">
-                        {editingCategoryId === cat.id ? (
-                          <div className="flex flex-1 items-center gap-2">
-                            {editingCategoryImage && <img src={editingCategoryImage} alt="preview" className="w-8 h-8 rounded-lg object-cover shrink-0 border border-purple-200" />}
-                            <input 
-                              type="file"
-                              accept=".jpg,.jpeg,.png"
-                              onChange={handleEditImageUpload}
-                              className="hidden"
-                              id={`edit-cat-img-${cat.id}`}
-                            />
-                            <label htmlFor={`edit-cat-img-${cat.id}`} className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-100 text-purple-700 hover:bg-purple-200 rounded-md cursor-pointer shrink-0 font-bold text-xs" title="Change Image">
-                              <Upload className="w-3.5 h-3.5" /> Upload Image
-                            </label>
-                            <input 
-                              type="text" 
-                              value={editingCategoryName} 
-                              onChange={e => setEditingCategoryName(e.target.value)} 
-                              className="flex-1 w-20 border border-purple-300 p-1.5 rounded-md outline-none focus:border-purple-500 text-sm font-bold" 
-                              autoFocus 
-                            />
-                            <button onClick={() => handleUpdateCategory(cat.id)} className="p-1.5 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded-md shrink-0">
-                              <Save className="w-4 h-4" />
-                            </button>
-                            <button onClick={() => setEditingCategoryId(null)} className="p-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-md shrink-0">
-                              <X className="w-4 h-4" />
-                            </button>
-                          </div>
-                        ) : (
-                          <>
-                            <div className="flex items-center gap-3 overflow-hidden">
-                              {cat.imageUrl && <img src={cat.imageUrl} alt={cat.name} className="w-8 h-8 rounded-lg object-cover" />}
-                              <div className="truncate">
-                                <p className="font-bold text-sm text-slate-800 truncate">{cat.name}</p>
-                                <p className="text-xs font-medium text-slate-500">{cat.jobCount || 0} active jobs</p>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-1 shrink-0 ml-2">
-                              <button onClick={() => { setEditingCategoryId(cat.id); setEditingCategoryName(cat.name); setEditingCategoryImage(cat.imageUrl || ''); }} className="p-1.5 text-sky-600 hover:bg-sky-50 rounded-md transition-colors" title="Edit Category">
-                                <Edit className="w-4 h-4" />
-                              </button>
-                              <button onClick={() => handleDeleteCategory(cat.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-md transition-colors" title="Delete Category">
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+
               {false && isCreatingJob && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto">
                   <div className="bg-white p-6 rounded-2xl border border-zinc-200 mb-8 shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">

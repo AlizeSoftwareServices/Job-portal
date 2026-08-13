@@ -17,7 +17,11 @@ export async function GET(req: NextRequest) {
       },
       orderBy: { createdAt: 'desc' }
     });
-    return NextResponse.json(employers, { status: 200 });
+    const safeEmployers = employers.map((emp: any) => {
+      const { passwordHash, ...rest } = emp;
+      return rest;
+    });
+    return NextResponse.json(safeEmployers, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }

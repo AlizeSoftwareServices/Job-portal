@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import ExcelJS from 'exceljs';
+import { verifyAuth } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
   try {
+    const { user, error } = await verifyAuth(req);
+    if (error || !user || user.role !== 'ADMIN') {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
     const employers = await prisma.user.findMany({
       where: { role: 'EMPLOYER' },
       include: { employerProfile: true }

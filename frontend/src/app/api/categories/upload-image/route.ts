@@ -20,6 +20,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'No file uploaded' }, { status: 400 });
     }
 
+    if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+      return NextResponse.json({ message: 'Invalid file format. Only JPG/PNG allowed.' }, { status: 400 });
+    }
+
+    if (file.size > 50 * 1024) {
+      return NextResponse.json({ message: 'File too large. Maximum size is 50KB.' }, { status: 400 });
+    }
+
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 

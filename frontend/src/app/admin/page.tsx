@@ -1035,12 +1035,12 @@ export default function AdminDashboard() {
                   >
                     <Download className="w-4 h-4" /> Export Jobs
                   </a>
-                  <button 
-                    onClick={() => setIsCreatingJob(!isCreatingJob)}
+                  <Link 
+                    href="/admin/jobs/edit/new"
                     className="bg-sky-800 hover:bg-sky-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center gap-2"
                   >
-                    {isCreatingJob ? 'Cancel' : <><Briefcase className="w-4 h-4" /> Create New Job</>}
-                  </button>
+                    <Briefcase className="w-4 h-4" /> Create New Job
+                  </Link>
                 </div>
               </div>
 
@@ -1152,7 +1152,7 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               )}
-              {isCreatingJob && (
+              {false && isCreatingJob && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto">
                   <div className="bg-white p-6 rounded-2xl border border-zinc-200 mb-8 shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
                     <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
@@ -1404,7 +1404,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Jobs Grid */}
-              {jobTotalItems === 0 && !isCreatingJob && (
+              {jobTotalItems === 0 && (
                 <div className="bg-white p-12 text-center rounded-2xl border border-dashed border-slate-300">
                   <Briefcase className="h-12 w-12 text-sky-100 mx-auto mb-3" />
                   <p className="text-slate-500 font-medium">No job postings found matching your filters.</p>
@@ -1500,9 +1500,9 @@ export default function AdminDashboard() {
                       </div>
                       <div className="flex gap-3">
                         <span className="text-xs font-bold text-slate-400 flex items-center gap-1"><Clock className="h-3 w-3"/> {new Date(job.createdAt).toLocaleDateString()}</span>
-                        <button onClick={() => handleEditClick(job)} className="text-sm font-bold text-sky-800 hover:text-sky-800 flex items-center gap-1">
+                        <Link href={`/admin/jobs/edit/${job.id}`} className="text-sm font-bold text-sky-800 hover:text-sky-800 flex items-center gap-1">
                           Edit <ChevronRight className="h-4 w-4" />
-                        </button>
+                        </Link>
                       </div>
                     </div>
                   </div>

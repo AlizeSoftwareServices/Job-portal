@@ -209,17 +209,6 @@ export default function SignUp() {
           {step === 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
               <button 
-                onClick={() => { setRole('EMPLOYER'); setStep(1); }}
-                className="p-6 border border-zinc-200 rounded-xl hover:border-sky-500 hover:shadow-md transition-all flex flex-col items-center justify-center gap-3 bg-white"
-              >
-                <div className="bg-sky-50 p-4 rounded-full">
-                  <Building2 className="h-8 w-8 text-sky-600" />
-                </div>
-                <h3 className="font-bold text-lg text-zinc-800">Client</h3>
-                <p className="text-sm text-zinc-500 text-center">I want to hire talent</p>
-              </button>
-
-              <button 
                 onClick={() => { setRole('CANDIDATE'); setStep(1); }}
                 className="p-6 border border-zinc-200 rounded-xl hover:border-amber-500 hover:shadow-md transition-all flex flex-col items-center justify-center gap-3 bg-white"
               >
@@ -229,17 +218,28 @@ export default function SignUp() {
                 <h3 className="font-bold text-lg text-zinc-800">Candidate</h3>
                 <p className="text-sm text-zinc-500 text-center">I want to find a job</p>
               </button>
+
+              <button 
+                onClick={() => { setRole('EMPLOYER'); setStep(1); }}
+                className="p-6 border border-zinc-200 rounded-xl hover:border-sky-500 hover:shadow-md transition-all flex flex-col items-center justify-center gap-3 bg-white"
+              >
+                <div className="bg-sky-50 p-4 rounded-full">
+                  <Building2 className="h-8 w-8 text-sky-600" />
+                </div>
+                <h3 className="font-bold text-lg text-zinc-800">Client</h3>
+                <p className="text-sm text-zinc-500 text-center">I want to hire talent</p>
+              </button>
             </div>
           ) : step === 1 ? (
             <form onSubmit={handleSendOtp} className="space-y-5">
               {role === 'EMPLOYER' ? (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-zinc-700 mb-1">Full Name</label>
+                    <label className="block text-sm font-medium text-zinc-700 mb-1">Full Name *</label>
                     <input required type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-zinc-700 mb-1">Company Name</label>
+                    <label className="block text-sm font-medium text-zinc-700 mb-1">Company Name *</label>
                     <input required type="text" value={formData.companyName} onChange={e => setFormData({...formData, companyName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" />
                   </div>
                   <div>
@@ -254,23 +254,23 @@ export default function SignUp() {
               ) : (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-zinc-700 mb-1">First name</label>
+                    <label className="block text-sm font-medium text-zinc-700 mb-1">First name *</label>
                     <input required type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-zinc-700 mb-1">Last name</label>
+                    <label className="block text-sm font-medium text-zinc-700 mb-1">Last name *</label>
                     <input required type="text" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" />
                   </div>
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-zinc-700 mb-1">E-mail id</label>
+                <label className="block text-sm font-medium text-zinc-700 mb-1">E-mail id *</label>
                 <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-700 mb-1">{role === 'EMPLOYER' ? 'Primary Contact Number' : 'Mobile Number'}</label>
+                <label className="block text-sm font-medium text-zinc-700 mb-1">{role === 'EMPLOYER' ? 'Primary Contact Number *' : 'Mobile Number *'}</label>
                 <div className="flex gap-2">
                   <div className="w-32 shrink-0">
                     <CountrySelect 
@@ -313,7 +313,7 @@ export default function SignUp() {
               )}
 
               <div>
-                <label className="block text-sm font-medium text-zinc-700 mb-1">Create Password</label>
+                <label className="block text-sm font-medium text-zinc-700 mb-1">Create Password *</label>
                 <div className="relative">
                   <input required type={showPassword ? 'text' : 'password'} value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 pr-10 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-sky-200">
@@ -324,7 +324,7 @@ export default function SignUp() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-700 mb-1">Confirm Password</label>
+                <label className="block text-sm font-medium text-zinc-700 mb-1">Confirm Password *</label>
                 <div className="relative">
                   <input required type={showConfirmPassword ? 'text' : 'password'} value={formData.confirmPassword} onChange={e => setFormData({...formData, confirmPassword: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 pr-10 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" />
                   <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-sky-200">

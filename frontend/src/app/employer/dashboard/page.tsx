@@ -37,7 +37,7 @@ export default function EmployerDashboard() {
     newCategoryName: '',
     locationCity: '',
     locationState: '',
-    experienceLevel: 'Entry Level',
+    experienceLevel: '0~2',
     workMode: 'Remote',
     jobType: 'Permanent',
     description: '',
@@ -258,7 +258,7 @@ export default function EmployerDashboard() {
       newCategoryName: '',
       locationCity: job.locationCity || '',
       locationState: job.locationState || '',
-      experienceLevel: job.experienceLevel || 'Entry Level',
+      experienceLevel: job.experienceLevel || '0~2',
       workMode: job.workMode || 'Remote',
       jobType: job.jobType || 'Permanent',
       description: job.description || '',
@@ -630,6 +630,22 @@ export default function EmployerDashboard() {
                         </p>
                       )}
                     </div>
+                    <div>
+                      <label className="block text-sm font-bold text-zinc-700 mb-1">Reference by Name/Details</label>
+                      {isEditingProfile ? (
+                        <input type="text" value={profile.referenceName || ''} onChange={e => setProfile({...profile, referenceName: e.target.value})} className="w-full border p-2.5 rounded outline-none focus:border-amber-500" placeholder="e.g. John Smith" />
+                      ) : (
+                        <p className="text-sm font-medium text-zinc-800 p-2.5 bg-zinc-50 rounded border border-transparent">{profile.referenceName || '-'}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-zinc-700 mb-1">Reference Contact Details</label>
+                      {isEditingProfile ? (
+                        <input type="text" value={profile.referenceContact || ''} onChange={e => setProfile({...profile, referenceContact: e.target.value})} className="w-full border p-2.5 rounded outline-none focus:border-amber-500" placeholder="e.g. +91 9876543210" />
+                      ) : (
+                        <p className="text-sm font-medium text-zinc-800 p-2.5 bg-zinc-50 rounded border border-transparent">{profile.referenceContact || '-'}</p>
+                      )}
+                    </div>
                   </div>
                   {isEditingProfile && (
                     <div className="flex justify-end pt-4 border-t border-slate-100 gap-3">
@@ -665,11 +681,11 @@ export default function EmployerDashboard() {
                     <form onSubmit={handleSaveJob}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div className="md:col-span-2">
-                            <label className="block text-sm font-bold text-zinc-700 mb-1">Job Title <span className="text-red-500">*</span></label>
+                            <label className="block text-sm font-bold text-zinc-700 mb-1">1. Job Title <span className="text-red-500">*</span></label>
                             <input required type="text" value={newJob.title} onChange={e => setNewJob({...newJob, title: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="e.g. Frontend Developer" />
                           </div>
                           <div>
-                            <label className="block text-sm font-bold text-zinc-700 mb-1">Category <span className="text-red-500">*</span></label>
+                            <label className="block text-sm font-bold text-zinc-700 mb-1">2. Category <span className="text-red-500">*</span></label>
                             <select required value={newJob.categoryId} onChange={e => setNewJob({...newJob, categoryId: e.target.value, newCategoryName: ''})} className="w-full border p-2 rounded outline-none focus:border-amber-500">
                               <option value="" disabled>Select Category</option>
                               {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -685,15 +701,15 @@ export default function EmployerDashboard() {
                           )}
 
                           <div>
-                            <label className="block text-sm font-bold text-zinc-700 mb-1">No. Of. Vacancies</label>
+                            <label className="block text-sm font-bold text-zinc-700 mb-1">3. No. Of. Vacancies</label>
                             <input type="text" value={newJob.vacancyCount} onChange={e => setNewJob({...newJob, vacancyCount: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="e.g. 10" />
                           </div>
                           <div>
-                            <label className="block text-sm font-bold text-zinc-700 mb-1">Location City <span className="text-red-500">*</span></label>
+                            <label className="block text-sm font-bold text-zinc-700 mb-1">4. Location City <span className="text-red-500">*</span></label>
                             <input required type="text" value={newJob.locationCity} onChange={e => setNewJob({...newJob, locationCity: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="e.g. Chennai" />
                           </div>
                           <div>
-                            <label className="block text-sm font-bold text-zinc-700 mb-1">Location State <span className="text-red-500">*</span></label>
+                            <label className="block text-sm font-bold text-zinc-700 mb-1">5. Location State <span className="text-red-500">*</span></label>
                             <select required value={newJob.locationState} onChange={e => setNewJob({...newJob, locationState: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500 bg-white">
                               <option value="" disabled>Select State</option>
                               <option value="Andhra Pradesh">Andhra Pradesh</option>
@@ -735,7 +751,7 @@ export default function EmployerDashboard() {
                             </select>
                           </div>
                           <div>
-                            <label className="block text-sm font-bold text-zinc-700 mb-1">Job Type <span className="text-red-500">*</span></label>
+                            <label className="block text-sm font-bold text-zinc-700 mb-1">6. Job Type <span className="text-red-500">*</span></label>
                             <select required value={newJob.jobType} onChange={e => setNewJob({...newJob, jobType: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500">
                               <option value="Permanent">Permanent</option>
                               <option value="Temporary">Temporary</option>
@@ -743,7 +759,7 @@ export default function EmployerDashboard() {
                             </select>
                           </div>
                           <div>
-                            <label className="block text-sm font-bold text-zinc-700 mb-1">Work Mode <span className="text-red-500">*</span></label>
+                            <label className="block text-sm font-bold text-zinc-700 mb-1">7. Work Mode <span className="text-red-500">*</span></label>
                             <select required value={newJob.workMode} onChange={e => setNewJob({...newJob, workMode: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500">
                               <option value="Remote">Remote</option>
                               <option value="Onsite">Onsite</option>
@@ -751,7 +767,7 @@ export default function EmployerDashboard() {
                             </select>
                           </div>
                           <div>
-                            <label className="block text-sm font-bold text-zinc-700 mb-1">Shift Timings</label>
+                            <label className="block text-sm font-bold text-zinc-700 mb-1">8. Shift Timings</label>
                             <select value={newJob.shiftTimings} onChange={e => setNewJob({...newJob, shiftTimings: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500">
                               <option value="">Select Shift Timing</option>
                               <option value="9:00 AM-6:00 PM (General shift)">9:00 AM-6:00 PM (General shift)</option>
@@ -766,21 +782,30 @@ export default function EmployerDashboard() {
                             </select>
                           </div>
                           <div>
-                            <label className="block text-sm font-bold text-zinc-700 mb-1">Experience Level <span className="text-red-500">*</span></label>
+                            <label className="block text-sm font-bold text-zinc-700 mb-1">9. Experience Years <span className="text-red-500">*</span></label>
                             <select required value={newJob.experienceLevel} onChange={e => setNewJob({...newJob, experienceLevel: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500">
-                              <option value="Entry Level">Entry Level</option>
-                              <option value="Mid Level">Mid Level</option>
-                              <option value="Senior Level">Senior Level</option>
-                              <option value="Executive">Executive</option>
+                              <option value="0~2">0~2</option>
+                              <option value="3~4">3~4</option>
+                              <option value="5~6">5~6</option>
+                              <option value="7~8">7~8</option>
+                              <option value="9~10">9~10</option>
+                              <option value="11~12">11~12</option>
+                              <option value="13~14">13~14</option>
+                              <option value="14~15">14~15</option>
+                              <option value="16~17">16~17</option>
+                              <option value="18~19">18~19</option>
+                              <option value="20~21">20~21</option>
+                              <option value="22~23">22~23</option>
+                              <option value="24~25">24~25</option>
                             </select>
                           </div>
                           <div className="flex gap-4">
                             <div className="flex-1">
-                              <label className="block text-sm font-bold text-zinc-700 mb-1">Salary</label>
+                              <label className="block text-sm font-bold text-zinc-700 mb-1">10. Salary Amount</label>
                               <input type="text" value={newJob.salary} onChange={e => setNewJob({...newJob, salary: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="e.g. ₹30,000" />
                             </div>
                             <div className="flex-1">
-                              <label className="block text-sm font-bold text-zinc-700 mb-1">Per</label>
+                              <label className="block text-sm font-bold text-zinc-700 mb-1">11. Per</label>
                               <select value={newJob.salaryType} onChange={e => setNewJob({...newJob, salaryType: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500">
                                 <option value="Month">Month</option>
                                 <option value="Year">Year</option>
@@ -789,19 +814,19 @@ export default function EmployerDashboard() {
                           </div>
                           
                           <div className="md:col-span-2">
-                            <label className="block text-sm font-bold text-zinc-700 mb-1">Other Benefits</label>
+                            <label className="block text-sm font-bold text-zinc-700 mb-1">12. Other Benefits</label>
                             <textarea value={newJob.benefits} onChange={e => setNewJob({...newJob, benefits: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" rows={2}></textarea>
                           </div>
                           <div className="md:col-span-2">
-                            <label className="block text-sm font-bold text-zinc-700 mb-1">General Comments</label>
+                            <label className="block text-sm font-bold text-zinc-700 mb-1">13. General Comments</label>
                             <textarea value={newJob.generalComments} onChange={e => setNewJob({...newJob, generalComments: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" rows={2}></textarea>
                           </div>
                           <div className="md:col-span-2">
-                            <label className="block text-sm font-bold text-zinc-700 mb-1">Description <span className="text-red-500">*</span></label>
+                            <label className="block text-sm font-bold text-zinc-700 mb-1">14. Roles and Responsibilities <span className="text-red-500">*</span></label>
                             <textarea required value={newJob.description} onChange={e => setNewJob({...newJob, description: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" rows={3}></textarea>
                           </div>
                           <div className="md:col-span-2">
-                            <label className="block text-sm font-bold text-zinc-700 mb-1">Requirements <span className="text-red-500">*</span></label>
+                            <label className="block text-sm font-bold text-zinc-700 mb-1">15. Requirements <span className="text-red-500">*</span></label>
                             <textarea required value={newJob.requirements} onChange={e => setNewJob({...newJob, requirements: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" rows={3}></textarea>
                           </div>
                         </div>

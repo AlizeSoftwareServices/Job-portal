@@ -21,6 +21,7 @@ enum JobRouteType {
 }
 
 enum ApprovalStatus {
+  DRAFT
   PENDING_APPROVAL
   APPROVED
   REJECTED
@@ -120,6 +121,9 @@ model EmployerProfile {
   hrContactNumber  String?
   officialMailId   String?
   secondaryContactNumber String?
+  referenceName          String?
+  referenceContact       String?
+  approvalStatus   ApprovalStatus @default(DRAFT)
 }
 
 model Experience {

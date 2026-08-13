@@ -126,6 +126,8 @@ export async function PUT(req: NextRequest) {
           ...(data.employerProfile.hrContactNumber && { hrContactNumber: data.employerProfile.hrContactNumber }),
           ...(data.employerProfile.officialMailId && { officialMailId: data.employerProfile.officialMailId }),
           ...(data.employerProfile.secondaryContactNumber && { secondaryContactNumber: data.employerProfile.secondaryContactNumber }),
+          ...(data.employerProfile.referenceName && { referenceName: data.employerProfile.referenceName }),
+          ...(data.employerProfile.referenceContact && { referenceContact: data.employerProfile.referenceContact }),
           ...(data.employerProfile.companyLogoUrl !== undefined && { companyLogoUrl: data.employerProfile.companyLogoUrl })
         }
       });

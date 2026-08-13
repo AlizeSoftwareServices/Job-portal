@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     }
 
     const data = await req.json();
-    const { firstName, lastName, countryCode, phone, email, password, otp, role, companyName, secondaryContactNumber } = data;
+    const { firstName, lastName, countryCode, phone, email, password, otp, role, companyName, secondaryContactNumber, referenceName, referenceContact } = data;
 
     const otpRecord = await prisma.otpCode.findFirst({
       where: { email, code: otp, type: 'REGISTER' },
@@ -52,6 +52,8 @@ export async function POST(req: NextRequest) {
               companyName: companyName || `${firstName} Company`,
               hrName: `${firstName} ${lastName || ''}`.trim(),
               secondaryContactNumber: secondaryContactNumber || null,
+              referenceName: referenceName || null,
+              referenceContact: referenceContact || null,
             }
           }
         })
@@ -76,9 +78,14 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    if (!process.env.JWT_SECRET) {
+      console.error('CRITICAL: JWT_SECRET is not defined');
+      return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    }
+
     const token = jwt.sign(
       { sub: user.id, email: user.email, role: user.role }, 
-      process.env.JWT_SECRET || 'fallback_secret',
+      process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
 

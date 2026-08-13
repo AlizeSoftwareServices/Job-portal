@@ -122,6 +122,8 @@ model EmployerProfile {
   hrContactNumber  String?
   officialMailId   String?
   secondaryContactNumber String?
+  referenceName          String?
+  referenceContact       String?
   approvalStatus   ApprovalStatus @default(DRAFT)
 }
 

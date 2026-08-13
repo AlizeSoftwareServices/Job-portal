@@ -12,11 +12,16 @@ export async function POST(req: NextRequest) {
     const data = await req.json();
     const { username, password } = data;
 
+    if (!process.env.JWT_SECRET) {
+      console.error('CRITICAL: JWT_SECRET is not defined');
+      return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    }
+
     // Hardcoded admin credentials for now
     if (username === 'Skyoadmin' && password === 'SkyoMPC') {
       const token = jwt.sign(
         { sub: 'admin', email: 'alizesoftwareservicesllp@gmail.com', role: 'ADMIN' },
-        process.env.JWT_SECRET || 'fallback_secret',
+        process.env.JWT_SECRET,
         { expiresIn: '7d' }
       );
       const response = NextResponse.json({ token }, { status: 200 });

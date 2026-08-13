@@ -24,9 +24,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Invalid credentials.' }, { status: 401 });
     }
 
+    if (!process.env.JWT_SECRET) {
+      console.error('CRITICAL: JWT_SECRET is not defined');
+      return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    }
+
     const token = jwt.sign(
       { sub: user.id, email: user.email, role: user.role }, 
-      process.env.JWT_SECRET || 'fallback_secret',
+      process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
 

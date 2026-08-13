@@ -31,6 +31,8 @@ export default function SignUp() {
     otp: '',
     companyName: '',
     secondaryContactNumber: '',
+    referenceName: '',
+    referenceContact: '',
   });
 
   const validateEmail = (email: string) => {
@@ -74,7 +76,7 @@ export default function SignUp() {
     if (formData.password !== formData.confirmPassword) {
       return setError('Passwords do not match.');
     }
-    if (role === 'EMPLOYER' && formData.phone === formData.secondaryContactNumber && formData.phone.trim() !== '') {
+    if (role === 'EMPLOYER' && formData.secondaryContactNumber.trim() !== '' && formData.phone === formData.secondaryContactNumber) {
       return setError('Primary Contact Number and Secondary Contact Number must be different.');
     }
 
@@ -126,7 +128,9 @@ export default function SignUp() {
           role: role,
           ...(role === 'EMPLOYER' && {
             companyName: formData.companyName,
-            secondaryContactNumber: formData.secondaryContactNumber
+            secondaryContactNumber: formData.secondaryContactNumber,
+            referenceName: formData.referenceName,
+            referenceContact: formData.referenceContact
           })
         })
       });
@@ -238,6 +242,14 @@ export default function SignUp() {
                     <label className="block text-sm font-medium text-zinc-700 mb-1">Company Name</label>
                     <input required type="text" value={formData.companyName} onChange={e => setFormData({...formData, companyName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" />
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-700 mb-1">Reference by Name/Details *</label>
+                    <input required type="text" value={formData.referenceName} onChange={e => setFormData({...formData, referenceName: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-700 mb-1">Reference Contact Details *</label>
+                    <input required type="text" value={formData.referenceContact} onChange={e => setFormData({...formData, referenceContact: e.target.value})} className="w-full border border-zinc-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-sky-500 outline-none text-zinc-900" />
+                  </div>
                 </>
               ) : (
                 <div className="grid grid-cols-2 gap-4">
@@ -289,7 +301,6 @@ export default function SignUp() {
                       />
                     </div>
                     <input 
-                      required
                       type="tel" 
                       maxLength={getPhoneMaxLength(formData.countryCode)}
                       value={formData.secondaryContactNumber} 

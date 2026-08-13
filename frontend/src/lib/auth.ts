@@ -17,7 +17,12 @@ export const verifyAuth = async (req: NextRequest) => {
       return { user: null, error: 'Unauthorized' };
     }
 
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
+    if (!process.env.JWT_SECRET) {
+      console.error('CRITICAL: JWT_SECRET is not defined');
+      return { user: null, error: 'Internal Server Error' };
+    }
+
+    const decoded: any = jwt.verify(token, process.env.JWT_SECRET);
     
     // In Next.js serverless we might not want to always hit the DB for user, but let's replicate NestJS behavior which usually checks the DB if needed.
     // If the token is valid, we can just return the decoded payload.

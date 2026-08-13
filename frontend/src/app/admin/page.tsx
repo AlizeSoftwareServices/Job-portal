@@ -435,7 +435,7 @@ export default function AdminDashboard() {
       newCategoryName: '',
       locationCity: job.locationCity || '',
       locationState: job.locationState || '',
-      experienceLevel: job.experienceLevel || 'Entry Level',
+      experienceLevel: job.experienceLevel || '0~2',
       workMode: job.workMode || 'Remote',
       jobType: job.jobType || 'Permanent',
       description: job.description || '',
@@ -1163,14 +1163,14 @@ export default function AdminDashboard() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="flex gap-2 items-end">
                         <div className="flex-1">
-                          <label className="block text-sm font-bold text-zinc-700 mb-1">Job Title <span className="text-red-500">*</span></label>
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">1. Job Title <span className="text-red-500">*</span></label>
                           <input required type="text" value={newJob.title} onChange={e => setNewJob({...newJob, title: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="e.g. Frontend Developer" />
                         </div>
                         <FieldToggle field="title" />
                       </div>
                       <div className="flex gap-2 items-end">
                         <div className="flex-1">
-                          <label className="block text-sm font-bold text-zinc-700 mb-1">Select Category <span className="text-red-500">*</span></label>
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">2. Select Category <span className="text-red-500">*</span></label>
                           <select 
                             required
                             value={newJob.categoryId} 
@@ -1196,7 +1196,7 @@ export default function AdminDashboard() {
 
                       <div className="flex gap-2 items-end">
                         <div className="flex-1">
-                          <label className="block text-sm font-bold text-zinc-700 mb-1">No. Of. Vacancies</label>
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">3. No. Of. Vacancies</label>
                           <input type="text" value={newJob.vacancyCount} onChange={e => setNewJob({...newJob, vacancyCount: e.target.value as any})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="e.g. 10" />
                         </div>
                         <FieldToggle field="vacancyCount" />
@@ -1204,7 +1204,7 @@ export default function AdminDashboard() {
 
                       <div className="flex gap-2 items-end">
                         <div className="flex-1">
-                          <label className="block text-sm font-bold text-zinc-700 mb-1">Location City <span className="text-red-500">*</span></label>
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">4. Location City <span className="text-red-500">*</span></label>
                           <input type="text" required value={newJob.locationCity} onChange={e => setNewJob({...newJob, locationCity: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="e.g. Bangalore" />
                         </div>
                         <FieldToggle field="locationCity" />
@@ -1212,7 +1212,7 @@ export default function AdminDashboard() {
 
                       <div className="flex gap-2 items-end">
                         <div className="flex-1">
-                          <label className="block text-sm font-bold text-zinc-700 mb-1">Location State <span className="text-red-500">*</span></label>
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">5. Location State <span className="text-red-500">*</span></label>
                           <input type="text" required value={newJob.locationState} onChange={e => setNewJob({...newJob, locationState: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="e.g. Karnataka" />
                         </div>
                         <FieldToggle field="locationState" />
@@ -1220,7 +1220,7 @@ export default function AdminDashboard() {
 
                       <div className="flex gap-2 items-end">
                         <div className="flex-1">
-                          <label className="block text-sm font-bold text-zinc-700 mb-1">Job Type <span className="text-red-500">*</span></label>
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">6. Job Type <span className="text-red-500">*</span></label>
                           <select required value={newJob.jobType} onChange={e => setNewJob({...newJob, jobType: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500">
                             <option value="Permanent">Permanent</option>
                             <option value="Temporary">Temporary</option>
@@ -1232,7 +1232,7 @@ export default function AdminDashboard() {
 
                       <div className="flex gap-2 items-end">
                         <div className="flex-1">
-                          <label className="block text-sm font-bold text-zinc-700 mb-1">Work Mode <span className="text-red-500">*</span></label>
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">7. Work Mode <span className="text-red-500">*</span></label>
                           <select required value={newJob.workMode} onChange={e => setNewJob({...newJob, workMode: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500">
                             <option value="Remote">Remote</option>
                             <option value="Onsite">Onsite</option>
@@ -1244,7 +1244,7 @@ export default function AdminDashboard() {
                       
                       <div className="flex gap-2 items-end">
                         <div className="flex-1">
-                          <label className="block text-sm font-bold text-zinc-700 mb-1">Shift Timings</label>
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">8. Shift Timings</label>
                           <select value={newJob.shiftTimings} onChange={e => setNewJob({...newJob, shiftTimings: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500">
                             <option value="">Select Shift Timing</option>
                             <option value="9:00 AM-6:00 PM (General shift)">9:00 AM-6:00 PM (General shift)</option>
@@ -1263,12 +1263,21 @@ export default function AdminDashboard() {
 
                       <div className="flex gap-2 items-end">
                         <div className="flex-1">
-                          <label className="block text-sm font-bold text-zinc-700 mb-1">Experience Level <span className="text-red-500">*</span></label>
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">9. Experience Years <span className="text-red-500">*</span></label>
                           <select required value={newJob.experienceLevel} onChange={e => setNewJob({...newJob, experienceLevel: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500">
-                            <option value="Entry Level">Entry Level</option>
-                            <option value="Mid Level">Mid Level</option>
-                            <option value="Senior Level">Senior Level</option>
-                            <option value="Executive">Executive</option>
+                            <option value="0~2">0~2</option>
+                            <option value="3~4">3~4</option>
+                            <option value="5~6">5~6</option>
+                            <option value="7~8">7~8</option>
+                            <option value="9~10">9~10</option>
+                            <option value="11~12">11~12</option>
+                            <option value="13~14">13~14</option>
+                            <option value="14~15">14~15</option>
+                            <option value="16~17">16~17</option>
+                            <option value="18~19">18~19</option>
+                            <option value="20~21">20~21</option>
+                            <option value="22~23">22~23</option>
+                            <option value="24~25">24~25</option>
                           </select>
                         </div>
                         <FieldToggle field="experienceLevel" />
@@ -1277,11 +1286,11 @@ export default function AdminDashboard() {
                       <div className="flex gap-2 items-end">
                         <div className="flex-1 flex gap-4">
                           <div className="flex-1">
-                            <label className="block text-sm font-bold text-zinc-700 mb-1">Salary Amount <span className="text-red-500">*</span></label>
+                            <label className="block text-sm font-bold text-zinc-700 mb-1">10. Salary Amount <span className="text-red-500">*</span></label>
                             <input type="text" required value={newJob.salary} onChange={e => setNewJob({...newJob, salary: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="e.g. ₹30,000" />
                           </div>
                           <div className="flex-1">
-                            <label className="block text-sm font-bold text-zinc-700 mb-1">Per</label>
+                            <label className="block text-sm font-bold text-zinc-700 mb-1">11. Per</label>
                             <select required value={newJob.salaryType} onChange={e => setNewJob({...newJob, salaryType: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500">
                               <option value="Month">Month</option>
                               <option value="Year">Year</option>
@@ -1295,7 +1304,7 @@ export default function AdminDashboard() {
 
                       <div className="md:col-span-2 flex gap-2 items-start">
                         <div className="flex-1">
-                          <label className="block text-sm font-bold text-zinc-700 mb-1">Other Benefits</label>
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">12. Other Benefits</label>
                           <textarea value={newJob.benefits} onChange={e => setNewJob({...newJob, benefits: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" rows={2}></textarea>
                         </div>
                         <div className="mt-6"><FieldToggle field="benefits" /></div>
@@ -1303,7 +1312,7 @@ export default function AdminDashboard() {
 
                       <div className="md:col-span-2 flex gap-2 items-start">
                         <div className="flex-1">
-                          <label className="block text-sm font-bold text-zinc-700 mb-1">General Comments</label>
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">13. General Comments</label>
                           <textarea value={newJob.generalComments} onChange={e => setNewJob({...newJob, generalComments: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" rows={2}></textarea>
                         </div>
                         <div className="mt-6"><FieldToggle field="generalComments" /></div>
@@ -1311,7 +1320,7 @@ export default function AdminDashboard() {
 
                       <div className="md:col-span-2 flex gap-2 items-start">
                         <div className="flex-1">
-                          <label className="block text-sm font-bold text-zinc-700 mb-1">Description <span className="text-red-500">*</span></label>
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">14. Roles and Responsibilities <span className="text-red-500">*</span></label>
                           <textarea required value={newJob.description} onChange={e => setNewJob({...newJob, description: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" rows={3}></textarea>
                         </div>
                         <div className="mt-6"><FieldToggle field="description" /></div>
@@ -1319,7 +1328,7 @@ export default function AdminDashboard() {
 
                       <div className="md:col-span-2 flex gap-2 items-start">
                         <div className="flex-1">
-                          <label className="block text-sm font-bold text-zinc-700 mb-1">Requirements <span className="text-red-500">*</span></label>
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">15. Requirements <span className="text-red-500">*</span></label>
                           <textarea required value={newJob.requirements} onChange={e => setNewJob({...newJob, requirements: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" rows={3}></textarea>
                         </div>
                         <div className="mt-6"><FieldToggle field="requirements" /></div>
@@ -1331,21 +1340,21 @@ export default function AdminDashboard() {
                       
                       <div className="flex gap-2 items-end">
                         <div className="flex-1">
-                          <label className="block text-sm font-bold text-zinc-700 mb-1">LinkedIn Link</label>
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">16. LinkedIn Link</label>
                           <input type="url" value={newJob.linkedinLink} onChange={e => setNewJob({...newJob, linkedinLink: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="https://linkedin.com/company/..." />
                         </div>
                         <FieldToggle field="linkedinLink" />
                       </div>
                       <div className="flex gap-2 items-end">
                         <div className="flex-1">
-                          <label className="block text-sm font-bold text-zinc-700 mb-1">Facebook Link</label>
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">17. Facebook Link</label>
                           <input type="url" value={newJob.facebookLink} onChange={e => setNewJob({...newJob, facebookLink: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="https://facebook.com/..." />
                         </div>
                         <FieldToggle field="facebookLink" />
                       </div>
                       <div className="flex gap-2 items-end">
                         <div className="flex-1">
-                          <label className="block text-sm font-bold text-zinc-700 mb-1">Instagram Link</label>
+                          <label className="block text-sm font-bold text-zinc-700 mb-1">18. Instagram Link</label>
                           <input type="url" value={newJob.instagramLink} onChange={e => setNewJob({...newJob, instagramLink: e.target.value})} className="w-full border p-2 rounded outline-none focus:border-amber-500" placeholder="https://instagram.com/..." />
                         </div>
                         <FieldToggle field="instagramLink" />
@@ -1987,13 +1996,15 @@ export default function AdminDashboard() {
                       <th className="p-4 font-bold text-sm text-zinc-600">HR Contact</th>
                       <th className="p-4 font-bold text-sm text-zinc-600">Industry</th>
                       <th className="p-4 font-bold text-sm text-zinc-600">Location</th>
+                      <th className="p-4 font-bold text-sm text-zinc-600">Reference Name</th>
+                      <th className="p-4 font-bold text-sm text-zinc-600">Reference Contact</th>
                       <th className="p-4 font-bold text-sm text-zinc-600">Joined</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-100">
                     {employersList.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="p-6 text-center text-zinc-500 italic">No clients found.</td>
+                        <td colSpan={7} className="p-6 text-center text-zinc-500 italic">No clients found.</td>
                       </tr>
                     ) : (
                       [...employersList].sort((a, b) => {
@@ -2019,11 +2030,13 @@ export default function AdminDashboard() {
                             </td>
                             <td className="p-4 text-sm text-zinc-700">{emp.employerProfile?.industry || 'Not Set'}</td>
                             <td className="p-4 text-sm text-zinc-700">{emp.employerProfile?.companyLocation || 'Not Set'}</td>
+                            <td className="p-4 text-sm text-zinc-700">{emp.employerProfile?.referenceName || 'Not Set'}</td>
+                            <td className="p-4 text-sm text-zinc-700">{emp.employerProfile?.referenceContact || 'Not Set'}</td>
                             <td className="p-4 text-sm text-zinc-700">{new Date(emp.createdAt).toLocaleDateString()}</td>
                           </tr>
                           {expandedEmployerId === emp.id && (
                             <tr className="bg-sky-50/50">
-                              <td colSpan={5} className="p-0">
+                              <td colSpan={7} className="p-0">
                                 <div className="p-6 border-t border-sky-100">
                                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {emp.employerProfile?.companyLogoUrl && (
@@ -2052,6 +2065,11 @@ export default function AdminDashboard() {
                                       <p className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1">Additional Contact</p>
                                       <p className="text-sm text-zinc-800"><strong>Official Mail ID:</strong> {emp.employerProfile?.officialMailId || 'N/A'}</p>
                                       <p className="text-sm text-zinc-800"><strong>Registered On:</strong> {new Date(emp.createdAt).toLocaleDateString()}</p>
+                                    </div>
+                                    <div>
+                                      <p className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1">Reference Details</p>
+                                      <p className="text-sm text-zinc-800"><strong>Name:</strong> {emp.employerProfile?.referenceName || 'N/A'}</p>
+                                      <p className="text-sm text-zinc-800"><strong>Contact:</strong> {emp.employerProfile?.referenceContact || 'N/A'}</p>
                                     </div>
                                   </div>
                                 </div>

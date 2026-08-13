@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
       { header: 'Category', key: 'category', width: 25 },
       { header: 'Employer Company', key: 'employer', width: 25 },
       { header: 'Location', key: 'location', width: 25 },
-      { header: 'Experience Level', key: 'experienceLevel', width: 15 },
+      { header: 'Experience Years', key: 'experienceLevel', width: 15 },
       { header: 'Work Mode', key: 'workMode', width: 15 },
       { header: 'Job Type', key: 'jobType', width: 15 },
       { header: 'Shift Timings', key: 'shiftTimings', width: 20 },

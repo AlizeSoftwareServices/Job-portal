@@ -22,6 +22,8 @@ export async function GET(req: NextRequest) {
       { header: 'HR Contact Number', key: 'hrContactNumber', width: 20 },
       { header: 'Official Mail ID', key: 'officialMailId', width: 25 },
       { header: 'Company Website', key: 'website', width: 25 },
+      { header: 'Reference Name', key: 'referenceName', width: 20 },
+      { header: 'Reference Contact', key: 'referenceContact', width: 20 },
       { header: 'Email (Login ID)', key: 'email', width: 30 },
       { header: 'Registered At', key: 'createdAt', width: 20 },
     ];
@@ -38,6 +40,8 @@ export async function GET(req: NextRequest) {
         hrContactNumber: profile?.hrContactNumber || 'N/A',
         officialMailId: profile?.officialMailId || 'N/A',
         website: profile?.companyWebsite || 'N/A',
+        referenceName: profile?.referenceName || 'N/A',
+        referenceContact: profile?.referenceContact || 'N/A',
         email: emp.email,
         createdAt: emp.createdAt.toLocaleDateString(),
       });

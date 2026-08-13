@@ -563,7 +563,7 @@ export default function AdminDashboard() {
     if (!editingCategoryName.trim()) return;
     try {
       const res = await fetch(`${API_URL}/categories/${id}`, {
-        method: 'PATCH',
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
         body: JSON.stringify({ name: editingCategoryName, imageUrl: editingCategoryImage })
       });

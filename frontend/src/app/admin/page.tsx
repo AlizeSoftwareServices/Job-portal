@@ -446,6 +446,20 @@ export default function AdminDashboard() {
   }, []);
 
   useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    };
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
     if (!isAdminAuthenticated) return;
     if (activeTab === 'categories') fetchCategories();
     if (activeTab === 'employers') fetchEmployers();
@@ -916,41 +930,30 @@ export default function AdminDashboard() {
   const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#6366f1'];
 
   // Compute hierarchical data for Categories -> Jobs breakdown
-  const categoryDetailedList = flowchartStats;
+  const categoryDetailedList = Array.isArray(flowchartStats) ? flowchartStats : [];
 
   const categoryInnerData: any[] = [];
   const jobsOuterData: any[] = [];
   
   categoryDetailedList.forEach(cat => {
+    if (!cat) return;
+    const catJobs = Array.isArray(cat.jobs) ? cat.jobs : [];
     categoryInnerData.push({
-      name: cat.name,
-      value: Math.max(cat.totalApps, 1),
-      appsCount: cat.totalApps,
-      jobsCount: cat.jobs.length
+      name: cat.name || 'Category',
+      value: Math.max(cat.totalApps || 0, 1),
+      appsCount: cat.totalApps || 0,
+      jobsCount: catJobs.length
     });
     
-    cat.jobs.forEach((job: any) => {
+    catJobs.forEach((job: any) => {
+      if (!job) return;
       jobsOuterData.push({
-        name: job.title,
-        value: Math.max(job.appsCount, 1),
-        appsCount: job.appsCount
+        name: job.title || 'Job',
+        value: Math.max(job.appsCount || 0, 1),
+        appsCount: job.appsCount || 0
       });
     });
   });
-
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-      document.body.style.touchAction = 'none';
-    } else {
-      document.body.style.overflow = '';
-      document.body.style.touchAction = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-      document.body.style.touchAction = '';
-    };
-  }, [isMobileMenuOpen]);
 
   return (
     <div className="flex h-screen bg-slate-50 font-sans text-slate-900 overflow-hidden relative">

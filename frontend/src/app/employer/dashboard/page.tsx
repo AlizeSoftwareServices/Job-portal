@@ -372,6 +372,20 @@ export default function EmployerDashboard() {
     } catch(err) { console.error(err); }
   };
 
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    };
+  }, [isMobileMenuOpen]);
+
   if (loading || !isAuthenticated) return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-50">
       <div className="animate-[pulse_1.5s_ease-in-out_infinite] flex flex-col items-center">
@@ -389,20 +403,6 @@ export default function EmployerDashboard() {
       </div>
     </div>
   );
-
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-      document.body.style.touchAction = 'none';
-    } else {
-      document.body.style.overflow = '';
-      document.body.style.touchAction = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-      document.body.style.touchAction = '';
-    };
-  }, [isMobileMenuOpen]);
 
   return (
     <div className="flex h-screen bg-slate-50 font-sans text-slate-900 overflow-hidden">

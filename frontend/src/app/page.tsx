@@ -591,10 +591,10 @@ export default async function Home() {
       {/* 4. Register with Us / Upload Resume Section */}
       <section className="py-14 md:py-24 px-4 md:px-6 bg-[#f3f6fc]">
         <div className="max-w-6xl mx-auto">
-          <div className="bg-white rounded-2xl sm:rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col-reverse md:flex-row relative min-h-auto md:min-h-[600px] p-6 sm:p-10 md:p-16">
+          <div className="bg-white rounded-2xl sm:rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col md:flex-row relative min-h-auto md:min-h-[600px] p-6 sm:p-10 md:p-16">
             
             {/* Left Content */}
-            <div className="md:w-1/2 flex flex-col justify-center relative z-20 md:pr-12 text-center md:text-left mt-10 md:mt-0">
+            <div className="md:w-1/2 flex flex-col justify-center relative z-20 md:pr-12 text-center md:text-left mt-4 md:mt-0">
               <div className="flex items-center justify-center md:justify-start gap-3 sm:gap-4 mb-4 sm:mb-6">
                 <div className="w-8 sm:w-12 h-0.5 bg-sky-700 hidden md:block"></div>
                 <span className="text-amber-500 font-bold tracking-wide text-sm sm:text-lg">Join Our Network</span>
@@ -603,10 +603,12 @@ export default async function Home() {
                 Upload Your Resume <br className="hidden sm:block"/>
                 <span className="text-amber-500 font-sans tracking-tight"> Find Your Job</span>
               </h2>
-              <p className="text-zinc-600 mb-6 sm:mb-10 leading-relaxed text-sm sm:text-base md:text-lg max-w-md mx-auto md:mx-0">
+              <p className="text-zinc-600 mb-2 md:mb-10 leading-relaxed text-sm sm:text-base md:text-lg max-w-md mx-auto md:mx-0">
                 Do you want to get started, but have not found the ideal job vacancy yet? Register with us and let the perfect opportunity find you.
               </p>
-              <div>
+              
+              {/* Desktop Button */}
+              <div className="hidden md:block">
                 <Link href="/register-cv" className="inline-flex items-center justify-center bg-sky-800 hover:bg-sky-700 text-white font-medium px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 text-sm sm:text-base w-full sm:w-auto">
                   Submit Your CV
                 </Link>
@@ -614,7 +616,7 @@ export default async function Home() {
             </div>
 
             {/* Right Images Composition */}
-            <div className="w-full md:w-1/2 relative flex justify-center items-center z-10 min-h-[350px] sm:min-h-[400px] md:min-h-[500px] overflow-hidden md:overflow-visible">
+            <div className="w-full md:w-1/2 relative flex justify-center items-center z-10 md:min-h-[500px] overflow-hidden md:overflow-visible -my-[80px] sm:-my-[40px] md:my-0">
               
               {/* Scale wrapper to keep perfect proportions on all devices */}
               <div className="relative w-[500px] h-[500px] scale-[0.65] sm:scale-[0.8] md:scale-100 origin-center flex-shrink-0">
@@ -654,6 +656,14 @@ export default async function Home() {
 
               </div>
             </div>
+
+            {/* Mobile Button */}
+            <div className="md:hidden w-full mt-2 flex justify-center z-20">
+              <Link href="/register-cv" className="inline-flex items-center justify-center bg-sky-800 hover:bg-sky-700 text-white font-medium px-6 py-4 rounded-xl transition-all shadow-lg w-full text-sm sm:text-base">
+                Submit Your CV
+              </Link>
+            </div>
+            
           </div>
         </div>
       </section>

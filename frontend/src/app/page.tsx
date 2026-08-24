@@ -591,61 +591,61 @@ export default async function Home() {
       {/* 4. Register with Us / Upload Resume Section */}
       <section className="py-14 md:py-24 px-4 md:px-6 bg-[#f3f6fc]">
         <div className="max-w-6xl mx-auto">
-          <div className="bg-white rounded-2xl sm:rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col md:flex-row relative min-h-auto md:min-h-[600px] p-6 sm:p-10 md:p-16">
+          <div className="bg-white rounded-2xl sm:rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col-reverse md:flex-row relative min-h-auto md:min-h-[600px] p-6 sm:p-10 md:p-16">
             
             {/* Left Content */}
-            <div className="md:w-1/2 flex flex-col justify-center relative z-20 md:pr-12">
-              <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-                <div className="w-8 sm:w-12 h-0.5 bg-sky-700"></div>
+            <div className="md:w-1/2 flex flex-col justify-center relative z-20 md:pr-12 text-center md:text-left mt-10 md:mt-0">
+              <div className="flex items-center justify-center md:justify-start gap-3 sm:gap-4 mb-4 sm:mb-6">
+                <div className="w-8 sm:w-12 h-0.5 bg-sky-700 hidden md:block"></div>
                 <span className="text-amber-500 font-bold tracking-wide text-sm sm:text-lg">Join Our Network</span>
               </div>
-              <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black mb-3 sm:mb-6 leading-[1.15] text-zinc-900 font-serif">
-                Upload Your Resume <br/>
-                <span className="text-amber-500 font-sans tracking-tight">Find Your Job</span>
+              <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black mb-3 sm:mb-6 leading-[1.15] text-zinc-900 font-serif mx-auto md:mx-0">
+                Upload Your Resume <br className="hidden sm:block"/>
+                <span className="text-amber-500 font-sans tracking-tight"> Find Your Job</span>
               </h2>
-              <p className="text-zinc-600 mb-6 sm:mb-10 leading-relaxed text-xs sm:text-base md:text-lg max-w-md">
+              <p className="text-zinc-600 mb-6 sm:mb-10 leading-relaxed text-sm sm:text-base md:text-lg max-w-md mx-auto md:mx-0">
                 Do you want to get started, but have not found the ideal job vacancy yet? Register with us and let the perfect opportunity find you.
               </p>
               <div>
-                <Link href="/register-cv" className="inline-flex items-center justify-center bg-sky-800 hover:bg-sky-700 text-white font-medium px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 text-xs sm:text-base w-full sm:w-auto">
+                <Link href="/register-cv" className="inline-flex items-center justify-center bg-sky-800 hover:bg-sky-700 text-white font-medium px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 text-sm sm:text-base w-full sm:w-auto">
                   Submit Your CV
                 </Link>
               </div>
             </div>
 
             {/* Right Images Composition */}
-            <div className="w-full md:w-1/2 relative mt-6 md:mt-0 flex justify-center items-center z-10 md:scale-100 origin-center md:origin-right">
+            <div className="w-full md:w-1/2 relative flex justify-center items-center z-10 min-h-[300px] sm:min-h-[400px] md:min-h-[500px]">
               
               {/* Decorative Shapes */}
-              <div className="hidden md:block absolute top-[10%] left-[10%] w-48 h-48 bg-[#FCD34D] rounded-full mix-blend-multiply opacity-90 z-0"></div>
-              <div className="hidden md:block absolute top-[5%] right-[5%] w-64 h-80 bg-[#FDBA74] rounded-full mix-blend-multiply opacity-80 z-0 transform rotate-12"></div>
-              <div className="hidden md:block absolute bottom-[5%] right-[10%] w-40 h-40 bg-[#93C5FD] rounded-full mix-blend-multiply opacity-90 z-0"></div>
+              <div className="absolute top-[10%] left-[5%] md:left-[10%] w-24 sm:w-36 md:w-48 h-24 sm:h-36 md:h-48 bg-[#FCD34D] rounded-full mix-blend-multiply opacity-90 z-0"></div>
+              <div className="absolute top-[5%] right-[0%] md:right-[5%] w-32 sm:w-48 md:w-64 h-40 sm:h-56 md:h-80 bg-[#FDBA74] rounded-full mix-blend-multiply opacity-80 z-0 transform rotate-12"></div>
+              <div className="absolute bottom-[5%] right-[10%] w-20 sm:w-28 md:w-40 h-20 sm:h-28 md:h-40 bg-[#93C5FD] rounded-full mix-blend-multiply opacity-90 z-0"></div>
 
               {/* Sparkles */}
-              <svg className="hidden md:block absolute top-[5%] left-[45%] w-10 h-10 text-sky-200 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M12 2l2 7 7 2-7 2-2 7-2-7-7-2 7-2 2-7z"/></svg>
-              <svg className="hidden md:block absolute bottom-[10%] right-[35%] w-8 h-8 text-sky-200 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M12 2l2 7 7 2-7 2-2 7-2-7-7-2 7-2 2-7z"/></svg>
+              <svg className="absolute top-[5%] left-[45%] w-6 sm:w-8 md:w-10 h-6 sm:h-8 md:h-10 text-sky-200 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M12 2l2 7 7 2-7 2-2 7-2-7-7-2 7-2 2-7z"/></svg>
+              <svg className="absolute bottom-[10%] right-[35%] w-5 sm:w-6 md:w-8 h-5 sm:h-6 md:h-8 text-sky-200 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M12 2l2 7 7 2-7 2-2 7-2-7-7-2 7-2 2-7z"/></svg>
               
               {/* Left Pill Image */}
-              <div className="hidden md:block absolute left-[5%] md:left-[10%] top-[25%] w-40 h-64 rounded-[4rem] border-[6px] border-white shadow-xl overflow-hidden z-20">
+              <div className="absolute left-[0%] md:left-[5%] lg:left-[10%] top-[25%] w-20 sm:w-32 md:w-40 h-32 sm:h-48 md:h-64 rounded-[2rem] sm:rounded-[3rem] md:rounded-[4rem] border-[3px] sm:border-4 md:border-[6px] border-white shadow-xl overflow-hidden z-20">
                 <img src="/images/user-uploaded-cv.jpg" alt="Student" className="w-full h-full object-cover" />
               </div>
               
               {/* Middle Tall Pill Image */}
-              <div className="relative w-full max-w-[200px] sm:max-w-[250px] md:w-48 h-56 sm:h-64 md:h-96 rounded-3xl sm:rounded-[3rem] md:rounded-[5rem] border-4 sm:border-[6px] border-white shadow-2xl overflow-hidden z-30 mx-auto">
+              <div className="relative w-28 sm:w-40 md:w-48 h-44 sm:h-64 md:h-96 rounded-[3rem] sm:rounded-[4rem] md:rounded-[5rem] border-[4px] sm:border-[5px] md:border-[6px] border-white shadow-2xl overflow-hidden z-30 mx-auto">
                 <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Working" className="w-full h-full object-cover" />
               </div>
               
               {/* Right Pill Image */}
-              <div className="hidden md:block absolute right-[5%] md:right-[0%] top-[20%] w-40 h-64 rounded-[4rem] border-[6px] border-white shadow-xl overflow-hidden z-10">
+              <div className="absolute right-[0%] md:right-[5%] lg:right-[0%] top-[20%] w-20 sm:w-32 md:w-40 h-32 sm:h-48 md:h-64 rounded-[2rem] sm:rounded-[3rem] md:rounded-[4rem] border-[3px] sm:border-4 md:border-[6px] border-white shadow-xl overflow-hidden z-10">
                 <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Writing" className="w-full h-full object-cover" />
               </div>
 
               {/* Small Profile Circles */}
-              <div className="hidden md:block absolute left-[8%] bottom-[20%] w-16 h-16 rounded-full border-4 border-[#10B981] bg-white overflow-hidden z-40 shadow-lg">
+              <div className="absolute left-[5%] md:left-[8%] bottom-[20%] w-8 sm:w-12 md:w-16 h-8 sm:h-12 md:h-16 rounded-full border-2 md:border-4 border-[#10B981] bg-white overflow-hidden z-40 shadow-lg">
                 <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" className="w-full h-full object-cover" />
               </div>
               
-              <div className="hidden md:block absolute right-[5%] top-[12%] w-16 h-16 rounded-full border-4 border-[#34D399] bg-white overflow-hidden z-40 shadow-lg">
+              <div className="absolute right-[2%] md:right-[5%] top-[12%] w-8 sm:w-12 md:w-16 h-8 sm:h-12 md:h-16 rounded-full border-2 md:border-4 border-[#34D399] bg-white overflow-hidden z-40 shadow-lg">
                 <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="User" className="w-full h-full object-cover" />
               </div>
 

@@ -614,41 +614,45 @@ export default async function Home() {
             </div>
 
             {/* Right Images Composition */}
-            <div className="w-full md:w-1/2 relative flex justify-center items-center z-10 min-h-[300px] sm:min-h-[400px] md:min-h-[500px]">
+            <div className="w-full md:w-1/2 relative flex justify-center items-center z-10 min-h-[350px] sm:min-h-[400px] md:min-h-[500px] overflow-hidden md:overflow-visible">
               
-              {/* Decorative Shapes */}
-              <div className="absolute top-[10%] left-[5%] md:left-[10%] w-24 sm:w-36 md:w-48 h-24 sm:h-36 md:h-48 bg-[#FCD34D] rounded-full mix-blend-multiply opacity-90 z-0"></div>
-              <div className="absolute top-[5%] right-[0%] md:right-[5%] w-32 sm:w-48 md:w-64 h-40 sm:h-56 md:h-80 bg-[#FDBA74] rounded-full mix-blend-multiply opacity-80 z-0 transform rotate-12"></div>
-              <div className="absolute bottom-[5%] right-[10%] w-20 sm:w-28 md:w-40 h-20 sm:h-28 md:h-40 bg-[#93C5FD] rounded-full mix-blend-multiply opacity-90 z-0"></div>
+              {/* Scale wrapper to keep perfect proportions on all devices */}
+              <div className="relative w-[500px] h-[500px] scale-[0.65] sm:scale-[0.8] md:scale-100 origin-center flex-shrink-0">
+                
+                {/* Decorative Shapes */}
+                <div className="absolute top-[10%] left-[10%] w-48 h-48 bg-[#FCD34D] rounded-full mix-blend-multiply opacity-90 z-0"></div>
+                <div className="absolute top-[5%] right-[5%] w-64 h-80 bg-[#FDBA74] rounded-full mix-blend-multiply opacity-80 z-0 transform rotate-12"></div>
+                <div className="absolute bottom-[5%] right-[10%] w-40 h-40 bg-[#93C5FD] rounded-full mix-blend-multiply opacity-90 z-0"></div>
 
-              {/* Sparkles */}
-              <svg className="absolute top-[5%] left-[45%] w-6 sm:w-8 md:w-10 h-6 sm:h-8 md:h-10 text-sky-200 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M12 2l2 7 7 2-7 2-2 7-2-7-7-2 7-2 2-7z"/></svg>
-              <svg className="absolute bottom-[10%] right-[35%] w-5 sm:w-6 md:w-8 h-5 sm:h-6 md:h-8 text-sky-200 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M12 2l2 7 7 2-7 2-2 7-2-7-7-2 7-2 2-7z"/></svg>
-              
-              {/* Left Pill Image */}
-              <div className="absolute left-[0%] md:left-[5%] lg:left-[10%] top-[25%] w-20 sm:w-32 md:w-40 h-32 sm:h-48 md:h-64 rounded-[2rem] sm:rounded-[3rem] md:rounded-[4rem] border-[3px] sm:border-4 md:border-[6px] border-white shadow-xl overflow-hidden z-20">
-                <img src="/images/user-uploaded-cv.jpg" alt="Student" className="w-full h-full object-cover" />
-              </div>
-              
-              {/* Middle Tall Pill Image */}
-              <div className="relative w-28 sm:w-40 md:w-48 h-44 sm:h-64 md:h-96 rounded-[3rem] sm:rounded-[4rem] md:rounded-[5rem] border-[4px] sm:border-[5px] md:border-[6px] border-white shadow-2xl overflow-hidden z-30 mx-auto">
-                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Working" className="w-full h-full object-cover" />
-              </div>
-              
-              {/* Right Pill Image */}
-              <div className="absolute right-[0%] md:right-[5%] lg:right-[0%] top-[20%] w-20 sm:w-32 md:w-40 h-32 sm:h-48 md:h-64 rounded-[2rem] sm:rounded-[3rem] md:rounded-[4rem] border-[3px] sm:border-4 md:border-[6px] border-white shadow-xl overflow-hidden z-10">
-                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Writing" className="w-full h-full object-cover" />
-              </div>
+                {/* Sparkles */}
+                <svg className="absolute top-[5%] left-[45%] w-10 h-10 text-sky-200 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M12 2l2 7 7 2-7 2-2 7-2-7-7-2 7-2 2-7z"/></svg>
+                <svg className="absolute bottom-[10%] right-[35%] w-8 h-8 text-sky-200 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M12 2l2 7 7 2-7 2-2 7-2-7-7-2 7-2 2-7z"/></svg>
+                
+                {/* Left Pill Image */}
+                <div className="absolute left-[8%] top-[25%] w-40 h-64 rounded-[4rem] border-[6px] border-white shadow-xl overflow-hidden z-20">
+                  <img src="/images/user-uploaded-cv.jpg" alt="Student" className="w-full h-full object-cover" />
+                </div>
+                
+                {/* Middle Tall Pill Image */}
+                <div className="absolute left-[50%] -translate-x-1/2 top-[10%] w-48 h-96 rounded-[5rem] border-[6px] border-white shadow-2xl overflow-hidden z-30">
+                  <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Working" className="w-full h-full object-cover" />
+                </div>
+                
+                {/* Right Pill Image */}
+                <div className="absolute right-[8%] top-[20%] w-40 h-64 rounded-[4rem] border-[6px] border-white shadow-xl overflow-hidden z-10">
+                  <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Writing" className="w-full h-full object-cover" />
+                </div>
 
-              {/* Small Profile Circles */}
-              <div className="absolute left-[5%] md:left-[8%] bottom-[20%] w-8 sm:w-12 md:w-16 h-8 sm:h-12 md:h-16 rounded-full border-2 md:border-4 border-[#10B981] bg-white overflow-hidden z-40 shadow-lg">
-                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" className="w-full h-full object-cover" />
-              </div>
-              
-              <div className="absolute right-[2%] md:right-[5%] top-[12%] w-8 sm:w-12 md:w-16 h-8 sm:h-12 md:h-16 rounded-full border-2 md:border-4 border-[#34D399] bg-white overflow-hidden z-40 shadow-lg">
-                <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="User" className="w-full h-full object-cover" />
-              </div>
+                {/* Small Profile Circles */}
+                <div className="absolute left-[5%] bottom-[20%] w-16 h-16 rounded-full border-4 border-[#10B981] bg-white overflow-hidden z-40 shadow-xl">
+                  <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" className="w-full h-full object-cover" />
+                </div>
+                
+                <div className="absolute right-[2%] top-[12%] w-16 h-16 rounded-full border-4 border-[#34D399] bg-white overflow-hidden z-40 shadow-xl">
+                  <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="User" className="w-full h-full object-cover" />
+                </div>
 
+              </div>
             </div>
           </div>
         </div>

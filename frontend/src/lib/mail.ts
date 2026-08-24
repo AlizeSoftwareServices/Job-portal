@@ -8,6 +8,12 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+const getBaseUrl = () => {
+  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, '');
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL.replace(/\/$/, '')}`;
+  return 'https://skyoconsultancy.vercel.app';
+};
+
 export const MailService = {
 
   async sendApplicationConfirmation(email: string, firstName: string, jobTitle: string, referenceNumber: string) {
@@ -160,7 +166,7 @@ export const MailService = {
           <p>Thank you for your application for the role of <strong>${jobTitle}</strong> at SkyoConsultancy. First off, we want to sincerely thank you for the time and effort you've invested in our recruitment process.</p>
           <p>While your profile is quite impressive, we will not be moving forward with your application as we feel it is not an exact match for our requirements at this point in time. Should a suitable position open up where your professional background is a better fit for our needs, we would like to reach out to you in the future.</p>
           <p>We are sure that given your profile, you will have amazing success in finding a role that fits you best. We wish you good luck with your job search and all your future professional endeavors.</p>
-          <p>To view additional job opportunities with SkyoConsultancy, please visit our careers site by clicking the following link: <a href="http://localhost:3001/jobs">SkyoConsultancy Careers</a></p>
+          <p>To view additional job opportunities with SkyoConsultancy, please visit our careers site by clicking the following link: <a href="${getBaseUrl()}/jobs">SkyoConsultancy Careers</a></p>
           <br/>
           <p>Regards,</p>
           <p><strong>SkyoConsultancy Team</strong></p>
@@ -225,7 +231,7 @@ export const MailService = {
               </div>
 
               <div style="text-align: center; margin-top: 30px;">
-                <a href="http://localhost:3001/empadmin" style="background-color: #1e3a8a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">View in Dashboard</a>
+                <a href="${getBaseUrl()}/employer/dashboard" style="background-color: #1e3a8a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">View in Dashboard</a>
               </div>
             </div>
             <div style="text-align: center; font-size: 12px; color: #64748b; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
@@ -262,7 +268,7 @@ export const MailService = {
               </div>
 
               <div style="text-align: center; margin-top: 30px;">
-                <a href="http://localhost:3001/admin" style="background-color: #1e3a8a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">View in Dashboard</a>
+                <a href="${getBaseUrl()}/admin" style="background-color: #1e3a8a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">View in Dashboard</a>
               </div>
             </div>
             <div style="text-align: center; font-size: 12px; color: #64748b; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
@@ -300,7 +306,7 @@ export const MailService = {
               </div>
 
               <div style="text-align: center; margin-top: 30px;">
-                <a href="http://localhost:3001/admin" style="background-color: #f59e0b; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Review in Dashboard</a>
+                <a href="${getBaseUrl()}/admin" style="background-color: #f59e0b; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Review in Dashboard</a>
               </div>
             </div>
             <div style="text-align: center; font-size: 12px; color: #64748b; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 15px;">

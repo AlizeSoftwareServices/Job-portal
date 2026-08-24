@@ -13,27 +13,28 @@ export default function AdminDashboard() {
   const [adminPassword, setAdminPassword] = useState('');
   const [showAdminPassword, setShowAdminPassword] = useState(false);
 
-    const handleAdminLogin = async (e: React.FormEvent) => {
+  const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const res = await fetch('/api/admin/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: adminUsername, password: adminPassword })
       });
-      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
       if (res.ok) {
         const data = await res.json();
         localStorage.setItem('skyo_admin_token', data.token);
         localStorage.setItem('skyo_admin_auth', 'true');
         setIsAdminAuthenticated(true);
-      sessionStorage.setItem('active_portal', 'ADMIN');
-        window.location.reload();
+        sessionStorage.setItem('active_portal', 'ADMIN');
+        setLoading(true);
+        Promise.all([fetchStats(true), fetchFlowchartStats(true), fetchCategories(true), fetchEmployers(true)]).finally(() => setLoading(false));
       } else {
-        alert('Invalid username or password');
+        const errData = await res.json().catch(() => ({}));
+        alert(errData.message || 'Invalid username or password');
       }
     } catch (err) {
-      alert('Login failed');
+      alert('Login failed. Please try again.');
     }
   };
 
@@ -224,7 +225,7 @@ export default function AdminDashboard() {
     setJobCurrentPage(1);
   }, [jobDebouncedSearch, jobStatusFilter]);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
+  const API_URL = '/api';
 
   // Real-time polling
   useEffect(() => {
@@ -261,16 +262,23 @@ export default function AdminDashboard() {
       } else if (jobStatusFilter !== 'All') {
         params.append('status', jobStatusFilter);
       }
+      const token = localStorage.getItem('skyo_admin_token');
+      if (!token) { setIsAdminAuthenticated(false); return; }
       const res = await fetch(`${API_URL}/jobs/admin-all?${params.toString()}&_t=${Date.now()}`, { 
-        headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
+        headers: { Authorization: `Bearer ${token}` },
         signal 
       });
-      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
+      if (res.status === 401) { 
+        localStorage.removeItem('skyo_admin_auth'); 
+        localStorage.removeItem('skyo_admin_token'); 
+        setIsAdminAuthenticated(false); 
+        return; 
+      }
       const data = await res.json();
-      if(data.items) {
+      if(data && data.items) {
         setJobs(data.items);
-        setJobTotalPages(data.pagination.totalPages);
-        setJobTotalItems(data.pagination.totalItems);
+        setJobTotalPages(data.pagination?.totalPages || 1);
+        setJobTotalItems(data.pagination?.totalItems || 0);
       }
     } catch (err) { if ((err as any).name !== 'AbortError') console.error(err); }
   };
@@ -283,16 +291,23 @@ export default function AdminDashboard() {
         search: appDebouncedSearch,
         status: appStatusFilter,
       });
+      const token = localStorage.getItem('skyo_admin_token');
+      if (!token) { setIsAdminAuthenticated(false); return; }
       const res = await fetch(`${API_URL}/applications?${params.toString()}&_t=${Date.now()}`, { 
-        headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
+        headers: { Authorization: `Bearer ${token}` },
         signal 
       });
-      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
+      if (res.status === 401) { 
+        localStorage.removeItem('skyo_admin_auth'); 
+        localStorage.removeItem('skyo_admin_token'); 
+        setIsAdminAuthenticated(false); 
+        return; 
+      }
       const data = await res.json();
-      if(data.items) {
+      if(data && data.items) {
         setApplications(data.items);
-        setAppTotalPages(data.pagination.totalPages);
-        setAppTotalItems(data.pagination.totalItems);
+        setAppTotalPages(data.pagination?.totalPages || 1);
+        setAppTotalItems(data.pagination?.totalItems || 0);
       }
     } catch (err) { if ((err as any).name !== 'AbortError') console.error(err); }
   };
@@ -300,8 +315,17 @@ export default function AdminDashboard() {
   const fetchCategories = async (force = false) => {
     if (!force && loadedTabs.has('categories')) return;
     try {
-      const res = await fetch(`${API_URL}/categories?_t=${Date.now()}`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
-      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
+      const token = localStorage.getItem('skyo_admin_token');
+      if (!token) { setIsAdminAuthenticated(false); return; }
+      const res = await fetch(`${API_URL}/categories?_t=${Date.now()}`, { 
+        headers: { Authorization: `Bearer ${token}` } 
+      });
+      if (res.status === 401) { 
+        localStorage.removeItem('skyo_admin_auth'); 
+        localStorage.removeItem('skyo_admin_token'); 
+        setIsAdminAuthenticated(false); 
+        return; 
+      }
       const data = await res.json();
       if(Array.isArray(data)) setCategories(data);
       setLoadedTabs(prev => new Set(prev).add('categories'));
@@ -311,8 +335,17 @@ export default function AdminDashboard() {
   const fetchEmployers = async (force = false) => {
     if (!force && loadedTabs.has('employers')) return;
     try {
-      const res = await fetch(`${API_URL}/admin/employers?_t=${Date.now()}`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
-      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
+      const token = localStorage.getItem('skyo_admin_token');
+      if (!token) { setIsAdminAuthenticated(false); return; }
+      const res = await fetch(`${API_URL}/admin/employers?_t=${Date.now()}`, { 
+        headers: { Authorization: `Bearer ${token}` } 
+      });
+      if (res.status === 401) { 
+        localStorage.removeItem('skyo_admin_auth'); 
+        localStorage.removeItem('skyo_admin_token'); 
+        setIsAdminAuthenticated(false); 
+        return; 
+      }
       const data = await res.json();
       if(Array.isArray(data)) setEmployersList(data);
       setLoadedTabs(prev => new Set(prev).add('employers'));
@@ -322,12 +355,18 @@ export default function AdminDashboard() {
   const handleEmployerApproval = async (employerId: string, action: 'ONBOARD' | 'REJECT') => {
     if (!window.confirm(`Are you sure you want to ${action === 'ONBOARD' ? 'approve' : 'reject'} this client?`)) return;
     try {
+      const token = localStorage.getItem('skyo_admin_token');
       const res = await fetch(`/api/admin/employers/${employerId}/approval`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ action })
       });
-      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
+      if (res.status === 401) { 
+        localStorage.removeItem('skyo_admin_auth'); 
+        localStorage.removeItem('skyo_admin_token'); 
+        setIsAdminAuthenticated(false); 
+        return; 
+      }
       if (res.ok) {
         alert(`Client ${action === 'ONBOARD' ? 'approved' : 'rejected'} successfully.`);
         fetchEmployers(true);
@@ -340,26 +379,46 @@ export default function AdminDashboard() {
   const fetchFlowchartStats = async (force = false) => {
     if (!force && loadedTabs.has('dashboard_stats')) return;
     try {
-      const res = await fetch(`${API_URL}/admin/flowchart-stats?_t=${Date.now()}`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
-      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
+      const token = localStorage.getItem('skyo_admin_token');
+      if (!token) { setIsAdminAuthenticated(false); return; }
+      const res = await fetch(`${API_URL}/admin/flowchart-stats?_t=${Date.now()}`, { 
+        headers: { Authorization: `Bearer ${token}` } 
+      });
+      if (res.status === 401) { 
+        localStorage.removeItem('skyo_admin_auth'); 
+        localStorage.removeItem('skyo_admin_token'); 
+        setIsAdminAuthenticated(false); 
+        return; 
+      }
       if(res.ok) {
         const data = await res.json();
-        setFlowchartStats(data);
-        setLoadedTabs(prev => new Set(prev).add('dashboard_stats'));
+        if (Array.isArray(data)) {
+          setFlowchartStats(data);
+          setLoadedTabs(prev => new Set(prev).add('dashboard_stats'));
+        }
       }
     } catch (err) { console.error(err); }
   };
+
   const fetchStats = async (force = false) => {
     if (!force && loadedTabs.has('dashboard_stats')) return;
     try {
-      const res = await fetch(`${API_URL}/admin/dashboard-data?_t=${Date.now()}`, { headers: { Authorization: `Bearer ${localStorage.getItem('skyo_admin_token')}` } });
-      if (res.status === 401) { localStorage.removeItem('skyo_admin_auth'); localStorage.removeItem('skyo_admin_token'); window.location.reload(); return; }
-      if (!res.ok) {
-        throw new Error('Stats fetch failed');
+      const token = localStorage.getItem('skyo_admin_token');
+      if (!token) { setIsAdminAuthenticated(false); return; }
+      const res = await fetch(`${API_URL}/admin/dashboard-data?_t=${Date.now()}`, { 
+        headers: { Authorization: `Bearer ${token}` } 
+      });
+      if (res.status === 401) { 
+        localStorage.removeItem('skyo_admin_auth'); 
+        localStorage.removeItem('skyo_admin_token'); 
+        setIsAdminAuthenticated(false); 
+        return; 
       }
-      const data = await res.json();
-      setStats(data);
-      setLoadedTabs(prev => new Set(prev).add('dashboard_stats'));
+      if (res.ok) {
+        const data = await res.json();
+        setStats(data);
+        setLoadedTabs(prev => new Set(prev).add('dashboard_stats'));
+      }
     } catch (err) { 
       console.error(err); 
       setStats({ totalJobs: 0, activeJobs: 0, totalApplications: 0, categoryBreakdown: [] });
@@ -368,16 +427,22 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const token = localStorage.getItem('skyo_admin_token');
-    if (localStorage.getItem('skyo_admin_auth') === 'true' && token) {
+    const auth = localStorage.getItem('skyo_admin_auth');
+    if (auth === 'true' && token) {
       setIsAdminAuthenticated(true);
-      Promise.all([fetchStats(), fetchFlowchartStats(), fetchCategories(), fetchEmployers()]).then(() => setLoading(false));
+      Promise.all([fetchStats(true), fetchFlowchartStats(true), fetchCategories(true), fetchEmployers(true)])
+        .catch(err => console.error(err))
+        .finally(() => {
+          setLoading(false);
+          setAdminAuthChecked(true);
+        });
     } else {
       localStorage.removeItem('skyo_admin_auth');
       localStorage.removeItem('skyo_admin_token');
       setIsAdminAuthenticated(false);
       setLoading(false);
+      setAdminAuthChecked(true);
     }
-    setAdminAuthChecked(true);
   }, []);
 
   useEffect(() => {

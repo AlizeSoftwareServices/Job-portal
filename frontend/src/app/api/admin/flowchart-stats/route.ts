@@ -62,6 +62,7 @@ export async function GET(req: NextRequest) {
 
     // Format for RelationalFlowChart
     const categoryDetailedList = Array.from(categoriesMap.values()).map(cat => ({
+      id: cat.id,
       name: cat.name,
       totalApps: cat.jobs.reduce((sum: number, j: any) => sum + j.appsCount, 0),
       jobs: cat.jobs

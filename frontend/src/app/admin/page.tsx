@@ -984,19 +984,19 @@ export default function AdminDashboard() {
           </button>
           <button 
             onClick={() => { setActiveTab('jobs'); setIsMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 transition-all font-medium ${activeTab === 'jobs' ? 'bg-sky-900 border-l-4 border-white text-white shadow-lg' : 'border-l-4 border-transparent hover:bg-white/10 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${activeTab === 'jobs' ? 'bg-sky-900 border-l-4 border-white text-white shadow-lg' : 'border-l-4 border-transparent hover:bg-white/10 hover:text-white'}`}
           >
             <Briefcase className="h-5 w-5" /> Jobs
           </button>
           <button 
             onClick={() => { setActiveTab('applications'); setIsMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 transition-all font-medium ${activeTab === 'applications' ? 'bg-sky-900 border-l-4 border-white text-white shadow-lg' : 'border-l-4 border-transparent hover:bg-white/10 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${activeTab === 'applications' ? 'bg-sky-900 border-l-4 border-white text-white shadow-lg' : 'border-l-4 border-transparent hover:bg-white/10 hover:text-white'}`}
           >
             <Users className="h-5 w-5" /> Applications
           </button>
           <button 
             onClick={() => { setActiveTab('employers'); setIsMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 transition-all font-medium ${activeTab === 'employers' ? 'bg-sky-900 border-l-4 border-white text-white shadow-lg' : 'border-l-4 border-transparent hover:bg-white/10 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${activeTab === 'employers' ? 'bg-sky-900 border-l-4 border-white text-white shadow-lg' : 'border-l-4 border-transparent hover:bg-white/10 hover:text-white'}`}
           >
             <Briefcase className="h-5 w-5" /> Client Management
           </button>

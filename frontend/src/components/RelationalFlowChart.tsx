@@ -30,10 +30,16 @@ export default function RelationalFlowChart({ categories = [], jobs = [], applic
   const categoryJobs = useMemo(() => {
     if (!selectedCategory) return [];
     if (categoryDetailedList && categoryDetailedList.length > 0) {
-      const match = categoryDetailedList.find(c => c.id === selectedCategory.id || c.name === selectedCategory.name);
+      const match = categoryDetailedList.find(c => 
+        (selectedCategory.id && c.id && c.id === selectedCategory.id) || 
+        (selectedCategory.name && c.name && c.name === selectedCategory.name)
+      );
       return match?.jobs || selectedCategory.jobs || [];
     }
-    return jobs.filter(j => j.status === 'ACTIVE' && (j.category?.name === selectedCategory.name || j.categoryId === selectedCategory.id));
+    return jobs.filter(j => j.status === 'ACTIVE' && (
+      (selectedCategory.id && j.categoryId === selectedCategory.id) || 
+      (selectedCategory.name && j.category?.name === selectedCategory.name)
+    ));
   }, [jobs, selectedCategory, categoryDetailedList]);
 
   // Derive applications for selected job

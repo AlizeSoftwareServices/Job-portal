@@ -11,6 +11,17 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    if (pathname === '/') {
+      e.preventDefault();
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+      setIsOpen(false);
+    }
+  };
+
   return (
     <>
       <nav className="bg-white border-b border-zinc-200 px-4 md:px-6 py-4 flex items-center justify-between sticky top-0 z-50">
@@ -18,7 +29,7 @@ export default function Navbar() {
           <button className="md:hidden p-2 -ml-2 text-zinc-600" onClick={() => setIsOpen(true)}>
             <Menu className="w-6 h-6" />
           </button>
-          <Link href="/" className="flex flex-col items-center">
+          <Link href="/#home" onClick={(e) => handleNavClick(e, 'home')} className="flex flex-col items-center">
             <img src="/logo.png" alt="Skyo Consultancy Logo" className="h-12 md:h-16 w-auto object-contain mix-blend-multiply" />
             {pathname === '/profile' && (
               <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-1 text-center">Candidate Portal</span>
@@ -28,10 +39,10 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-6 font-medium text-zinc-600">
-          <Link href="/" className="hover:text-sky-800 transition-colors">Home</Link>
-          <Link href="/jobs" className="hover:text-sky-800 transition-colors">Find Jobs</Link>
-          <Link href="/about" className="hover:text-sky-800 transition-colors">About Us</Link>
-          <Link href="/#footer" className="hover:text-sky-800 transition-colors">Contact</Link>
+          <Link href="/#home" onClick={(e) => handleNavClick(e, 'home')} className="hover:text-sky-800 transition-colors">Home</Link>
+          <Link href="/#jobs" onClick={(e) => handleNavClick(e, 'jobs')} className="hover:text-sky-800 transition-colors">Find Jobs</Link>
+          <Link href="/#about" onClick={(e) => handleNavClick(e, 'about')} className="hover:text-sky-800 transition-colors">About Us</Link>
+          <Link href="/#contact" onClick={(e) => handleNavClick(e, 'contact')} className="hover:text-sky-800 transition-colors">Contact</Link>
           <ProfileLink />
         </div>
 
@@ -59,10 +70,10 @@ export default function Navbar() {
           </button>
         </div>
         <div className="flex flex-col py-4 px-4 gap-4 font-medium text-zinc-600 flex-1 overflow-y-auto">
-          <Link href="/" onClick={() => setIsOpen(false)} className="hover:text-sky-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">Home</Link>
-          <Link href="/jobs" onClick={() => setIsOpen(false)} className="hover:text-sky-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">Find Jobs</Link>
-          <Link href="/about" onClick={() => setIsOpen(false)} className="hover:text-sky-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">About Us</Link>
-          <Link href="/#footer" onClick={() => setIsOpen(false)} className="hover:text-sky-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">Contact</Link>
+          <Link href="/#home" onClick={(e) => handleNavClick(e, 'home')} className="hover:text-sky-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">Home</Link>
+          <Link href="/#jobs" onClick={(e) => handleNavClick(e, 'jobs')} className="hover:text-sky-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">Find Jobs</Link>
+          <Link href="/#about" onClick={(e) => handleNavClick(e, 'about')} className="hover:text-sky-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">About Us</Link>
+          <Link href="/#contact" onClick={(e) => handleNavClick(e, 'contact')} className="hover:text-sky-800 transition-colors p-2 rounded-lg hover:bg-zinc-50">Contact</Link>
           <div className="p-2" onClick={() => setIsOpen(false)}>
             <ProfileLink />
           </div>

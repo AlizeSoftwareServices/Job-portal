@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+html {
+  scroll-behavior: smooth;
+}
+
 /* Hide browser default password input eye icon */
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {

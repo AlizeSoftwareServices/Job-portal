@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer id="footer" className="bg-sky-800 text-sky-200 py-16 px-6 border-t border-sky-900/50">
+    <footer id="contact" className="bg-sky-800 text-sky-200 py-16 px-6 border-t border-sky-900/50 scroll-mt-10">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12">
         
         {/* Branding & About */}
@@ -42,10 +42,10 @@ export default function Footer() {
         <div className="lg:col-span-2">
           <h4 className="text-white font-semibold mb-4 text-lg">Quick Links</h4>
           <ul className="space-y-3 text-sm">
-            <li><Link href="/" className="hover:text-amber-500 transition-colors flex items-center gap-2"><span className="text-amber-500 text-xs">▹</span> Home</Link></li>
-            <li><Link href="/jobs" className="hover:text-amber-500 transition-colors flex items-center gap-2"><span className="text-amber-500 text-xs">▹</span> Find Jobs</Link></li>
-            <li><Link href="/about" className="hover:text-amber-500 transition-colors flex items-center gap-2"><span className="text-amber-500 text-xs">▹</span> About Us</Link></li>
-            <li><Link href="#footer" className="hover:text-amber-500 transition-colors flex items-center gap-2"><span className="text-amber-500 text-xs">▹</span> Contact</Link></li>
+            <li><Link href="/#home" className="hover:text-amber-500 transition-colors flex items-center gap-2"><span className="text-amber-500 text-xs">▹</span> Home</Link></li>
+            <li><Link href="/#jobs" className="hover:text-amber-500 transition-colors flex items-center gap-2"><span className="text-amber-500 text-xs">▹</span> Find Jobs</Link></li>
+            <li><Link href="/#about" className="hover:text-amber-500 transition-colors flex items-center gap-2"><span className="text-amber-500 text-xs">▹</span> About Us</Link></li>
+            <li><Link href="/#contact" className="hover:text-amber-500 transition-colors flex items-center gap-2"><span className="text-amber-500 text-xs">▹</span> Contact</Link></li>
           </ul>
         </div>
 

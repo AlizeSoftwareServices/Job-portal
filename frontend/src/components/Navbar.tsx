@@ -83,14 +83,13 @@ export default function Navbar() {
             <X className="w-5 h-5" />
           </button>
         </div>
-        <div className="flex flex-col py-4 px-4 gap-3 font-medium text-zinc-700 flex-1 overflow-y-auto">
+        <div className="flex flex-col py-4 px-4 gap-2.5 font-medium text-zinc-700 flex-1 overflow-y-auto">
           <Link href="/#home" onClick={(e) => handleNavClick(e, 'home')} className="hover:text-sky-800 transition-colors p-2.5 rounded-lg hover:bg-zinc-50 font-semibold">Home</Link>
           <Link href="/#jobs" onClick={(e) => handleNavClick(e, 'jobs')} className="hover:text-sky-800 transition-colors p-2.5 rounded-lg hover:bg-zinc-50 font-semibold">Find Jobs</Link>
           <Link href="/#about" onClick={(e) => handleNavClick(e, 'about')} className="hover:text-sky-800 transition-colors p-2.5 rounded-lg hover:bg-zinc-50 font-semibold">About Us</Link>
           <Link href="/#contact" onClick={(e) => handleNavClick(e, 'contact')} className="hover:text-sky-800 transition-colors p-2.5 rounded-lg hover:bg-zinc-50 font-semibold">Contact</Link>
-          <div className="p-2.5" onClick={() => setIsOpen(false)}>
-            <ProfileLink />
-          </div>
+          <ProfileLink onClick={() => setIsOpen(false)} className="hover:text-sky-800 transition-colors p-2.5 rounded-lg hover:bg-zinc-50 font-bold text-sky-800" />
+          
           <div className="mt-auto pt-4 border-t border-zinc-100 pb-6" onClick={() => setIsOpen(false)}>
             <AuthButtons />
           </div>

@@ -15,6 +15,8 @@ export default function RelationalFlowChart({ categories = [], jobs = [], applic
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const [lazyApplications, setLazyApplications] = useState<any[]>([]);
   const [isLoadingApps, setIsLoadingApps] = useState(false);
+  const [appsCache, setAppsCache] = useState<Record<string, any[]>>({});
+  const activeJobIdRef = React.useRef<string | null>(null);
 
   // Derive unique categories from jobs if category list is empty or for safety
   const activeCategories = useMemo(() => {
@@ -27,35 +29,55 @@ export default function RelationalFlowChart({ categories = [], jobs = [], applic
   // Derive active jobs for selected category
   const categoryJobs = useMemo(() => {
     if (!selectedCategory) return [];
-    if (categoryDetailedList && categoryDetailedList.length > 0) return selectedCategory.jobs;
+    if (categoryDetailedList && categoryDetailedList.length > 0) {
+      const match = categoryDetailedList.find(c => c.id === selectedCategory.id || c.name === selectedCategory.name);
+      return match?.jobs || selectedCategory.jobs || [];
+    }
     return jobs.filter(j => j.status === 'ACTIVE' && (j.category?.name === selectedCategory.name || j.categoryId === selectedCategory.id));
   }, [jobs, selectedCategory, categoryDetailedList]);
 
   // Derive applications for selected job
   const jobApplications = useMemo(() => {
     if (!selectedJob) return [];
+    if (appsCache[selectedJob.id]) return appsCache[selectedJob.id];
     if (categoryDetailedList && categoryDetailedList.length > 0) return lazyApplications;
     return applications.filter(a => a.job?.id === selectedJob.id || a.jobId === selectedJob.id);
-  }, [applications, selectedJob, categoryDetailedList, lazyApplications]);
+  }, [applications, selectedJob, categoryDetailedList, lazyApplications, appsCache]);
 
+  // Silent Background Fetch without UI Glitches or Card Disappearance
   useEffect(() => {
-    if (selectedJob && categoryDetailedList && categoryDetailedList.length > 0) {
-      setIsLoadingApps(true);
-      fetch(`/api/applications/job/${selectedJob.id}`)
-        .then(res => res.json())
-        .then(data => {
-          if (Array.isArray(data)) setLazyApplications(data);
-          else setLazyApplications([]);
-        })
-        .catch(err => {
-          console.error(err);
-          setLazyApplications([]);
-        })
-        .finally(() => setIsLoadingApps(false));
-    } else {
+    if (!selectedJob) {
+      activeJobIdRef.current = null;
       setLazyApplications([]);
+      return;
     }
-  }, [selectedJob, categoryDetailedList]);
+
+    const isNewJob = activeJobIdRef.current !== selectedJob.id;
+    activeJobIdRef.current = selectedJob.id;
+
+    // Only show loading spinner on first time click if no cached data exists
+    if (isNewJob && !appsCache[selectedJob.id]) {
+      setIsLoadingApps(true);
+    }
+
+    const controller = new AbortController();
+    fetch(`/api/applications/job/${selectedJob.id}`, { signal: controller.signal })
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setLazyApplications(data);
+          setAppsCache(prev => ({ ...prev, [selectedJob.id]: data }));
+        }
+      })
+      .catch(err => {
+        if (err.name !== 'AbortError') console.error(err);
+      })
+      .finally(() => {
+        setIsLoadingApps(false);
+      });
+
+    return () => controller.abort();
+  }, [selectedJob?.id]);
 
   const handleCategoryClick = (cat: any) => {
     if (selectedCategory?.id === cat.id && selectedCategory?.name === cat.name) {

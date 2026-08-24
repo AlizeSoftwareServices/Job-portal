@@ -873,30 +873,44 @@ export default function AdminDashboard() {
     });
   });
 
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    };
+  }, [isMobileMenuOpen]);
+
   return (
     <div className="flex h-screen bg-slate-50 font-sans text-slate-900 overflow-hidden relative">
       
       {/* Mobile Sidebar Overlay */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setIsMobileMenuOpen(false)}></div>
+        <div className="fixed inset-0 bg-black/60 z-[998] md:hidden overscroll-none backdrop-blur-xs" onClick={() => setIsMobileMenuOpen(false)}></div>
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-sky-800 text-sky-100 flex flex-col transform transition-transform duration-300 md:relative md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="p-6 pt-8 pb-6 flex items-center justify-center relative">
-          <a href="/" className="cursor-pointer hover:scale-105 transition-transform flex flex-col items-center">
-            <img src="/logo.png" alt="Skyo Consultancy Logo" className="h-16 w-auto object-contain mb-2" />
-            <span className="text-[10px] font-bold text-sky-200 uppercase tracking-widest text-center">Skyo Admin</span>
-          </a>
-          <button className="md:hidden text-white absolute right-6 top-8" onClick={() => setIsMobileMenuOpen(false)}>
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      <aside className={`fixed top-0 bottom-0 left-0 z-[999] h-[100dvh] w-72 max-w-[82vw] bg-sky-800 text-sky-100 flex flex-col transform transition-transform duration-300 md:relative md:translate-x-0 md:h-screen md:w-64 overscroll-contain shadow-2xl ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="p-4 pt-6 pb-4 flex items-center justify-between border-b border-sky-900/60 bg-sky-900/40 shrink-0">
+          <Link href="/" className="cursor-pointer hover:scale-105 transition-transform flex items-center gap-2">
+            <img src="/logo.png" alt="Skyo Consultancy Logo" className="h-10 w-auto bg-white rounded-md p-1 object-contain mix-blend-normal" />
+            <span className="text-xs font-black text-white uppercase tracking-wider">Skyo Admin</span>
+          </Link>
+          <button className="md:hidden text-white/80 hover:text-white p-2 rounded-lg bg-sky-950/50" onClick={() => setIsMobileMenuOpen(false)} aria-label="Close Menu">
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        <nav className="flex-1 px-2 py-6 space-y-2">
+        <nav className="flex-1 px-3 py-6 space-y-2 overflow-y-auto">
           <button 
             onClick={() => { setActiveTab('dashboard'); setIsMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 transition-all font-medium ${activeTab === 'dashboard' ? 'bg-sky-900 border-l-4 border-white text-white shadow-lg' : 'border-l-4 border-transparent hover:bg-white/10 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${activeTab === 'dashboard' ? 'bg-sky-900 border-l-4 border-white text-white shadow-lg' : 'border-l-4 border-transparent hover:bg-white/10 hover:text-white'}`}
           >
             <TrendingUp className="h-5 w-5" /> Dashboard
           </button>
@@ -1017,7 +1031,7 @@ export default function AdminDashboard() {
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 w-full mb-8">
                 <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2"><PieChartIcon className="h-5 w-5 text-amber-500" /> Platform Advanced Distribution (Categories &rarr; Jobs)</h3>
                 <div className="w-full">
-                  <RelationalFlowChart categories={categories} jobs={jobs} applications={applications} categoryDetailedList={categoryDetailedList} onViewResume={viewResume} />
+                  <RelationalFlowChart categories={categories} jobs={jobs} applications={applications} categoryDetailedList={flowchartStats} onViewResume={viewResume} />
                 </div>
               </div>
             </div>

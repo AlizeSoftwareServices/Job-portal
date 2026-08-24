@@ -390,37 +390,51 @@ export default function EmployerDashboard() {
     </div>
   );
 
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    };
+  }, [isMobileMenuOpen]);
+
   return (
     <div className="flex h-screen bg-slate-50 font-sans text-slate-900 overflow-hidden">
       
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-black/50 z-[60] md:hidden" onClick={() => setIsMobileMenuOpen(false)} />
+        <div className="fixed inset-0 bg-black/60 z-[998] md:hidden overscroll-none backdrop-blur-xs" onClick={() => setIsMobileMenuOpen(false)} />
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed md:relative top-0 left-0 w-64 bg-sky-800 text-sky-100 flex flex-col h-full z-[70] transform transition-transform duration-300 ease-in-out md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="p-4 pt-6 pb-4 flex flex-col items-center justify-center relative">
-          <button className="md:hidden absolute top-4 right-4 text-sky-200 p-1 bg-zinc-800 rounded-md" onClick={() => setIsMobileMenuOpen(false)}>
+      <aside className={`fixed top-0 bottom-0 left-0 h-[100dvh] w-72 max-w-[82vw] bg-sky-800 text-sky-100 flex flex-col z-[999] transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:h-screen md:w-64 overscroll-contain shadow-2xl ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="p-4 pt-6 pb-4 flex items-center justify-between border-b border-sky-900/60 bg-sky-900/40 shrink-0">
+          <Link href="/" className="cursor-pointer hover:scale-105 transition-transform flex items-center gap-2">
+            <img src="/logo.png" alt="Skyo Logo" className="h-10 w-auto bg-white rounded-md p-1 object-contain mix-blend-normal" />
+            <span className="text-xs font-black text-white uppercase tracking-wider">Client Portal</span>
+          </Link>
+          <button className="md:hidden text-white/80 hover:text-white p-2 rounded-lg bg-sky-950/50" onClick={() => setIsMobileMenuOpen(false)} aria-label="Close Menu">
             <X className="w-5 h-5" />
           </button>
-          <a href="/" className="cursor-pointer hover:scale-105 transition-transform flex flex-col items-center">
-            <img src="/logo.png" alt="Skyo Logo" className="h-12 md:h-16 w-auto object-contain mb-2" />
-            <span className="text-[10px] font-bold text-sky-200 uppercase tracking-widest text-center">Client Portal</span>
-          </a>
         </div>
 
         <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-          <button onClick={() => { setActiveTab('profile'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${activeTab === 'profile' ? 'bg-sky-800 text-white shadow-lg shadow-sky-900/20' : 'hover:bg-slate-800'}`}>
+          <button onClick={() => { setActiveTab('profile'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${activeTab === 'profile' ? 'bg-sky-900 border-l-4 border-white text-white shadow-lg' : 'border-l-4 border-transparent hover:bg-white/10 hover:text-white'}`}>
             <User className="h-5 w-5" /> Profile Settings
           </button>
-          <button onClick={() => { setActiveTab('jobs'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${activeTab === 'jobs' ? 'bg-sky-800 text-white shadow-lg shadow-sky-900/20' : 'hover:bg-slate-800'}`}>
+          <button onClick={() => { setActiveTab('jobs'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${activeTab === 'jobs' ? 'bg-sky-900 border-l-4 border-white text-white shadow-lg' : 'border-l-4 border-transparent hover:bg-white/10 hover:text-white'}`}>
             <Briefcase className="h-5 w-5" /> Manage Jobs
           </button>
-          <button onClick={() => { setActiveTab('direct_applicants'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${activeTab === 'direct_applicants' ? 'bg-sky-800 text-white shadow-lg shadow-sky-900/20' : 'hover:bg-slate-800'}`}>
+          <button onClick={() => { setActiveTab('direct_applicants'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${activeTab === 'direct_applicants' ? 'bg-sky-900 border-l-4 border-white text-white shadow-lg' : 'border-l-4 border-transparent hover:bg-white/10 hover:text-white'}`}>
             <Users className="h-5 w-5" /> Direct Applicants
           </button>
-          <button onClick={() => { setActiveTab('skyo_applicants'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${activeTab === 'skyo_applicants' ? 'bg-sky-800 text-white shadow-lg shadow-sky-900/20' : 'hover:bg-slate-800'}`}>
+          <button onClick={() => { setActiveTab('skyo_applicants'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${activeTab === 'skyo_applicants' ? 'bg-sky-900 border-l-4 border-white text-white shadow-lg' : 'border-l-4 border-transparent hover:bg-white/10 hover:text-white'}`}>
             <FileText className="h-5 w-5" /> Skyo Applicants
           </button>
         </nav>

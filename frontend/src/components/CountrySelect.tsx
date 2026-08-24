@@ -29,7 +29,7 @@ export default function CountrySelect({ value, onChange }: { value: string, onCh
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between border border-zinc-300 rounded-xl px-3 py-3 focus:ring-2 focus:ring-sky-500 outline-none bg-white text-sm transition-shadow"
+        className="w-full flex items-center justify-between border border-zinc-300 rounded-xl px-3 py-3 focus:ring-2 focus:ring-sky-500 outline-none bg-white text-zinc-900 text-sm transition-shadow font-medium"
       >
         <span className="flex items-center gap-2">
           {selectedCountry && (
@@ -39,20 +39,20 @@ export default function CountrySelect({ value, onChange }: { value: string, onCh
               className="w-5 h-auto rounded-sm object-cover shadow-sm"
             />
           )}
-          <span>{selectedCountry?.dialCode}</span>
+          <span className="text-zinc-900 font-semibold">{selectedCountry?.dialCode}</span>
         </span>
-        <ChevronDown className="h-4 w-4 text-sky-200" />
+        <ChevronDown className="h-4 w-4 text-zinc-600" />
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 top-full left-0 mt-1 w-64 bg-white border border-zinc-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-          <div className="sticky top-0 bg-white p-2 border-b border-zinc-100">
+        <div className="absolute z-50 top-full left-0 mt-1 w-64 sm:w-72 bg-white border border-zinc-200 rounded-xl shadow-2xl max-h-60 overflow-y-auto">
+          <div className="sticky top-0 bg-white p-2 border-b border-zinc-100 z-10">
             <input 
               type="text" 
               placeholder="Search country..." 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-1.5 text-sm outline-none focus:border-sky-400"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
             />
           </div>
           <ul className="py-1">
@@ -60,19 +60,19 @@ export default function CountrySelect({ value, onChange }: { value: string, onCh
               <li 
                 key={c.code}
                 onClick={() => { onChange(c.dialCode); setIsOpen(false); setSearch(''); }}
-                className="flex items-center gap-3 px-3 py-2 hover:bg-zinc-50 cursor-pointer text-sm"
+                className="flex items-center gap-3 px-3 py-2.5 hover:bg-sky-50 hover:text-sky-900 cursor-pointer text-sm transition-colors"
               >
                 <img 
                   src={`https://flagcdn.com/w20/${c.code}.png`} 
                   alt={c.name}
-                  className="w-5 h-auto rounded-sm object-cover shadow-sm"
+                  className="w-5 h-auto rounded-sm object-cover shadow-sm shrink-0"
                 />
-                <span className="flex-1 truncate">{c.name}</span>
-                <span className="text-zinc-500">{c.dialCode}</span>
+                <span className="flex-1 truncate font-semibold text-zinc-900">{c.name}</span>
+                <span className="text-zinc-600 font-mono text-xs font-bold">{c.dialCode}</span>
               </li>
             ))}
             {filteredCountries.length === 0 && (
-              <li className="px-3 py-2 text-sm text-zinc-500 text-center">No countries found</li>
+              <li className="px-3 py-4 text-sm text-zinc-500 text-center font-medium">No countries found</li>
             )}
           </ul>
         </div>

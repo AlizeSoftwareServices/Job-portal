@@ -426,7 +426,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               
               <div>
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">First Name</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">First Name</span>
                 {isEditing ? (
                   <input type="text" name="firstName" value={form.firstName} onChange={handleChange} className={inputClass} />
                 ) : (
@@ -435,7 +435,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
               </div>
               
               <div>
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Last Name</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Last Name</span>
                 {isEditing ? (
                   <input type="text" name="lastName" value={form.lastName} onChange={handleChange} className={inputClass} />
                 ) : (
@@ -444,7 +444,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Gender *</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Gender *</span>
                 {isEditing ? (
                   <select name="gender" value={form.gender} onChange={handleChange} className={inputClass} required>
                     <option value="">Select</option>
@@ -458,7 +458,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Date of Birth *</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Date of Birth *</span>
                 {isEditing ? (
                   <input type="date" name="dateOfBirth" value={form.dateOfBirth} onChange={handleChange} className={inputClass} required />
                 ) : (
@@ -467,7 +467,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Marital status *</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Marital status *</span>
                 {isEditing ? (
                   <select name="maritalStatus" value={form.maritalStatus} onChange={handleChange} className={inputClass} required>
                     <option value="">Select</option>
@@ -491,7 +491,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Primary contact *</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Primary contact *</span>
                 {isEditing ? (
                   <div className="flex gap-1 mt-1">
                      <div className="w-28 flex-shrink-0">
@@ -505,7 +505,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Secondary contact *</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Secondary contact *</span>
                 {isEditing ? (
                   <input type="tel" name="secondaryContactNumber" value={form.secondaryContactNumber} onChange={handleChange} className={inputClass} required />
                 ) : (
@@ -514,12 +514,12 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Email *</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Email *</span>
                 <p className="text-sm font-medium text-zinc-800 break-all">{form.email}</p>
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Current stay *</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Current stay *</span>
                 {isEditing ? (
                    <input type="text" name="currentStay" value={form.currentStay} onChange={handleChange} className={inputClass} required />
                 ) : (
@@ -528,7 +528,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Native place *</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Native place *</span>
                 {isEditing ? (
                    <input type="text" name="nativePlace" value={form.nativePlace} onChange={handleChange} className={inputClass} required />
                 ) : (
@@ -548,7 +548,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Father Name</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Father Name</span>
                 {isEditing ? (
                   <input type="text" name="fatherName" value={form.fatherName} onChange={handleChange} className={inputClass} />
                 ) : (
@@ -556,7 +556,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 )}
               </div>
               <div>
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Father occupation</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Father occupation</span>
                 {isEditing ? (
                   <input type="text" name="fatherOccupation" value={form.fatherOccupation} onChange={handleChange} className={inputClass} />
                 ) : (
@@ -564,7 +564,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 )}
               </div>
               <div>
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Mother Name</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Mother Name</span>
                 {isEditing ? (
                   <input type="text" name="motherName" value={form.motherName} onChange={handleChange} className={inputClass} />
                 ) : (
@@ -572,7 +572,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 )}
               </div>
               <div>
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Mother occupation</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Mother occupation</span>
                 {isEditing ? (
                   <input type="text" name="motherOccupation" value={form.motherOccupation} onChange={handleChange} className={inputClass} />
                 ) : (
@@ -592,7 +592,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Education qualification *</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Education qualification *</span>
                 {isEditing ? (
                   <input type="text" name="educationQualification" value={form.educationQualification} onChange={handleChange} className={inputClass} />
                 ) : (
@@ -601,7 +601,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Preferred Location *</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Preferred Location *</span>
                 {isEditing ? (
                   <input type="text" name="preferredLocation" value={form.preferredLocation} onChange={handleChange} className={inputClass} required />
                 ) : (
@@ -609,7 +609,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 )}
               </div>
               <div>
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Total work experience years</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Total work experience years</span>
                 {isEditing ? (
                   <input type="text" name="totalWorkExperienceYears" value={form.totalWorkExperienceYears} onChange={handleChange} className={inputClass} />
                 ) : (
@@ -617,7 +617,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 )}
               </div>
               <div className="sm:col-span-2">
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Current working details</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Current working details</span>
                 {isEditing ? (
                   <textarea name="currentWorkingDetails" value={form.currentWorkingDetails} onChange={handleChange} className={inputClass} />
                 ) : (
@@ -625,7 +625,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 )}
               </div>
               <div>
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Current Salary(Rs)/Month *</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Current Salary(Rs)/Month *</span>
                 {isEditing ? (
                   <>
                     <input type="text" name="currentSalary" value={form.currentSalary} onChange={handleChange} className={inputClass} required />
@@ -636,7 +636,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
                 )}
               </div>
               <div>
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Expected Salary(Rs) /Month *</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Expected Salary(Rs) /Month *</span>
                 {isEditing ? (
                   <input type="text" name="expectedSalary" value={form.expectedSalary} onChange={handleChange} className={inputClass} required />
                 ) : (
@@ -645,7 +645,7 @@ export default function ProfileView({ profile, onSaved }: { profile: any, onSave
               </div>
               
               <div className="sm:col-span-2">
-                <span className="block text-xs font-semibold text-sky-200 uppercase tracking-wider mb-1">Interest field to work</span>
+                <span className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Interest field to work</span>
                 {isEditing ? (
                   <div className="mt-2 text-sm text-zinc-900">
                     <Select 

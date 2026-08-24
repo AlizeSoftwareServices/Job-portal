@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer id="contact" className="bg-sky-800 text-sky-200 py-16 px-6 border-t border-sky-900/50 scroll-mt-10">
+    <footer id="contact" className="bg-sky-800 text-sky-200 pt-14 pb-12 sm:pb-16 px-4 sm:px-6 border-t border-sky-900/50 scroll-mt-10 w-full">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12">
         
         {/* Branding & About */}

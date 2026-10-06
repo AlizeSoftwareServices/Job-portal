@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Briefcase, Users, Layers, TrendingUp, Settings, LogOut, Search, Bell, Menu, MapPin, Clock, ChevronRight, Eye, EyeOff, Trash2, Edit, Save, X, Upload, Download, Building2, PieChart as PieChartIcon } from 'lucide-react';
+import { Briefcase, Users, Layers, TrendingUp, Settings, LogOut, Search, Bell, Menu, MapPin, Clock, ChevronRight, Eye, EyeOff, Trash2, Edit, Save, X, Upload, Download, Building2, PieChart as PieChartIcon, Mail, MessageSquare, CheckCircle2, Filter, CornerUpLeft, Phone } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import RelationalFlowChart from '@/components/RelationalFlowChart';
 
@@ -45,13 +45,13 @@ export default function AdminDashboard() {
     setIsAdminAuthenticated(false);
   };
 
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'jobs' | 'categories' | 'applications' | 'employers'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'jobs' | 'categories' | 'applications' | 'employers' | 'enquiries'>('dashboard');
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const tab = params.get('tab');
-      if (tab && ['dashboard', 'jobs', 'categories', 'applications', 'employers'].includes(tab)) {
+      if (tab && ['dashboard', 'jobs', 'categories', 'applications', 'employers', 'enquiries'].includes(tab)) {
         setActiveTab(tab as any);
       }
     }
@@ -146,6 +146,17 @@ export default function AdminDashboard() {
   const [jobDebouncedSearch, setJobDebouncedSearch] = useState('');
   const jobsPerPage = 16;
 
+  // State for Enquiries
+  const [enquiries, setEnquiries] = useState<any[]>([]);
+  const [enquiryStatusFilter, setEnquiryStatusFilter] = useState<string>('All');
+  const [enquirySearchInput, setEnquirySearchInput] = useState<string>('');
+  const [enquiryDebouncedSearch, setEnquiryDebouncedSearch] = useState<string>('');
+  const [enquiryCurrentPage, setEnquiryCurrentPage] = useState<number>(1);
+  const [enquiryTotalPages, setEnquiryTotalPages] = useState<number>(1);
+  const [enquiryTotalItems, setEnquiryTotalItems] = useState<number>(0);
+  const [pendingEnquiryCount, setPendingEnquiryCount] = useState<number>(0);
+  const [selectedEnquiry, setSelectedEnquiry] = useState<any | null>(null);
+
   // Derive filter options for Applications
   const appUniqueCategories = ['All', ...Array.from(new Set(applications.map((a: any) => a.job?.category?.name || 'General')))] as string[];
   const appUniqueJobs = ['All', ...Array.from(new Set(applications.map((a: any) => a.job?.title).filter(Boolean)))] as string[];
@@ -225,6 +236,27 @@ export default function AdminDashboard() {
     setJobCurrentPage(1);
   }, [jobDebouncedSearch, jobStatusFilter]);
 
+  // Debounce enquiry search input
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setEnquiryDebouncedSearch(enquirySearchInput);
+    }, 400);
+    return () => clearTimeout(handler);
+  }, [enquirySearchInput]);
+
+  // Fetch Enquiries when dependencies change
+  useEffect(() => {
+    if (!isAdminAuthenticated) return;
+    const controller = new AbortController();
+    if (activeTab === 'enquiries') fetchEnquiries(controller.signal);
+    return () => controller.abort();
+  }, [enquiryCurrentPage, enquiryDebouncedSearch, enquiryStatusFilter, isAdminAuthenticated, activeTab]);
+
+  // Reset pagination when enquiry filters change
+  useEffect(() => {
+    setEnquiryCurrentPage(1);
+  }, [enquiryDebouncedSearch, enquiryStatusFilter]);
+
   const API_URL = '/api';
 
   // Real-time polling
@@ -238,6 +270,7 @@ export default function AdminDashboard() {
       if (activeTab === 'applications') fetchApplications();
       if (activeTab === 'categories') fetchCategories(true);
       if (activeTab === 'employers') fetchEmployers(true);
+      if (activeTab === 'enquiries') fetchEnquiries();
     };
 
     window.addEventListener('focus', fetchCurrentTab);
@@ -247,7 +280,7 @@ export default function AdminDashboard() {
       window.removeEventListener('focus', fetchCurrentTab);
       clearInterval(interval);
     };
-  }, [isAdminAuthenticated, activeTab, jobCurrentPage, jobDebouncedSearch, jobStatusFilter, appCurrentPage, appDebouncedSearch, appStatusFilter]);
+  }, [isAdminAuthenticated, activeTab, jobCurrentPage, jobDebouncedSearch, jobStatusFilter, appCurrentPage, appDebouncedSearch, appStatusFilter, enquiryCurrentPage, enquiryDebouncedSearch, enquiryStatusFilter]);
 
 
   const fetchJobs = async (signal?: AbortSignal) => {
@@ -350,6 +383,81 @@ export default function AdminDashboard() {
       if(Array.isArray(data)) setEmployersList(data);
       setLoadedTabs(prev => new Set(prev).add('employers'));
     } catch (err) { console.error(err); }
+  };
+
+  const fetchEnquiries = async (signal?: AbortSignal) => {
+    try {
+      const params = new URLSearchParams({
+        page: enquiryCurrentPage.toString(),
+        limit: '15',
+        search: enquiryDebouncedSearch,
+        status: enquiryStatusFilter,
+      });
+      const token = localStorage.getItem('skyo_admin_token');
+      if (!token) { setIsAdminAuthenticated(false); return; }
+      const res = await fetch(`/api/admin/enquiries?${params.toString()}&_t=${Date.now()}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        signal,
+      });
+      if (res.status === 401) {
+        localStorage.removeItem('skyo_admin_auth');
+        localStorage.removeItem('skyo_admin_token');
+        setIsAdminAuthenticated(false);
+        return;
+      }
+      const data = await res.json();
+      if (data && data.enquiries) {
+        setEnquiries(data.enquiries);
+        setEnquiryTotalPages(data.pagination?.totalPages || 1);
+        setEnquiryTotalItems(data.pagination?.total || 0);
+        setPendingEnquiryCount(data.pendingCount || 0);
+      }
+    } catch (err) {
+      if ((err as any).name !== 'AbortError') console.error(err);
+    }
+  };
+
+  const handleUpdateEnquiryStatus = async (id: string, newStatus: string) => {
+    try {
+      const token = localStorage.getItem('skyo_admin_token');
+      const res = await fetch(`/api/admin/enquiries/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (res.ok) {
+        fetchEnquiries();
+        if (selectedEnquiry && selectedEnquiry.id === id) {
+          setSelectedEnquiry((prev: any) => prev ? { ...prev, status: newStatus } : null);
+        }
+      } else {
+        alert('Failed to update enquiry status.');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteEnquiry = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this enquiry?')) return;
+    try {
+      const token = localStorage.getItem('skyo_admin_token');
+      const res = await fetch(`/api/admin/enquiries/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        if (selectedEnquiry && selectedEnquiry.id === id) setSelectedEnquiry(null);
+        fetchEnquiries();
+      } else {
+        alert('Failed to delete enquiry.');
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleEmployerApproval = async (employerId: string, action: 'ONBOARD' | 'REJECT') => {
@@ -999,6 +1107,19 @@ export default function AdminDashboard() {
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${activeTab === 'employers' ? 'bg-sky-900 border-l-4 border-white text-white shadow-lg' : 'border-l-4 border-transparent hover:bg-white/10 hover:text-white'}`}
           >
             <Briefcase className="h-5 w-5" /> Client Management
+          </button>
+          <button 
+            onClick={() => { setActiveTab('enquiries'); setIsMobileMenuOpen(false); }}
+            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all font-medium ${activeTab === 'enquiries' ? 'bg-sky-900 border-l-4 border-white text-white shadow-lg' : 'border-l-4 border-transparent hover:bg-white/10 hover:text-white'}`}
+          >
+            <div className="flex items-center gap-3">
+              <MessageSquare className="h-5 w-5" /> Enquiries
+            </div>
+            {pendingEnquiryCount > 0 && (
+              <span className="bg-amber-400 text-slate-900 font-bold text-xs px-2 py-0.5 rounded-full shadow-sm animate-pulse">
+                {pendingEnquiryCount}
+              </span>
+            )}
           </button>
         </nav>
 
@@ -2098,6 +2219,412 @@ export default function AdminDashboard() {
                     )}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          )}
+
+          {/* ENQUIRIES TAB */}
+          {activeTab === 'enquiries' && (
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-6">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-2xl font-black text-slate-800">Enquiries & Contact Messages</h2>
+                  <p className="text-sm text-slate-500 mt-1">
+                    Manage enquiries submitted via the landing page contact form.
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => fetchEnquiries()}
+                    className="px-4 py-2 bg-sky-50 text-sky-800 font-bold text-sm rounded-xl border border-sky-200 hover:bg-sky-100 transition-colors flex items-center gap-2 shadow-xs"
+                  >
+                    Refresh List
+                  </button>
+                </div>
+              </div>
+
+              {/* Summary Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Enquiries</p>
+                    <p className="text-2xl font-black text-slate-800 mt-1">{enquiryTotalItems}</p>
+                  </div>
+                  <div className="p-3 bg-sky-100 text-sky-700 rounded-xl">
+                    <MessageSquare className="w-6 h-6" />
+                  </div>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Pending Action</p>
+                    <p className="text-2xl font-black text-amber-600 mt-1">{pendingEnquiryCount}</p>
+                  </div>
+                  <div className="p-3 bg-amber-100 text-amber-600 rounded-xl">
+                    <Clock className="w-6 h-6" />
+                  </div>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Filter Status</p>
+                    <p className="text-lg font-bold text-slate-800 mt-1 uppercase">{enquiryStatusFilter}</p>
+                  </div>
+                  <div className="p-3 bg-purple-100 text-purple-600 rounded-xl">
+                    <Filter className="w-6 h-6" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Filters & Search */}
+              <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div className="relative w-full md:w-96">
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="Search by name, email, subject, message..."
+                    value={enquirySearchInput}
+                    onChange={(e) => setEnquirySearchInput(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-sky-600 focus:ring-1 focus:ring-sky-600"
+                  />
+                  {enquirySearchInput && (
+                    <button
+                      onClick={() => setEnquirySearchInput('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+                  <span className="text-xs font-bold text-slate-500 uppercase mr-1 whitespace-nowrap">Status:</span>
+                  {['All', 'PENDING', 'READ', 'RESOLVED'].map((st) => (
+                    <button
+                      key={st}
+                      onClick={() => setEnquiryStatusFilter(st)}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                        enquiryStatusFilter === st
+                          ? 'bg-sky-800 text-white shadow-sm'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      }`}
+                    >
+                      {st}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Enquiries Table */}
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase tracking-wider">
+                        <th className="py-3.5 px-4 font-bold">Date & Time</th>
+                        <th className="py-3.5 px-4 font-bold">Sender Info</th>
+                        <th className="py-3.5 px-4 font-bold">Subject</th>
+                        <th className="py-3.5 px-4 font-bold">Message Preview</th>
+                        <th className="py-3.5 px-4 font-bold text-center">Status</th>
+                        <th className="py-3.5 px-4 font-bold text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 text-sm">
+                      {enquiries.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="py-12 text-center text-slate-400">
+                            <MessageSquare className="w-10 h-10 mx-auto mb-3 opacity-30" />
+                            <p className="font-semibold text-slate-600">No enquiries found</p>
+                            <p className="text-xs text-slate-400 mt-1">Try clearing filters or checking back later.</p>
+                          </td>
+                        </tr>
+                      ) : (
+                        enquiries.map((enq) => (
+                          <tr
+                            key={enq.id}
+                            className={`hover:bg-sky-50/50 transition-colors ${
+                              enq.status === 'PENDING' ? 'bg-amber-50/30 font-medium' : ''
+                            }`}
+                          >
+                            <td className="py-4 px-4 text-xs text-slate-500 whitespace-nowrap">
+                              {new Date(enq.createdAt).toLocaleString('en-IN', {
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </td>
+
+                            <td className="py-4 px-4 whitespace-nowrap">
+                              <div className="font-bold text-slate-800">{enq.name}</div>
+                              <div className="text-xs text-slate-500 flex items-center gap-1.5 mt-0.5">
+                                <Mail className="w-3 h-3 text-sky-600" />
+                                <a href={`mailto:${enq.email}`} className="hover:underline hover:text-sky-700">
+                                  {enq.email}
+                                </a>
+                              </div>
+                              {enq.phone && (
+                                <div className="text-xs text-slate-500 flex items-center gap-1.5 mt-0.5">
+                                  <Phone className="w-3 h-3 text-emerald-600" />
+                                  <a href={`tel:${enq.phone}`} className="hover:underline">
+                                    {enq.phone}
+                                  </a>
+                                </div>
+                              )}
+                            </td>
+
+                            <td className="py-4 px-4 max-w-[180px] truncate text-slate-700 font-medium">
+                              {enq.subject || 'General Enquiry'}
+                            </td>
+
+                            <td className="py-4 px-4 max-w-[280px] truncate text-slate-600 text-xs">
+                              {enq.message}
+                            </td>
+
+                            <td className="py-4 px-4 text-center whitespace-nowrap">
+                              {enq.status === 'PENDING' && (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                  Pending
+                                </span>
+                              )}
+                              {enq.status === 'READ' && (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-sky-100 text-sky-800 text-xs font-bold">
+                                  Read
+                                </span>
+                              )}
+                              {enq.status === 'RESOLVED' && (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">
+                                  Resolved
+                                </span>
+                              )}
+                            </td>
+
+                            <td className="py-4 px-4 text-right whitespace-nowrap">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  onClick={() => setSelectedEnquiry(enq)}
+                                  title="View Full Enquiry"
+                                  className="p-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-sky-600 hover:text-white transition-colors"
+                                >
+                                  <Eye className="w-4 h-4" />
+                                </button>
+
+                                <a
+                                  href={`mailto:${enq.email}?subject=Re: ${encodeURIComponent(
+                                    enq.subject || 'Enquiry with Skyo Consultancy'
+                                  )}&body=${encodeURIComponent(`Dear ${enq.name},\n\nThank you for contacting Skyo Consultancy.\n\n`)}`}
+                                  title="Reply via Email"
+                                  onClick={() => {
+                                    if (enq.status === 'PENDING') handleUpdateEnquiryStatus(enq.id, 'READ');
+                                  }}
+                                  className="p-1.5 rounded-lg bg-sky-50 text-sky-700 hover:bg-sky-700 hover:text-white transition-colors"
+                                >
+                                  <CornerUpLeft className="w-4 h-4" />
+                                </a>
+
+                                {enq.status !== 'RESOLVED' ? (
+                                  <button
+                                    onClick={() => handleUpdateEnquiryStatus(enq.id, 'RESOLVED')}
+                                    title="Mark as Resolved"
+                                    className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white transition-colors"
+                                  >
+                                    <CheckCircle2 className="w-4 h-4" />
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={() => handleUpdateEnquiryStatus(enq.id, 'PENDING')}
+                                    title="Mark as Pending"
+                                    className="p-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-600 hover:text-white transition-colors"
+                                  >
+                                    <Clock className="w-4 h-4" />
+                                  </button>
+                                )}
+
+                                <button
+                                  onClick={() => handleDeleteEnquiry(enq.id)}
+                                  title="Delete Enquiry"
+                                  className="p-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-colors"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Pagination */}
+                {enquiryTotalPages > 1 && (
+                  <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs font-bold text-slate-600">
+                    <div>
+                      Page {enquiryCurrentPage} of {enquiryTotalPages} ({enquiryTotalItems} total items)
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        disabled={enquiryCurrentPage <= 1}
+                        onClick={() => setEnquiryCurrentPage((p) => Math.max(p - 1, 1))}
+                        className="px-3 py-1.5 bg-white border border-slate-300 rounded-lg hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        Previous
+                      </button>
+                      <button
+                        disabled={enquiryCurrentPage >= enquiryTotalPages}
+                        onClick={() => setEnquiryCurrentPage((p) => Math.min(p + 1, enquiryTotalPages))}
+                        className="px-3 py-1.5 bg-white border border-slate-300 rounded-lg hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Enquiry Detail Modal */}
+          {selectedEnquiry && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+              <div className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200">
+                <div className="p-6 bg-sky-900 text-white flex justify-between items-center">
+                  <div>
+                    <h3 className="text-lg font-bold">Enquiry Details</h3>
+                    <p className="text-xs text-sky-200">
+                      Received on{' '}
+                      {new Date(selectedEnquiry.createdAt).toLocaleString('en-IN', {
+                        dateStyle: 'full',
+                        timeStyle: 'short',
+                      })}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setSelectedEnquiry(null)}
+                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="p-6 space-y-6">
+                  {/* Sender Details */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                    <div>
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Sender Name</p>
+                      <p className="text-base font-bold text-slate-800 mt-0.5">{selectedEnquiry.name}</p>
+                    </div>
+
+                    <div>
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Email Address</p>
+                      <a
+                        href={`mailto:${selectedEnquiry.email}`}
+                        className="text-sm font-semibold text-sky-700 hover:underline block mt-0.5 break-all"
+                      >
+                        {selectedEnquiry.email}
+                      </a>
+                    </div>
+
+                    <div>
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Phone Number</p>
+                      <p className="text-sm font-semibold text-slate-800 mt-0.5">
+                        {selectedEnquiry.phone ? (
+                          <a href={`tel:${selectedEnquiry.phone}`} className="hover:underline text-emerald-700">
+                            {selectedEnquiry.phone}
+                          </a>
+                        ) : (
+                          'Not provided'
+                        )}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Current Status</p>
+                      <div className="mt-1">
+                        <span
+                          className={`inline-block px-3 py-0.5 rounded-full text-xs font-bold ${
+                            selectedEnquiry.status === 'PENDING'
+                              ? 'bg-amber-100 text-amber-800'
+                              : selectedEnquiry.status === 'READ'
+                              ? 'bg-sky-100 text-sky-800'
+                              : 'bg-emerald-100 text-emerald-800'
+                          }`}
+                        >
+                          {selectedEnquiry.status}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Subject & Message */}
+                  <div>
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Subject</p>
+                    <p className="text-sm font-bold text-slate-800 p-3 bg-slate-100 rounded-xl">
+                      {selectedEnquiry.subject || 'General Enquiry'}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Full Message</p>
+                    <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-800 text-sm whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto">
+                      {selectedEnquiry.message}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer Buttons */}
+                <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex flex-wrap justify-between items-center gap-3">
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleUpdateEnquiryStatus(selectedEnquiry.id, 'PENDING')}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold ${
+                        selectedEnquiry.status === 'PENDING'
+                          ? 'bg-amber-600 text-white'
+                          : 'bg-slate-200 text-slate-700 hover:bg-amber-100 hover:text-amber-800'
+                      }`}
+                    >
+                      Pending
+                    </button>
+                    <button
+                      onClick={() => handleUpdateEnquiryStatus(selectedEnquiry.id, 'READ')}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold ${
+                        selectedEnquiry.status === 'READ'
+                          ? 'bg-sky-700 text-white'
+                          : 'bg-slate-200 text-slate-700 hover:bg-sky-100 hover:text-sky-800'
+                      }`}
+                    >
+                      Read
+                    </button>
+                    <button
+                      onClick={() => handleUpdateEnquiryStatus(selectedEnquiry.id, 'RESOLVED')}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold ${
+                        selectedEnquiry.status === 'RESOLVED'
+                          ? 'bg-emerald-600 text-white'
+                          : 'bg-slate-200 text-slate-700 hover:bg-emerald-100 hover:text-emerald-800'
+                      }`}
+                    >
+                      Resolved
+                    </button>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <a
+                      href={`mailto:${selectedEnquiry.email}?subject=Re: ${encodeURIComponent(
+                        selectedEnquiry.subject || 'Enquiry with Skyo Consultancy'
+                      )}`}
+                      onClick={() => {
+                        if (selectedEnquiry.status === 'PENDING') {
+                          handleUpdateEnquiryStatus(selectedEnquiry.id, 'READ');
+                        }
+                      }}
+                      className="px-4 py-2 bg-sky-800 hover:bg-sky-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors shadow-sm"
+                    >
+                      <CornerUpLeft className="w-4 h-4" /> Reply via Email
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           )}

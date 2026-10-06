@@ -329,3 +329,18 @@ model OtpCode {
   expiresAt DateTime
   createdAt DateTime @default(now())
 }
+
+model Enquiry {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String
+  status    String   @default("PENDING") // PENDING, READ, RESOLVED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+}
+

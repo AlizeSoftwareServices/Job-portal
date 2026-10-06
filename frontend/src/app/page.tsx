@@ -10,6 +10,7 @@ import JobCard from '../components/JobCard';
 import GlobalSearchBar from '../components/GlobalSearchBar';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import ContactEnquirySection from '../components/ContactEnquirySection';
 
 export const revalidate = 60; // Cache for 60 seconds (ISR)
 
@@ -667,6 +668,9 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* Contact Enquiry Section */}
+      <ContactEnquirySection />
 
       {/* 5. Contact Us / Social Awareness Section (#contact) */}
       <div className="mt-auto">

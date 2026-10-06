@@ -124,6 +124,8 @@ model EmployerProfile {
   secondaryContactNumber String?
   referenceName          String?
   referenceContact       String?
+  ownerName              String?
+  ownerContactNumber     String?
   approvalStatus   ApprovalStatus @default(DRAFT)
 }
 

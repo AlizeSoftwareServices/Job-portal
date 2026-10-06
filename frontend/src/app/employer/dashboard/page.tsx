@@ -116,7 +116,10 @@ export default function EmployerDashboard() {
       if (data.employerProfile) {
         setProfile({
           ...data.employerProfile,
-          primaryContactNumber: data.phone || ''
+          ownerName: data.employerProfile.ownerName || data.firstName || '',
+          ownerContactNumber: data.employerProfile.ownerContactNumber || data.phone || '',
+          primaryContactNumber: data.phone || data.employerProfile.primaryContactNumber || '',
+          secondaryContactNumber: data.employerProfile.secondaryContactNumber || ''
         });
       }
     } catch(err) { console.error(err); }
@@ -279,12 +282,16 @@ export default function EmployerDashboard() {
   };
 
   const isProfileComplete = () => {
-    return profile.companyName?.trim() && 
+    return profile.ownerName?.trim() && 
+           profile.ownerContactNumber?.trim() && 
+           profile.companyName?.trim() && 
            profile.primaryContactNumber?.trim() && 
-           profile.industry?.trim() && 
+           profile.secondaryContactNumber?.trim() && 
            profile.companyLocation?.trim() && 
            profile.hrName?.trim() && 
-           profile.officialMailId?.trim();
+           profile.hrContactNumber?.trim() && 
+           profile.officialMailId?.trim() && 
+           profile.companyWebsite?.trim();
   };
 
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -432,7 +439,7 @@ export default function EmployerDashboard() {
             <Briefcase className="h-5 w-5" /> Manage Jobs
           </button>
           <button onClick={() => { setActiveTab('direct_applicants'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${activeTab === 'direct_applicants' ? 'bg-sky-900 border-l-4 border-white text-white shadow-lg' : 'border-l-4 border-transparent hover:bg-white/10 hover:text-white'}`}>
-            <Users className="h-5 w-5" /> Direct Applicants
+            <Users className="h-5 w-5" /> Employer Applications
           </button>
           <button onClick={() => { setActiveTab('skyo_applicants'); setIsCreatingJob(false); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${activeTab === 'skyo_applicants' ? 'bg-sky-900 border-l-4 border-white text-white shadow-lg' : 'border-l-4 border-transparent hover:bg-white/10 hover:text-white'}`}>
             <FileText className="h-5 w-5" /> Skyo Applicants
@@ -453,13 +460,13 @@ export default function EmployerDashboard() {
             <button className="md:hidden p-2 -ml-2 text-zinc-600" onClick={() => setIsMobileMenuOpen(true)}>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
-            <h1 className="text-xl md:text-2xl font-black text-slate-800 capitalize tracking-tight">{activeTab.replace('_', ' ')}</h1>
+            <h1 className="text-xl md:text-2xl font-black text-slate-800 capitalize tracking-tight">{activeTab === 'direct_applicants' ? 'Employer Applications' : activeTab.replace('_', ' ')}</h1>
           </div>
           {activeTab === 'jobs' && !isCreatingJob && (
              <button 
                onClick={() => {
                  if (!isProfileComplete()) {
-                   alert('Please complete your Company Profile Information (including Company Name, Contact, Industry, Location, HR Name, and Official Mail ID) before posting a new job.');
+                   alert('Please complete all mandatory Company Profile Information (including Owner Details, Company Name, Contact Numbers, Location, HR Details, Official Mail ID, and Website) before posting a new job.');
                    setActiveTab('profile');
                    setIsEditingProfile(true);
                    return;
@@ -577,7 +584,23 @@ export default function EmployerDashboard() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-bold text-zinc-700 mb-1">Company Name</label>
+                      <label className="block text-sm font-bold text-zinc-700 mb-1">Owner Name <span className="text-red-500">*</span></label>
+                      {isEditingProfile ? (
+                        <input type="text" value={profile.ownerName || ''} onChange={e => setProfile({...profile, ownerName: e.target.value})} className="w-full border p-2.5 rounded outline-none focus:border-amber-500" placeholder="e.g. John Doe" />
+                      ) : (
+                        <p className="text-sm font-medium text-zinc-800 p-2.5 bg-zinc-50 rounded border border-transparent">{profile.ownerName || '-'}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-zinc-700 mb-1">Owner Contact Number <span className="text-red-500">*</span></label>
+                      {isEditingProfile ? (
+                        <input type="text" value={profile.ownerContactNumber || ''} onChange={e => setProfile({...profile, ownerContactNumber: e.target.value})} className="w-full border p-2.5 rounded outline-none focus:border-amber-500" placeholder="e.g. +91 9876543210" />
+                      ) : (
+                        <p className="text-sm font-medium text-zinc-800 p-2.5 bg-zinc-50 rounded border border-transparent">{profile.ownerContactNumber || '-'}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-zinc-700 mb-1">Company Name <span className="text-red-500">*</span></label>
                       {isEditingProfile ? (
                         <input type="text" value={profile.companyName || ''} onChange={e => setProfile({...profile, companyName: e.target.value})} className="w-full border p-2.5 rounded outline-none focus:border-amber-500" placeholder="e.g. Acme Corp" />
                       ) : (
@@ -585,11 +608,19 @@ export default function EmployerDashboard() {
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-zinc-700 mb-1">Primary Contact Number</label>
+                      <label className="block text-sm font-bold text-zinc-700 mb-1">Primary Contact Number <span className="text-red-500">*</span></label>
                       {isEditingProfile ? (
                         <input type="text" value={profile.primaryContactNumber || ''} onChange={e => setProfile({...profile, primaryContactNumber: e.target.value})} className="w-full border p-2.5 rounded outline-none focus:border-amber-500" placeholder="e.g. +91 9876543210" />
                       ) : (
                         <p className="text-sm font-medium text-zinc-800 p-2.5 bg-zinc-50 rounded border border-transparent">{profile.primaryContactNumber || '-'}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-zinc-700 mb-1">Secondary Contact Number <span className="text-red-500">*</span></label>
+                      {isEditingProfile ? (
+                        <input type="text" value={profile.secondaryContactNumber || ''} onChange={e => setProfile({...profile, secondaryContactNumber: e.target.value})} className="w-full border p-2.5 rounded outline-none focus:border-amber-500" placeholder="e.g. +91 9876543211" />
+                      ) : (
+                        <p className="text-sm font-medium text-zinc-800 p-2.5 bg-zinc-50 rounded border border-transparent">{profile.secondaryContactNumber || '-'}</p>
                       )}
                     </div>
                     <div>
@@ -601,7 +632,7 @@ export default function EmployerDashboard() {
                       )}
                     </div>
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-bold text-zinc-700 mb-1">Company Location</label>
+                      <label className="block text-sm font-bold text-zinc-700 mb-1">Company Location <span className="text-red-500">*</span></label>
                       {isEditingProfile ? (
                         <textarea value={profile.companyLocation || ''} onChange={e => setProfile({...profile, companyLocation: e.target.value})} className="w-full border p-2.5 rounded outline-none focus:border-amber-500" rows={2} placeholder="Full address of the company"></textarea>
                       ) : (
@@ -609,7 +640,7 @@ export default function EmployerDashboard() {
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-zinc-700 mb-1">HR Name</label>
+                      <label className="block text-sm font-bold text-zinc-700 mb-1">HR Name <span className="text-red-500">*</span></label>
                       {isEditingProfile ? (
                         <input type="text" value={profile.hrName || ''} onChange={e => setProfile({...profile, hrName: e.target.value})} className="w-full border p-2.5 rounded outline-none focus:border-amber-500" placeholder="e.g. Jane Doe" />
                       ) : (
@@ -617,7 +648,7 @@ export default function EmployerDashboard() {
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-zinc-700 mb-1">HR Contact Number</label>
+                      <label className="block text-sm font-bold text-zinc-700 mb-1">HR Contact Number <span className="text-red-500">*</span></label>
                       {isEditingProfile ? (
                         <input type="text" value={profile.hrContactNumber || ''} onChange={e => setProfile({...profile, hrContactNumber: e.target.value})} className="w-full border p-2.5 rounded outline-none focus:border-amber-500" placeholder="e.g. +91 8765432109" />
                       ) : (
@@ -625,7 +656,7 @@ export default function EmployerDashboard() {
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-zinc-700 mb-1">Official Mail id</label>
+                      <label className="block text-sm font-bold text-zinc-700 mb-1">Official Mail id <span className="text-red-500">*</span></label>
                       {isEditingProfile ? (
                         <input type="email" value={profile.officialMailId || ''} onChange={e => setProfile({...profile, officialMailId: e.target.value})} className="w-full border p-2.5 rounded outline-none focus:border-amber-500" placeholder="hr@acmecorp.com" />
                       ) : (
@@ -633,7 +664,7 @@ export default function EmployerDashboard() {
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-zinc-700 mb-1">Company Website</label>
+                      <label className="block text-sm font-bold text-zinc-700 mb-1">Company Website <span className="text-red-500">*</span></label>
                       {isEditingProfile ? (
                         <input type="url" value={profile.companyWebsite || ''} onChange={e => setProfile({...profile, companyWebsite: e.target.value})} className="w-full border p-2.5 rounded outline-none focus:border-amber-500" placeholder="https://..." />
                       ) : (
@@ -1016,7 +1047,7 @@ export default function EmployerDashboard() {
                     <tr>
                       <td colSpan={5} className="p-10 text-center">
                         <Users className="w-10 h-10 text-sky-100 mx-auto mb-3" />
-                        <span className="text-slate-500 font-bold">No direct applications found.</span>
+                        <span className="text-slate-500 font-bold">No employer applications found.</span>
                       </td>
                     </tr>
                   ) : (

@@ -16,15 +16,39 @@ export default function ApplyClient({ job, profileData, candidateProfile }: { jo
   const derivedLastName = profileData.lastName || (candidateProfile?.fullName ? candidateProfile.fullName.substring(derivedFirstName.length).trim() : '');
   const derivedPhone = profileData.phone || candidateProfile?.phone || '';
 
+  const isCandidateProfileComplete = () => {
+    if (!candidateProfile) return false;
+    const hasName = Boolean(derivedFirstName?.trim());
+    const hasEmail = Boolean(profileData.email?.trim());
+    const hasGender = Boolean(candidateProfile.gender?.trim());
+    const hasDob = Boolean(candidateProfile.dateOfBirth);
+    const hasPrimaryPhone = Boolean(derivedPhone?.trim());
+    const hasSecondaryPhone = Boolean(candidateProfile.secondaryContactNumber?.trim());
+    const hasEducation = Boolean((candidateProfile.educationQualification || candidateProfile.highestQualification)?.trim());
+    const hasCurrentSalary = Boolean(candidateProfile.currentSalary?.trim());
+    const hasExpectedSalary = Boolean(candidateProfile.expectedSalary?.trim());
+    const hasCurrentStay = Boolean((candidateProfile.currentStay || candidateProfile.addressState)?.trim());
+    const hasNativePlace = Boolean((candidateProfile.nativePlace || candidateProfile.addressCity)?.trim());
+    const hasInterestField = Boolean(
+      (Array.isArray(candidateProfile.interestFieldToWork) && candidateProfile.interestFieldToWork.length > 0) ||
+      (typeof candidateProfile.interestFieldToWork === 'string' && candidateProfile.interestFieldToWork.trim())
+    );
+    const hasResume = Boolean(candidateProfile.resumeUrl?.trim());
+
+    return hasName && hasEmail && hasGender && hasDob && hasPrimaryPhone && hasSecondaryPhone &&
+           hasEducation && hasCurrentSalary && hasExpectedSalary && hasCurrentStay &&
+           hasNativePlace && hasInterestField && hasResume;
+  };
+
   useEffect(() => {
-    if (!candidateProfile || !candidateProfile.resumeUrl || !derivedFirstName || !derivedPhone) {
-      alert('Please complete your candidate profile (including Resume and Contact details) before applying for jobs.');
+    if (!isCandidateProfileComplete()) {
+      alert('Please complete all mandatory details in your candidate profile (including Name, Gender, DOB, Primary & Secondary Contact, Qualification, Current & Expected Salary, Current State, Native Place, Interested Field, and Resume) before applying for jobs.');
       router.push('/profile');
     }
   }, [candidateProfile, derivedFirstName, derivedPhone, router]);
 
   // If incomplete, just show a blank or loading state while redirecting
-  if (!candidateProfile || !candidateProfile.resumeUrl || !derivedFirstName || !derivedPhone) {
+  if (!isCandidateProfileComplete()) {
     return <div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-800"></div></div>;
   }
 

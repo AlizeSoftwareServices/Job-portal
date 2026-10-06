@@ -128,6 +128,8 @@ export async function PUT(req: NextRequest) {
           ...(data.employerProfile.secondaryContactNumber && { secondaryContactNumber: data.employerProfile.secondaryContactNumber }),
           ...(data.employerProfile.referenceName && { referenceName: data.employerProfile.referenceName }),
           ...(data.employerProfile.referenceContact && { referenceContact: data.employerProfile.referenceContact }),
+          ...(data.employerProfile.ownerName && { ownerName: data.employerProfile.ownerName }),
+          ...(data.employerProfile.ownerContactNumber && { ownerContactNumber: data.employerProfile.ownerContactNumber }),
           ...(data.employerProfile.companyLogoUrl !== undefined && { companyLogoUrl: data.employerProfile.companyLogoUrl })
         }
       });

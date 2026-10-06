@@ -340,8 +340,8 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
             <input type="date" name="dateOfBirth" value={form.dateOfBirth} onChange={handleChange} className={inputClass} required />
           </div>
           <div>
-            <label className={labelClass}>Marital status *</label>
-            <select name="maritalStatus" value={form.maritalStatus} onChange={handleChange} className={inputClass} required>
+            <label className={labelClass}>Marital status</label>
+            <select name="maritalStatus" value={form.maritalStatus} onChange={handleChange} className={inputClass}>
               <option value="">Select</option>
               <option value="Single">Single</option>
               <option value="Married">Married</option>
@@ -401,8 +401,8 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
         <h3 className="text-xl font-bold text-zinc-900 mb-6 mt-10 border-b pb-2">Professional Details</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div>
-            <label className={labelClass}>Education qualification</label>
-            <input type="text" name="educationQualification" value={form.educationQualification} onChange={handleChange} className={inputClass} placeholder="e.g., B.E Computer Science" />
+            <label className={labelClass}>Education qualification *</label>
+            <input type="text" name="educationQualification" value={form.educationQualification} onChange={handleChange} className={inputClass} placeholder="e.g., B.E Computer Science" required />
           </div>
           <div>
             <label className={labelClass}>Total work experience years</label>
@@ -421,7 +421,7 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
             <input type="text" name="expectedSalary" value={form.expectedSalary} onChange={handleChange} className={inputClass} required />
           </div>
           <div className="md:col-span-2">
-            <label className={labelClass}>Interest field to work</label>
+            <label className={labelClass}>Interest field to work *</label>
             <div className="mt-2 text-sm text-zinc-900">
               <Select 
                 isMulti
@@ -439,7 +439,7 @@ export default function EditProfileForm({ profile, onSaved, onLogout }: { profil
 
       {/* Resume */}
       <div className={sectionClass}>
-        <h3 className="text-xl font-bold text-zinc-900 mb-6">Resume</h3>
+        <h3 className="text-xl font-bold text-zinc-900 mb-6">Resume <span className="text-red-500">*</span></h3>
         <div className="flex flex-col md:flex-row items-center gap-6">
           <div className="flex-1">
             <label className="block w-full border-2 border-dashed border-zinc-300 hover:border-amber-500 rounded-2xl p-8 text-center cursor-pointer transition-colors bg-zinc-50">

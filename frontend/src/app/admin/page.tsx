@@ -2377,50 +2377,53 @@ export default function AdminDashboard() {
 
           {/* Enquiry Detail Modal */}
           {selectedEnquiry && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-              <div className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200">
-                <div className="p-6 bg-sky-900 text-white flex justify-between items-center">
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs">
+              <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-2xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200">
+                <div className="p-4 sm:p-6 bg-sky-900 text-white flex justify-between items-center shrink-0">
                   <div>
-                    <h3 className="text-lg font-bold">Enquiry Details</h3>
-                    <p className="text-xs text-sky-200">
+                    <h3 className="text-base sm:text-lg font-bold">Enquiry Details</h3>
+                    <p className="text-xs text-sky-200 mt-0.5">
                       Received on{' '}
                       {new Date(selectedEnquiry.createdAt).toLocaleString('en-IN', {
-                        dateStyle: 'full',
-                        timeStyle: 'short',
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
                       })}
                     </p>
                   </div>
                   <button
                     onClick={() => setSelectedEnquiry(null)}
-                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                    className="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
                   >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
 
-                <div className="p-6 space-y-6">
+                <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto">
                   {/* Sender Details */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200">
                     <div>
-                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Sender Name</p>
-                      <p className="text-base font-bold text-slate-800 mt-0.5">{selectedEnquiry.name}</p>
+                      <p className="text-[11px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Sender Name</p>
+                      <p className="text-sm sm:text-base font-bold text-slate-800 mt-0.5 break-words">{selectedEnquiry.name}</p>
                     </div>
 
                     <div>
-                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Email Address</p>
+                      <p className="text-[11px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Email Address</p>
                       <a
                         href={`mailto:${selectedEnquiry.email}?subject=Re: ${encodeURIComponent(
                           selectedEnquiry.subject || 'Enquiry - Skyo Consultancy'
                         )}`}
-                        className="text-sm font-semibold text-sky-700 hover:underline block mt-0.5 break-all"
+                        className="text-xs sm:text-sm font-semibold text-sky-700 hover:underline block mt-0.5 break-all"
                       >
                         {selectedEnquiry.email}
                       </a>
                     </div>
 
                     <div>
-                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Phone Number</p>
-                      <p className="text-sm font-semibold text-slate-800 mt-0.5">
+                      <p className="text-[11px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Phone Number</p>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-800 mt-0.5">
                         {selectedEnquiry.phone ? (
                           <a href={`tel:${selectedEnquiry.phone}`} className="hover:underline text-emerald-700">
                             {selectedEnquiry.phone}
@@ -2434,35 +2437,33 @@ export default function AdminDashboard() {
 
                   {/* Subject & Message */}
                   <div>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Subject</p>
-                    <p className="text-sm font-bold text-slate-800 p-3 bg-slate-100 rounded-xl">
+                    <p className="text-[11px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Subject</p>
+                    <p className="text-xs sm:text-sm font-bold text-slate-800 p-3 bg-slate-100 rounded-xl break-words">
                       {selectedEnquiry.subject || 'General Enquiry'}
                     </p>
                   </div>
 
                   <div>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Full Message</p>
-                    <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-800 text-sm whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto">
+                    <p className="text-[11px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Full Message</p>
+                    <div className="p-3.5 sm:p-4 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl text-slate-800 text-xs sm:text-sm whitespace-pre-wrap leading-relaxed max-h-52 overflow-y-auto break-words">
                       {selectedEnquiry.message}
                     </div>
                   </div>
                 </div>
 
                 {/* Footer Buttons */}
-                <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex flex-wrap justify-between items-center gap-3">
-                  <div>
-                    <button
-                      onClick={() => handleDeleteEnquiry(selectedEnquiry.id)}
-                      className="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" /> Delete Enquiry
-                    </button>
-                  </div>
+                <div className="px-4 sm:px-6 py-3 sm:py-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2.5 sm:gap-3 shrink-0">
+                  <button
+                    onClick={() => handleDeleteEnquiry(selectedEnquiry.id)}
+                    className="w-full sm:w-auto px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" /> Delete Enquiry
+                  </button>
 
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
                     <button
                       onClick={() => setSelectedEnquiry(null)}
-                      className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-xl transition-colors"
+                      className="flex-1 sm:flex-none px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-xl transition-colors text-center"
                     >
                       Close
                     </button>
@@ -2470,7 +2471,7 @@ export default function AdminDashboard() {
                       href={`mailto:${selectedEnquiry.email}?subject=Re: ${encodeURIComponent(
                         selectedEnquiry.subject || 'Enquiry - Skyo Consultancy'
                       )}`}
-                      className="px-4 py-2 bg-sky-800 hover:bg-sky-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors shadow-sm"
+                      className="flex-1 sm:flex-none px-4 py-2 bg-sky-800 hover:bg-sky-700 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-colors shadow-sm text-center"
                     >
                       <CornerUpLeft className="w-4 h-4" /> Reply via Email
                     </a>

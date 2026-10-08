@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 };
 
 import NextTopLoader from 'nextjs-toploader';
+import FloatingContactButtons from '@/components/FloatingContactButtons';
 
 export default function RootLayout({
   children,
@@ -27,6 +28,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-sans">
         <NextTopLoader color="#22c55e" showSpinner={false} height={4} />
         {children}
+        <FloatingContactButtons />
       </body>
     </html>
   );

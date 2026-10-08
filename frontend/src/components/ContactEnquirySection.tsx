@@ -100,8 +100,8 @@ export default function ContactEnquirySection() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <h4 className="text-[11px] sm:text-xs uppercase tracking-wider text-sky-300 font-semibold mb-0.5">Official Email</h4>
-                    <a href="mailto:skyotechnical@gmail.com" className="text-white font-medium hover:text-amber-400 transition-colors block text-sm sm:text-base break-all">
-                      skyotechnical@gmail.com
+                    <a href="mailto:skyoconsultancy@gmail.com" className="text-white font-medium hover:text-amber-400 transition-colors block text-sm sm:text-base break-all">
+                      skyoconsultancy@gmail.com
                     </a>
                   </div>
                 </div>

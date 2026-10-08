@@ -282,9 +282,7 @@ export default function EmployerDashboard() {
   };
 
   const isProfileComplete = () => {
-    return profile.ownerName?.trim() && 
-           profile.ownerContactNumber?.trim() && 
-           profile.companyName?.trim() && 
+    return profile.companyName?.trim() && 
            profile.primaryContactNumber?.trim() && 
            profile.secondaryContactNumber?.trim() && 
            profile.companyLocation?.trim() && 
@@ -583,22 +581,6 @@ export default function EmployerDashboard() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-bold text-zinc-700 mb-1">Owner Name <span className="text-red-500">*</span></label>
-                      {isEditingProfile ? (
-                        <input type="text" value={profile.ownerName || ''} onChange={e => setProfile({...profile, ownerName: e.target.value})} className="w-full border p-2.5 rounded outline-none focus:border-amber-500" placeholder="e.g. John Doe" />
-                      ) : (
-                        <p className="text-sm font-medium text-zinc-800 p-2.5 bg-zinc-50 rounded border border-transparent">{profile.ownerName || '-'}</p>
-                      )}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-bold text-zinc-700 mb-1">Owner Contact Number <span className="text-red-500">*</span></label>
-                      {isEditingProfile ? (
-                        <input type="text" value={profile.ownerContactNumber || ''} onChange={e => setProfile({...profile, ownerContactNumber: e.target.value})} className="w-full border p-2.5 rounded outline-none focus:border-amber-500" placeholder="e.g. +91 9876543210" />
-                      ) : (
-                        <p className="text-sm font-medium text-zinc-800 p-2.5 bg-zinc-50 rounded border border-transparent">{profile.ownerContactNumber || '-'}</p>
-                      )}
-                    </div>
                     <div>
                       <label className="block text-sm font-bold text-zinc-700 mb-1">Company Name <span className="text-red-500">*</span></label>
                       {isEditingProfile ? (

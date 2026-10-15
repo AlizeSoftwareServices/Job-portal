@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
   try {
+    const rateLimit = checkRateLimit(req, 5, 10 * 60 * 1000); // 5 attempts per 10 mins
+    if (!rateLimit.success) {
+      return NextResponse.json({ message: 'Too many attempts. Please try again later.' }, { status: 429 });
+    }
+
     const { email, otp, newPassword } = await req.json();
     
     const otpRecord = await prisma.otpCode.findFirst({

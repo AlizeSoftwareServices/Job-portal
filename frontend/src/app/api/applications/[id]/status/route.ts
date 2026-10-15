@@ -9,6 +9,22 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     const { user, error } = await verifyAuth(req);
     if (error || !user) return NextResponse.json({ message: error }, { status: 401 });
 
+    const existingApp = await prisma.application.findUnique({
+      where: { id: resolvedParams.id },
+      include: { job: { select: { employerId: true } } }
+    });
+
+    if (!existingApp) {
+      return NextResponse.json({ message: 'Application not found' }, { status: 404 });
+    }
+
+    const isAdmin = user.role === 'ADMIN';
+    const isAssignedEmployer = user.role === 'EMPLOYER' && (existingApp.assignedEmployerId === user.sub || existingApp.job?.employerId === user.sub);
+
+    if (!isAdmin && !isAssignedEmployer) {
+      return NextResponse.json({ message: 'Forbidden: You do not have permission to update this application status' }, { status: 403 });
+    }
+
     const { status } = await req.json();
     const application = await prisma.application.update({
       where: { id: resolvedParams.id },

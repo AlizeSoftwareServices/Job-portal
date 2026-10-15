@@ -17,8 +17,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 
-    // Hardcoded admin credentials for now
-    if (username === 'Skyoadmin' && password === 'SkyoMPC') {
+    const adminUsername = process.env.ADMIN_USERNAME || 'Skyoadmin';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'SkyoMPC';
+
+    if (username === adminUsername && password === adminPassword) {
       const token = jwt.sign(
         { sub: 'admin', email: 'alizesoftwareservicesllp@gmail.com', role: 'ADMIN' },
         process.env.JWT_SECRET,

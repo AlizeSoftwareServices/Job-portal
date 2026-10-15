@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ ref: string }> }) {
   try {
+    const rateLimit = checkRateLimit(req, 20, 10 * 60 * 1000); // 20 requests per 10 mins
+    if (!rateLimit.success) {
+      return NextResponse.json({ message: 'Too many requests. Please try again later.' }, { status: 429 });
+    }
+
     const unwrappedParams = await params;
     const ref = unwrappedParams.ref;
 
@@ -22,7 +28,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ ref:
           { referenceNumber: formattedRef },
         ]
       },
-      include: {
+      select: {
+        referenceNumber: true,
+        status: true,
+        appliedAt: true,
+        updatedAt: true,
         job: {
           select: {
             title: true,

@@ -17,6 +17,16 @@ export function checkRateLimit(req: NextRequest, limit: number, windowMs: number
   const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : (realIp || 'unknown-ip');
   
   const now = Date.now();
+
+  // Prune expired records if store gets large to prevent memory leaks
+  if (rateLimiterStore.size > 1000) {
+    for (const [key, value] of rateLimiterStore.entries()) {
+      if (now > value.resetTime) {
+        rateLimiterStore.delete(key);
+      }
+    }
+  }
+
   const tracker = rateLimiterStore.get(ip);
   
   if (!tracker || now > tracker.resetTime) {

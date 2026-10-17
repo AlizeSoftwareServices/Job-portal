@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
 
     if (username === adminUsername && password === adminPassword) {
       const token = jwt.sign(
-        { sub: 'admin', email: 'alizesoftwareservicesllp@gmail.com', role: 'ADMIN' },
+        { sub: 'admin', email: 'skyotechnical@gmail.com', role: 'ADMIN' },
         process.env.JWT_SECRET,
         { expiresIn: '7d' }
       );
